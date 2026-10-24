@@ -8,6 +8,8 @@ The Titanic is about to hit an iceberg. You start at the very bottom of the ship
 
 Open `index.html` in any modern browser. There's nothing to install or build.
 
+The game is drawn in 3D with [three.js](https://threejs.org/), loaded from a CDN, so the 3D version needs an internet connection and a computer or tablet with WebGL. If three.js can't load, for example offline, the game automatically uses its built-in 2D drawing instead, and plays exactly the same.
+
 | Action | Keyboard | Touch |
 | --- | --- | --- |
 | Walk | ← → (or A / D) | ◀ ▶ buttons |
@@ -67,5 +69,5 @@ The **Grown-ups** button on the title screen has:
 Other notes:
 
 - Sound effects are soft chimes. The speaker button in the top-right corner turns them off.
-- It's a single self-contained file: `index.html`, with plain JavaScript and a canvas. The only external resource is the Fredoka font from Google Fonts, and the game still works without it.
+- It's a single file: `index.html`, with plain JavaScript. It loads three.js (r128) from cdnjs for the 3D world and the Fredoka font from Google Fonts. Without either, it still works, in 2D and with a fallback font.
 - To put it online, enable **GitHub Pages** for this repository (Settings → Pages → deploy from the `main` branch) and share the link.
