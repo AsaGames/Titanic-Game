@@ -13,6 +13,7 @@ Open `index.html` in any modern browser. There's nothing to install or build.
 | Walk | ← → (or A / D) | ◀ ▶ buttons |
 | Climb ladders | ↑ ↓ (or W / S) | ▲ ▼ buttons |
 | Search luggage, or open the shop | Space (or E / Enter) | 🔍 button |
+| Full screen | F, or the ⛶ button at the top right | ⛶ button (not on iPhone) |
 
 ## The rules
 

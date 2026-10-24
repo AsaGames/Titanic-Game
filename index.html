@@ -52,6 +52,9 @@
   .spacer { flex: 1; }
   .lvl { font-size: 13px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
   .lvl b { font-size: 21px; color: var(--text); font-weight: 600; letter-spacing: 0; margin-left: 4px; }
+  #fsBtn { pointer-events: auto; cursor: pointer; color: var(--text); width: 44px; padding: 0; justify-content: center; font: inherit; }
+  #fsBtn svg { width: 22px; height: 22px; }
+  #fsBtn[hidden] { display: none; }
   #soundBtn { pointer-events: auto; cursor: pointer; color: var(--text); width: 44px; padding: 0; justify-content: center; font: inherit; }
   #soundBtn svg { width: 22px; height: 22px; }
 
@@ -213,6 +216,7 @@
   </div>
   <div class="spacer"></div>
   <div class="panel lvl">Level<b id="levelNum">1</b></div>
+  <button class="panel" id="fsBtn" aria-label="Full screen" hidden></button>
   <button class="panel" id="soundBtn" aria-label="Toggle sound"></button>
 </div>
 <div id="msg"></div>
@@ -267,6 +271,8 @@ const ICONS = {
   down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l7 7 7-7"/></svg>',
   palette: '<svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2a4 4 0 0 0 4-4c0-4.4-4-8-9-8z" fill="#e8c15a"/><circle cx="7.5" cy="11" r="1.7" fill="#e5484d"/><circle cx="10" cy="7" r="1.7" fill="#5aa9e6"/><circle cx="15" cy="7" r="1.7" fill="#5bd18b"/></svg>',
   sliders: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h9M19 6h1M4 12h3M13 12h7M4 18h11M21 18h-1"/><circle cx="16" cy="6" r="2.4"/><circle cx="10" cy="12" r="2.4"/><circle cx="18" cy="18" r="2.4"/></svg>',
+  fsOn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
+  fsOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>',
   soundOn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>',
   soundOff: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M17 9l5 6M22 9l-5 6"/></svg>',
   shipHero: '<svg viewBox="0 0 180 96"><defs><linearGradient id="hs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1b4a80"/><stop offset="1" stop-color="#071a38"/></linearGradient></defs><rect x="0" y="70" width="180" height="26" rx="4" fill="url(#hs)"/><g fill="#d4a24c"><rect x="44" y="18" width="12" height="30"/><rect x="66" y="18" width="12" height="30"/><rect x="88" y="18" width="12" height="30"/><rect x="110" y="18" width="12" height="30"/></g><g fill="#111"><rect x="44" y="18" width="12" height="6"/><rect x="66" y="18" width="12" height="6"/><rect x="88" y="18" width="12" height="6"/><rect x="110" y="18" width="12" height="6"/></g><rect x="36" y="44" width="96" height="10" fill="#f1ede4"/><path d="M18 54h138l8-4-10 26H28z" fill="#141414"/><path d="M24 70h134l-4 6H28z" fill="#7d1a1a"/><path d="M20 55h140" stroke="#e8c15a" stroke-width="1.5"/><g fill="#ffd98a"><circle cx="50" cy="62" r="1.8"/><circle cx="64" cy="62" r="1.8"/><circle cx="78" cy="62" r="1.8"/><circle cx="92" cy="62" r="1.8"/><circle cx="106" cy="62" r="1.8"/><circle cx="120" cy="62" r="1.8"/><circle cx="134" cy="62" r="1.8"/></g><path d="M150 76l10-34 9 8 6 26z" fill="#e8f6ff"/><path d="M160 42l9 8 6 26h-9z" fill="#b9dcf0"/><path d="M0 80c10 0 10-3 20-3s10 3 20 3 10-3 20-3 10 3 20 3 10-3 20-3 10 3 20 3 10-3 20-3 10 3 20 3 10-3 20-3" stroke="#5aa9e6" stroke-width="1.5" fill="none" opacity=".6"/></svg>',
@@ -442,6 +448,26 @@ if (isTouch) document.body.classList.add('touch');
 function updateSoundBtn() { $('soundBtn').innerHTML = soundOn ? ICONS.soundOn : ICONS.soundOff; }
 updateSoundBtn();
 $('soundBtn').addEventListener('click', () => { soundOn = !soundOn; save('titanic.sound', soundOn); updateSoundBtn(); });
+
+// Full screen (where the browser allows it — not on iPhone)
+const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
+function updateFsBtn() { $('fsBtn').innerHTML = fsEl() ? ICONS.fsOff : ICONS.fsOn; $('fsBtn').setAttribute('aria-label', fsEl() ? 'Exit full screen' : 'Full screen'); }
+if (document.fullscreenEnabled || document.webkitFullscreenEnabled) {
+  $('fsBtn').hidden = false; updateFsBtn();
+  $('fsBtn').addEventListener('click', () => {
+    const root = document.documentElement;
+    try {
+      const r = fsEl() ? (document.exitFullscreen || document.webkitExitFullscreen).call(document)
+        : (root.requestFullscreen || root.webkitRequestFullscreen).call(root);
+      if (r && r.catch) r.catch(() => {});
+    } catch (e) {}
+  });
+  document.addEventListener('fullscreenchange', updateFsBtn);
+  document.addEventListener('webkitfullscreenchange', updateFsBtn);
+}
+addEventListener('keydown', e => {
+  if (e.code === 'KeyF' && !(e.target && e.target.tagName === 'INPUT') && !$('fsBtn').hidden) $('fsBtn').click();
+});
 
 // ---------- Input ----------
 const input = { left: false, right: false, up: false, down: false };
@@ -626,6 +652,7 @@ function showScreen(kind) {
         <span><kbd>←</kbd><kbd>→</kbd> Walk</span>
         <span><kbd>↑</kbd><kbd>↓</kbd> Climb</span>
         <span><kbd>Space</kbd> Search &amp; shop</span>
+        <span><kbd>F</kbd> Full screen</span>
       </div>`}
       ${pips()}
       <div class="actions">
