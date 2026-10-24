@@ -259,7 +259,7 @@ function load(k, def) { try { const v = localStorage.getItem(k); return v == nul
 function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 const FONT = 'Fredoka, "Trebuchet MS", system-ui, sans-serif';
 
-// ---------- Sound + talking ----------
+// ---------- Sound ----------
 let soundOn = load('titanic.sound', true);
 let AC = null;
 function ac() {
@@ -286,29 +286,19 @@ function noise(dur, vol, freq) {
   g.gain.setValueAtTime(vol, a.currentTime); g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + dur);
   src.connect(f).connect(g).connect(a.destination); src.start();
 }
-const sfx = {
-  coin()   { tone(988, .08, 'square', .08); tone(1319, .16, 'square', .08, .08); },
-  key()    { [784, 988, 1175, 1568].forEach((f, i) => tone(f, .18, 'triangle', .18, i * .09)); },
-  boom()   { noise(1.4, .7, 260); tone(70, 1.2, 'sine', .5, 0, 28); },
-  bell()   { [0, .4, .8].forEach(w => tone(1568, .5, 'sine', .14, w)); },
-  horn()   { tone(110, 1.5, 'sawtooth', .06); tone(147, 1.5, 'sawtooth', .045); },
-  nope()   { tone(220, .14, 'square', .07); tone(175, .2, 'square', .07, .12); },
-  open()   { tone(523, .1, 'triangle', .15); tone(784, .22, 'triangle', .15, .1); },
-  search() { tone(330, .07, 'triangle', .12); tone(440, .09, 'triangle', .12, .07); },
-  splash() { noise(.9, .5, 1400); },
-  up()     { [523, 659, 784, 1047].forEach((f, i) => tone(f, .14, 'square', .07, i * .08)); },
-  win()    { [523, 659, 784, 1047, 784, 1047].forEach((f, i) => tone(f, .26, 'triangle', .18, i * .15)); },
-  lose()   { [392, 330, 262].forEach((f, i) => tone(f, .4, 'triangle', .16, i * .3)); },
+const sfx = { // soft chimes only
+  coin()   { tone(1047, .12, 'sine', .07); tone(1397, .2, 'sine', .06, .07); },
+  key()    { [784, 988, 1175, 1568].forEach((f, i) => tone(f, .3, 'sine', .08, i * .1)); },
+  boom()   { noise(1.2, .35, 180); tone(55, 1.2, 'sine', .3, 0, 30); },
+  bell()   { [0, .5, 1].forEach(w => tone(1319, .6, 'sine', .07, w)); },
+  nope()   { tone(330, .18, 'sine', .06); tone(262, .24, 'sine', .06, .14); },
+  open()   { tone(659, .18, 'sine', .08); tone(988, .3, 'sine', .08, .12); },
+  search() { tone(523, .1, 'sine', .05); },
+  splash() { noise(.8, .25, 900); },
+  up()     { [659, 784, 988, 1319].forEach((f, i) => tone(f, .25, 'sine', .07, i * .09)); },
+  win()    { [523, 659, 784, 1047].forEach((f, i) => tone(f, .45, 'sine', .09, i * .16)); },
+  lose()   { [392, 330, 262].forEach((f, i) => tone(f, .5, 'sine', .07, i * .3)); },
 };
-function say(text) {
-  if (!soundOn || !('speechSynthesis' in window)) return;
-  try {
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.95; u.pitch = 1.1;
-    speechSynthesis.speak(u);
-  } catch (e) {}
-}
 
 // ---------- DOM ----------
 const cv = document.getElementById('game');
@@ -316,9 +306,8 @@ const cx = cv.getContext('2d');
 const $ = id => document.getElementById(id);
 const msgEl = $('msg'), warnEl = $('warn'), screenEl = $('screen'), cardEl = $('card');
 let msgTimer = 0;
-function msg(text, speak = true, secs = 3.5) {
+function msg(text, secs = 3.5) {
   msgEl.textContent = text; msgEl.classList.add('show'); msgTimer = secs;
-  if (speak) say(typeof speak === 'string' ? speak : text);
 }
 
 let isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
@@ -328,7 +317,6 @@ function updateSoundBtn() { $('soundBtn').innerHTML = soundOn ? ICONS.soundOn : 
 updateSoundBtn();
 $('soundBtn').addEventListener('click', () => {
   soundOn = !soundOn; save('titanic.sound', soundOn); updateSoundBtn();
-  if (!soundOn && 'speechSynthesis' in window) speechSynthesis.cancel();
 });
 
 // ---------- Input ----------
@@ -426,8 +414,7 @@ function startGame() {
   state = 'play';
   screenEl.classList.add('hide');
   warnEl.style.display = 'none';
-  sfx.horn();
-  msg('Explore the Titanic! Find coins and the key.', true, 5);
+  msg('Explore the Titanic! Find coins and the key.', 5);
 }
 
 function pips() {
@@ -493,7 +480,7 @@ function hitIceberg() {
   G.hit = true; G.shake = 1.4; G.flash = 1;
   sfx.boom();
   warnEl.style.display = 'flex';
-  msg("We hit an iceberg! Get to a lifeboat before the water touches you!", "Oh no! We hit an iceberg! Get to a lifeboat before the water touches you!", 6);
+  msg('We hit an iceberg! Get to a lifeboat before the water touches you!', 6);
   for (let i = 0; i < 30; i++) G.parts.push({ k: 'ice', x: BOW_X - rand(0, 80), y: rand(560, 760), vx: rand(-60, 60), vy: rand(-140, -40), life: 1.2, s: rand(3, 6) });
 }
 
@@ -515,7 +502,7 @@ function addMoney(n, x, y) {
 
 function gotKey(x, y) {
   G.hasKey = true; sfx.key();
-  msg('You found the key! Now go up to the lifeboats.', true, 5);
+  msg('You found the key! Now go up to the lifeboats.', 5);
   for (let i = 0; i < 18; i++) G.parts.push({ k: 'spark', x, y: y - 30, vx: rand(-140, 140), vy: rand(-180, -40), life: 1.1, s: rand(4, 9) });
 }
 
@@ -584,7 +571,7 @@ function interact() {
       if (s.has === 'key') gotKey(s.x, FLOOR(d));
       else if (s.has === 'coin') addMoney(1, s.x, FLOOR(d));
       else if (s.has === 'bag') addMoney(3, s.x, FLOOR(d));
-      else msg('Nothing in here!', true, 1.6);
+      else msg('Nothing in here!', 1.6);
     }
   }
   // lifeboats
@@ -648,11 +635,11 @@ function update(dt) {
     const sea = seaY();
     if (G.boat.y < sea - 2) G.boat.y = Math.min(sea - 2, G.boat.y + 90 * dt);
     else G.boat.x -= 50 * dt;
-    if (G.endT > 4.5) { showScreen('win'); say('You survived!'); }
+    if (G.endT > 4.5) showScreen('win');
   } else if (state === 'sinking') {
     G.endT += dt;
     player.y += 25 * dt;
-    if (G.endT > 1.8) { showScreen('lose'); say('Splash! The water got you. Try again!'); }
+    if (G.endT > 1.8) showScreen('lose');
   }
   updateHud();
 }

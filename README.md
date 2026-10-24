@@ -41,6 +41,6 @@ From level 2 on, the iceberg also tends to come sooner and the water rises faste
 
 ## For grown-ups
 
-- Messages are read aloud with the browser's speech feature, so non-readers can play. The speaker button turns all sound off.
+- Sound effects are soft chimes. The speaker button in the top-right corner turns them off.
 - It's a single self-contained file: `index.html`, with plain JavaScript and a canvas. The only external resource is the Fredoka font from Google Fonts, and the game still works without it.
 - To put it online, enable **GitHub Pages** for this repository (Settings → Pages → deploy from the `main` branch) and share the link.
