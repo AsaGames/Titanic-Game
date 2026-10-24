@@ -1,6 +1,6 @@
 # The Titanic Game
 
-A browser game designed by Asa (age 6), drawn in a brick-built toy style.
+A browser game designed by Asa (age 6), drawn in a bright, brick-built toy-town style: yellow minifigure faces, a sunset that darkens as the ship sinks, and sailors who point you toward the ladders.
 
 The Titanic is about to hit an iceberg. You start at the very bottom of the ship. Find the key, unlock the gate to the lifeboats, and get in a lifeboat before the water touches you. There are no points. You either survive or you don't.
 
