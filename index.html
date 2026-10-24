@@ -26,7 +26,7 @@
     overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
-  canvas { display: block; width: 100vw; height: 100vh; position: fixed; inset: 0; }
+  #game, #sky, #gl { display: block; width: 100vw; height: 100vh; position: fixed; inset: 0; }
   #sky, #gl { display: none; }
   body.three #sky, body.three #gl { display: block; }
   svg { display: block; }
@@ -54,6 +54,24 @@
   .spacer { flex: 1; }
   .lvl { font-size: 13px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
   .lvl b { font-size: 21px; color: var(--text); font-weight: 600; letter-spacing: 0; margin-left: 4px; }
+  #pauseBtn { pointer-events: auto; cursor: pointer; color: var(--text); width: 44px; padding: 0; justify-content: center; font: inherit; }
+  #pauseBtn svg { width: 22px; height: 22px; }
+  [hidden] { display: none !important; }
+  .face-wrap { display: grid; grid-template-columns: 200px 1fr; gap: 20px; align-items: start; text-align: left; margin: 14px 0 20px; }
+  #facePreview { width: 200px; height: 200px; border-radius: 22px; background: rgba(255,255,255,0.06); border: 1px solid var(--line); }
+  .face-tools .seg { margin-bottom: 14px; }
+  .face-tools .lbl { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin: 6px 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .chip { width: 48px; height: 48px; border-radius: 12px; border: 2px solid var(--line); background: rgba(255,255,255,0.05); padding: 0; cursor: pointer; display: grid; place-items: center; }
+  .chip canvas { width: 40px; height: 40px; }
+  .chip[aria-pressed="true"] { border-color: var(--gold); background: rgba(232,193,90,0.18); }
+  #facePad { width: 240px; height: 240px; border-radius: 18px; touch-action: none; cursor: crosshair; display: block; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.2); }
+  .pad-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  .pad-tools .secondary { padding: 6px 10px; font-size: 14px; }
+  .pad-tools .secondary[aria-pressed="true"] { border-color: var(--gold); color: var(--gold); }
+  .ink { width: 30px; height: 30px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.25); cursor: pointer; padding: 0; }
+  .ink[aria-pressed="true"] { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(232,193,90,0.4); }
+  @media (max-width: 560px) { .face-wrap { grid-template-columns: 1fr; justify-items: center; } }
   #fsBtn { pointer-events: auto; cursor: pointer; color: var(--text); width: 44px; padding: 0; justify-content: center; font: inherit; }
   #fsBtn svg { width: 22px; height: 22px; }
   #fsBtn[hidden] { display: none; }
@@ -224,6 +242,7 @@
   </div>
   <div class="spacer"></div>
   <div class="panel lvl">Level<b id="levelNum">1</b></div>
+  <button class="panel" id="pauseBtn" aria-label="Pause"></button>
   <button class="panel" id="fsBtn" aria-label="Full screen" hidden></button>
   <button class="panel" id="soundBtn" aria-label="Toggle sound"></button>
 </div>
@@ -278,6 +297,8 @@ const ICONS = {
   left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
   right: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
   down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l7 7 7-7"/></svg>',
+  smile: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f6c92b"/><circle cx="8.7" cy="10" r="1.4" fill="#1b1b1b"/><circle cx="15.3" cy="10" r="1.4" fill="#1b1b1b"/><path d="M7.5 14.2a5 5 0 0 0 9 0" fill="none" stroke="#1b1b1b" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M9 5v14M15 5v14"/></svg>',
   palette: '<svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2a4 4 0 0 0 4-4c0-4.4-4-8-9-8z" fill="#e8c15a"/><circle cx="7.5" cy="11" r="1.7" fill="#e5484d"/><circle cx="10" cy="7" r="1.7" fill="#5aa9e6"/><circle cx="15" cy="7" r="1.7" fill="#5bd18b"/></svg>',
   sliders: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h9M19 6h1M4 12h3M13 12h7M4 18h11M21 18h-1"/><circle cx="16" cy="6" r="2.4"/><circle cx="10" cy="12" r="2.4"/><circle cx="18" cy="18" r="2.4"/></svg>',
   fsOn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
@@ -402,9 +423,87 @@ const prefs = {
   sign: String(load('titanic.sign', '') || '').slice(0, 20),
   slow: !!load('titanic.slow', false),
   guide: ['auto', 'on', 'off'].includes(load('titanic.guide', 'auto')) ? load('titanic.guide', 'auto') : 'auto',
+  ending: load('titanic.ending', true) !== false,
 };
 function setPref(k, v) { prefs[k] = v; save('titanic.' + k, v); }
 const dogName = () => prefs.dog.trim() || 'the puppy';
+
+// ---------- Faces (the face maker) ----------
+const FACE_PARTS = {
+  eyes: ['dots', 'big', 'happy', 'wink', 'sleepy', 'stars', 'hearts'],
+  mouth: ['smile', 'grin', 'laugh', 'tongue', 'oh', 'teeth', 'sad'],
+  brows: ['normal', 'raised', 'cross', 'none'],
+  extra: ['none', 'cheeks', 'freckles', 'glasses', 'sunglasses', 'mustache', 'beard', 'patch'],
+};
+const FACE_DEFAULT = { eyes: 'dots', mouth: 'smile', brows: 'normal', extra: 'none', custom: false };
+function cleanFace(f) {
+  const o = { ...FACE_DEFAULT };
+  if (f && typeof f === 'object') { for (const k in FACE_PARTS) if (FACE_PARTS[k].includes(f[k])) o[k] = f[k]; o.custom = !!f.custom; }
+  return o;
+}
+prefs.face = cleanFace(load('titanic.face', null));
+let faceRev = 0, FACE_CACHE = {}, hasDrawing = false;
+const faceLayer = document.createElement('canvas'); faceLayer.width = faceLayer.height = 288; // Asa's own drawing
+function faceChanged() { faceRev++; FACE_CACHE = {}; AVATARS.length = 0; }
+(() => {
+  const d = load('titanic.faceDraw', null);
+  if (typeof d === 'string' && d.startsWith('data:image/png')) {
+    const img = new Image(); img.onload = () => { faceLayer.getContext('2d').drawImage(img, 0, 0); hasDrawing = true; faceChanged(); }; img.src = d;
+  }
+})();
+function star5(g, x, y, r) { g.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, q = i % 2 ? r * 0.45 : r; g.lineTo(x + Math.cos(a) * q, y + Math.sin(a) * q); } g.closePath(); g.fill(); }
+function heart5(g, x, y, s) { g.beginPath(); g.moveTo(x, y + s * 0.9); g.bezierCurveTo(x - s * 1.6, y - s * 0.2, x - s * 0.6, y - s * 1.4, x, y - s * 0.4); g.bezierCurveTo(x + s * 0.6, y - s * 1.4, x + s * 1.6, y - s * 0.2, x, y + s * 0.9); g.fill(); }
+function drawFace(g, f) { // a face in a 96 x 96 box; used by the face maker, the 2D heads and the 3D heads
+  g.save();
+  if (f.custom) { g.drawImage(faceLayer, 0, 0, 96, 96); g.restore(); return; }
+  const ink = '#1b1b1b';
+  g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = ink; g.fillStyle = ink;
+  const dot = (x, y, r) => { g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); };
+  const ell = (x, y, rx, ry, rot = 0) => { g.beginPath(); g.ellipse(x, y, rx, ry, rot, 0, Math.PI * 2); g.fill(); };
+  const arc = (x, y, r, a0, a1, w) => { g.lineWidth = w; g.beginPath(); g.arc(x, y, r, a0, a1); g.stroke(); };
+  if (f.extra === 'beard') { g.fillStyle = '#6b4226'; g.beginPath(); g.moveTo(12, 52); g.quadraticCurveTo(14, 94, 48, 94); g.quadraticCurveTo(82, 94, 84, 52); g.quadraticCurveTo(70, 76, 48, 76); g.quadraticCurveTo(26, 76, 12, 52); g.fill(); g.fillStyle = ink; }
+  if (f.extra === 'cheeks') { g.fillStyle = 'rgba(235,90,90,0.5)'; dot(20, 60, 8); dot(76, 60, 8); g.fillStyle = ink; }
+  if (f.extra === 'freckles') { g.fillStyle = '#a0522d'; for (const [x, y] of [[18, 56], [25, 62], [15, 64], [78, 56], [71, 62], [81, 64]]) dot(x, y, 2.2); g.fillStyle = ink; }
+  const E = [[34, 42], [62, 42]];
+  E.forEach(([x, y], i) => {
+    if (f.extra === 'patch' && i === 1) return;
+    const kind = f.eyes === 'wink' && i === 1 ? 'happy' : f.eyes;
+    if (kind === 'dots' || kind === 'wink') { ell(x, y, 5, 7.5); g.fillStyle = '#fff'; dot(x + 1.5, y - 3, 2); g.fillStyle = ink; }
+    else if (kind === 'big') { g.fillStyle = '#fff'; dot(x, y, 10); g.lineWidth = 2.5; g.beginPath(); g.arc(x, y, 10, 0, 7); g.stroke(); g.fillStyle = ink; dot(x + 1, y + 1, 5.5); g.fillStyle = '#fff'; dot(x + 3, y - 2, 2); g.fillStyle = ink; }
+    else if (kind === 'happy') arc(x, y + 5, 7, Math.PI * 1.1, Math.PI * 1.9, 4.5);
+    else if (kind === 'sleepy') arc(x, y - 3, 7, Math.PI * 0.1, Math.PI * 0.9, 4.5);
+    else if (kind === 'stars') star5(g, x, y, 9);
+    else if (kind === 'hearts') { g.fillStyle = '#e5484d'; heart5(g, x, y, 8); g.fillStyle = ink; }
+  });
+  if (f.brows === 'normal') { g.lineWidth = 3.5; g.beginPath(); g.moveTo(26, 28); g.lineTo(40, 26); g.moveTo(56, 26); g.lineTo(70, 28); g.stroke(); }
+  else if (f.brows === 'raised') { arc(34, 31, 9, Math.PI * 1.15, Math.PI * 1.85, 3.5); arc(62, 31, 9, Math.PI * 1.15, Math.PI * 1.85, 3.5); }
+  else if (f.brows === 'cross') { g.lineWidth = 4; g.beginPath(); g.moveTo(25, 24); g.lineTo(42, 31); g.moveTo(54, 31); g.lineTo(71, 24); g.stroke(); }
+  if (f.mouth === 'smile') arc(48, 56, 14, 0.35, Math.PI - 0.35, 4.5);
+  else if (f.mouth === 'sad') arc(48, 80, 13, Math.PI + 0.45, Math.PI * 2 - 0.45, 4.5);
+  else if (f.mouth === 'oh') ell(48, 68, 6, 7.5);
+  else if (f.mouth === 'teeth') {
+    g.fillStyle = '#fff'; g.fillRect(32, 60, 32, 13); g.lineWidth = 3; g.strokeRect(32, 60, 32, 13);
+    g.lineWidth = 1.5; g.beginPath(); for (const x of [40, 48, 56]) { g.moveTo(x, 60); g.lineTo(x, 73); } g.moveTo(32, 66.5); g.lineTo(64, 66.5); g.stroke();
+  } else {
+    g.fillStyle = f.mouth === 'grin' ? ink : '#5a1a1a';
+    g.beginPath(); g.moveTo(30, 60); g.quadraticCurveTo(48, 63, 66, 60); g.quadraticCurveTo(64, 82, 48, 82); g.quadraticCurveTo(32, 82, 30, 60); g.fill();
+    if (f.mouth === 'grin') { g.fillStyle = '#fff'; g.fillRect(34, 61, 28, 5); }
+    else { g.fillStyle = '#ef7b8b'; ell(48, 77, 9, 4.5); }
+    if (f.mouth === 'tongue') { g.fillStyle = '#ef7b8b'; ell(55, 83, 7, 9, 0.25); }
+  }
+  g.fillStyle = ink;
+  if (f.extra === 'glasses') { g.lineWidth = 3; for (const [x, y] of E) { g.beginPath(); g.arc(x, y, 11, 0, 7); g.stroke(); } g.beginPath(); g.moveTo(45, 41); g.lineTo(51, 41); g.stroke(); }
+  if (f.extra === 'sunglasses') { g.fillStyle = '#111'; for (const [x, y] of E) g.fillRect(x - 12, y - 8, 24, 16); g.fillRect(44, 38, 8, 3); g.fillStyle = 'rgba(255,255,255,0.55)'; for (const [x, y] of E) g.fillRect(x - 8, y - 5, 6, 2.5); }
+  if (f.extra === 'mustache') { g.fillStyle = '#5a3a22'; g.beginPath(); g.moveTo(48, 54); g.quadraticCurveTo(36, 45, 25, 56); g.quadraticCurveTo(36, 62, 48, 57); g.quadraticCurveTo(60, 62, 71, 56); g.quadraticCurveTo(60, 45, 48, 54); g.fill(); }
+  if (f.extra === 'patch') { g.lineWidth = 2.5; g.strokeStyle = '#111'; g.beginPath(); g.moveTo(12, 25); g.lineTo(84, 34); g.stroke(); g.fillStyle = '#111'; ell(62, 42, 10, 9); }
+  g.restore();
+}
+function faceKey(f) { return JSON.stringify(f) + (f.custom ? '#' + faceRev : ''); }
+function faceCanvas(f) {
+  const key = faceKey(f);
+  if (!FACE_CACHE[key]) { const c = document.createElement('canvas'); c.width = c.height = 96; drawFace(c.getContext('2d'), f); FACE_CACHE[key] = c; }
+  return FACE_CACHE[key];
+}
 
 // ---------- Sound ----------
 let soundOn = load('titanic.sound', true);
@@ -465,6 +564,8 @@ if (isTouch) document.body.classList.add('touch');
 function updateSoundBtn() { $('soundBtn').innerHTML = soundOn ? ICONS.soundOn : ICONS.soundOff; }
 updateSoundBtn();
 $('soundBtn').addEventListener('click', () => { soundOn = !soundOn; save('titanic.sound', soundOn); updateSoundBtn(); });
+$('pauseBtn').innerHTML = ICONS.home;
+$('pauseBtn').addEventListener('click', () => pauseGame());
 
 // Full screen (where the browser allows it — not on iPhone)
 const fsEl = () => document.fullscreenElement || document.webkitFullscreenElement;
@@ -493,7 +594,10 @@ const KEYMAP = { ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'ri
 addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return; // typing a name
   const k = KEYMAP[e.code];
-  if (k && (state === 'play' || state === 'swim')) { input[k] = true; e.preventDefault(); }
+  if (k && (state === 'play' || state === 'swim' || state === 'dive')) { input[k] = true; e.preventDefault(); }
+  if (state === 'ending' && (e.code === 'Space' || e.code === 'Enter')) { e.preventDefault(); startDive(); return; }
+  if (e.code === 'Escape' && state === 'play') { pauseGame(); return; }
+  if (state === 'paused' && (e.code === 'Escape' || e.code === 'Space')) { e.preventDefault(); resumeGame(); return; }
   if (state === 'shop') {
     if (e.code === 'Digit1') buy(SHOP_ITEMS[0].id);
     if (e.code === 'Digit2') buy(SHOP_ITEMS[1].id);
@@ -558,10 +662,10 @@ function newGame() {
   const slow = prefs.slow;
   G = {
     time: 0,
-    tHit: rand(Math.max(20, 32 - level * 2), Math.max(30, 52 - level * 3)) + (slow ? 10 : 0),
+    tHit: rand(Math.max(10, 32 - level * 2), Math.max(18, 52 - level * 3.2)) + (slow ? 10 : 0),
     hit: false, bellRung: false, waitMsg: false, bumpMsg: false,
     water: HULL_BOTTOM + 20,
-    rate: Math.min(5.1, 3.4 * (1 + 0.1 * (level - 1))) * (slow ? 0.6 : 1),
+    rate: (level <= 6 ? Math.min(5.1, 3.4 * (1 + 0.1 * (level - 1))) : Math.min(6.6, 5.1 + (level - 6) * 0.38)) * (slow ? 0.6 : 1),
     coins: 0, earned: 0, cls: 3, hasKey: false, silver: false,
     hatch: level >= 6, hatchHintT: -10, hatchMsgT: -10,
     jacket: false, shoes: false, swim: null,
@@ -586,12 +690,13 @@ function newGame() {
     const zone = level === 1 ? pick(['d0', 'd1']) : pick(['d1', 'd2', 'd3']);
     const deck = ZONES[zone].deck;
     G.items.push({ deck, x: freeX(zone, deck, G.items), type: 'key', taken: false, ph: 0 });
-  } else {
+  } else if (level <= 6) {
     const want = level === 3 ? ['low', 'mid'] : level === 4 ? ['c2'] : ['c1'];
     pick(G.spots.filter(s => want.includes(s.zone))).has = 'key';
-  }
+  } else G.lateKey = true; // from level 7 the key only falls into luggage when the iceberg hits
   // From level 6, a hatch on the way up needs a silver key
-  if (G.hatch) pick(G.spots.filter(s => s.zone === 'low' && !s.has)).has = 'silver';
+  if (G.hatch && level < 8) pick(G.spots.filter(s => s.zone === 'low' && !s.has)).has = 'silver';
+  else if (G.hatch) G.lateSilver = true;
   for (const s of G.spots) if (!s.has) {
     const r = Math.random();
     s.has = r < 0.35 ? 'coin' : r < 0.55 ? 'bag' : null;
@@ -626,10 +731,14 @@ const LEVEL_NOTES = {
   4: 'The key is in the 2nd Class Lounge, and lifeboats leave early!',
   5: 'The key is in the 1st Class Ballroom.',
   6: 'A locked hatch needs a silver key.',
+  7: 'The key only drops into luggage when the iceberg hits!',
+  8: 'The silver key hides after the iceberg too, and the water is faster.',
+  9: 'No more twinkling hints, bigger crowds, and lifeboats leave sooner.',
+  10: 'The fastest water yet. Good luck!',
 };
 function pips() {
   let html = '';
-  for (let i = 1; i <= 6; i++) html += `<span class="pip${i <= level ? ' on' : ''}"></span>`;
+  for (let i = 1; i <= 10; i++) html += `<span class="pip${i <= level ? ' on' : ''}"></span>`;
   return `<div class="level-row">Level <b>${level}</b><span class="pips">${html}</span></div>`;
 }
 const AVATARS = [];
@@ -638,17 +747,18 @@ function avatarURL(i) {
   const c = document.createElement('canvas'); c.width = 108; c.height = 136;
   const saved = cx; cx = c.getContext('2d');
   cx.scale(1.5, 1.5);
-  drawPerson(36, 86, { ...KID_STYLE[3], ...KIDS[i], hat: 'none', face: 1, walkT: 0, moving: false, climbing: false });
+  drawPerson(36, 86, { ...KID_STYLE[3], ...KIDS[i], faceLook: prefs.face, hat: 'none', face: 1, walkT: 0, moving: false, climbing: false });
   cx = saved;
   return (AVATARS[i] = c.toDataURL());
 }
 
 function showScreen(kind) {
   screenKind = kind;
-  if (kind === 'menu' || kind === 'make' || kind === 'grown') state = 'menu';
+  if (kind === 'menu' || kind === 'make' || kind === 'grown' || kind === 'face') state = 'menu';
+  else if (kind === 'pause') state = 'paused';
   else if (kind !== 'shop') state = 'over';
   screenShownAt = performance.now();
-  if (kind !== 'shop') warnEl.style.display = 'none';
+  if (kind !== 'shop' && kind !== 'pause') warnEl.style.display = 'none';
   const keysHint = isTouch ? '' : '<div class="hint">or press Space</div>';
   let html;
   if (kind === 'menu') {
@@ -676,6 +786,7 @@ function showScreen(kind) {
       <div class="actions">
         <button class="primary" id="playBtn">Play</button>
         <div class="row">
+          <button class="secondary" id="faceBtn">${ICONS.smile}Face maker</button>
           <button class="secondary" id="makeBtn">${ICONS.palette}Make it yours</button>
           <button class="secondary" id="grownBtn">${ICONS.sliders}Grown-ups</button>
         </div>
@@ -708,12 +819,48 @@ function showScreen(kind) {
         <div class="field"><span class="lbl">Level</span>
           <div class="stepper"><button id="lvlDown" aria-label="Lower level">&minus;</button><output id="lvlOut">${level}</output><button id="lvlUp" aria-label="Higher level">+</button></div>
           <div class="help" id="lvlNote">${esc(levelSummary(level))}</div></div>
+        <div class="field"><label class="switch"><span><span class="lbl" style="margin:0">Sinking ending</span>
+          <span class="help" style="display:block">After you escape, watch the ship split and sink, then guide it to the sea floor (3D only).</span></span>
+          <input type="checkbox" id="endingOpt" ${prefs.ending ? 'checked' : ''}></label></div>
+        <div class="field"><span class="lbl">Start over</span><button class="secondary" id="resetAll">Reset everything</button>
+          <div class="help">Goes back to level 1 and clears the face, names and settings.</div></div>
       </div>
       <div class="actions"><button class="primary" id="backBtn">Done</button></div>`;
+  } else if (kind === 'face') {
+    const names = { eyes: 'Eyes', mouth: 'Mouth', brows: 'Eyebrows', extra: 'Extras' };
+    const parts = Object.keys(FACE_PARTS).map(cat => `<div class="lbl">${names[cat]}</div><div class="chips">${FACE_PARTS[cat].map(v =>
+      `<button class="chip" data-cat="${cat}" data-val="${v}" aria-pressed="${!prefs.face.custom && prefs.face[cat] === v}" aria-label="${names[cat]}: ${v}"><canvas width="96" height="96"></canvas></button>`).join('')}</div>`).join('');
+    const inks = ['#1b1b1b', '#e5484d', '#ef7b8b', '#1e5aa8', '#ffffff', '#6b4226'].map((c, i) => `<button class="ink" data-ink="${c}" style="background:${c}" aria-pressed="${i === 0}" aria-label="Pen colour ${c}"></button>`).join('');
+    html = `
+      <div class="eyebrow">Face maker</div>
+      <h2>Make your face</h2>
+      <div class="face-wrap">
+        <canvas id="facePreview" width="400" height="400" aria-label="Your face"></canvas>
+        <div class="face-tools">
+          <div class="seg"><button data-ftab="parts" aria-pressed="${!prefs.face.custom}">Pick parts</button><button data-ftab="draw" aria-pressed="${prefs.face.custom}">Draw my own</button></div>
+          <div id="fParts" ${prefs.face.custom ? 'hidden' : ''}>${parts}</div>
+          <div id="fDraw" ${prefs.face.custom ? '' : 'hidden'}>
+            <canvas id="facePad" width="288" height="288" aria-label="Drawing pad"></canvas>
+            <div class="pad-tools">${inks}
+              <button class="secondary" data-size="7" aria-pressed="true">Thin</button><button class="secondary" data-size="16" aria-pressed="false">Thick</button>
+              <button class="secondary" data-ink="erase" aria-pressed="false">Eraser</button><button class="secondary" id="padClear">Clear</button></div>
+          </div>
+        </div>
+      </div>
+      <div class="actions"><button class="primary" id="backBtn">Done</button></div>`;
+  } else if (kind === 'pause') {
+    html = `
+      <div class="eyebrow">Paused</div>
+      <h2>Take a break</h2>
+      <div class="actions" style="margin-top:18px">
+        <button class="primary" id="resumeBtn">Keep playing</button>
+        <div class="row"><button class="secondary" id="restartBtn">Start this level again</button><button class="secondary" id="menuBtn">Main menu</button></div>
+      </div>`;
   } else if (kind === 'shop') {
     html = shopHTML();
   } else if (kind === 'win') {
-    const pup = G && G.dog.following ? `<div class="saved">${ICONS.dog}<span>You saved ${esc(dogName())} too!</span></div>` : '';
+    const pup = (G && G.dog.following ? `<div class="saved">${ICONS.dog}<span>You saved ${esc(dogName())} too!</span></div>` : '')
+      + (G && G.dive && G.dive.landed ? `<div class="saved">${ICONS.wave}<span>${G.dive.bumped === 0 ? 'You guided the Titanic down and every fish stayed safe!' : `You guided the Titanic down and kept ${G.dive.total - G.dive.bumped} of ${G.dive.total} fish safe.`}</span></div>` : '');
     const note = LEVEL_NOTES[level] ? `<div class="next">${ICONS.keyGold}<span>Next: ${LEVEL_NOTES[level]}</span></div>` : `<div class="next">${ICONS.keyGold}<span>Next time, the key will be hidden even better.</span></div>`;
     html = `
       <div class="hero">${ICONS.boatHero}</div>
@@ -745,7 +892,9 @@ function showScreen(kind) {
 
 function levelSummary(l) {
   const key = l === 1 ? 'Key in the open on the bottom decks.' : l === 2 ? 'Key in the open on any deck.' : l === 3 ? 'Key hidden in luggage; passengers get in the way.'
-    : l === 4 ? 'Key in the 2nd Class Lounge; lifeboats leave early.' : l === 5 ? 'Key in the 1st Class Ballroom.' : 'Key in the Ballroom, behind a hatch that needs a silver key.';
+    : l === 4 ? 'Key in the 2nd Class Lounge; lifeboats leave early.' : l === 5 ? 'Key in the 1st Class Ballroom.' : l === 6 ? 'Key in the Ballroom, behind a hatch that needs a silver key.'
+    : l === 7 ? 'The key drops into luggage only when the iceberg hits.' : l === 8 ? 'Both keys hide only after the iceberg; faster water.'
+    : l === 9 ? 'No twinkle hints, bigger crowds, lifeboats leave sooner.' : 'Fastest water and the earliest iceberg.';
   return key + (l > 1 ? ' The iceberg comes sooner and the water rises faster.' : '');
 }
 
@@ -754,6 +903,18 @@ function wireScreen(kind) {
   on('playBtn', startGame);
   on('menuBtn', () => showScreen('menu'));
   on('makeBtn', () => showScreen('make'));
+  on('faceBtn', () => showScreen('face'));
+  on('resumeBtn', resumeGame);
+  on('restartBtn', startGame);
+  on('resetAll', e => {
+    const b = e.currentTarget;
+    if (!b.dataset.sure) { b.dataset.sure = '1'; b.textContent = 'Tap again to reset everything'; return; }
+    try { Object.keys(localStorage).filter(k => k.startsWith('titanic.')).forEach(k => localStorage.removeItem(k)); } catch (_) {}
+    level = 1; Object.assign(prefs, { kid: 0, dog: 'Biscuit', boat: '#ffffff', sign: '', slow: false, guide: 'auto', ending: true, face: { ...FACE_DEFAULT } });
+    faceLayer.getContext('2d').clearRect(0, 0, 288, 288); hasDrawing = false; faceChanged(); if (use3D) refreshShipSign();
+    showScreen('menu');
+  });
+  if (kind === 'face') wireFaceMaker();
   on('grownBtn', () => showScreen('grown'));
   on('backBtn', () => showScreen('menu'));
   on('closeShop', closeShop);
@@ -773,9 +934,81 @@ function wireScreen(kind) {
   const dn = $('dogName'); if (dn) dn.addEventListener('input', () => setPref('dog', dn.value.slice(0, 14)));
   const sg = $('shipSign'); if (sg) sg.addEventListener('input', () => { setPref('sign', sg.value.slice(0, 20)); if (use3D) refreshShipSign(); });
   const sm = $('slowMode'); if (sm) sm.addEventListener('change', () => setPref('slow', sm.checked));
-  const setLevel = l => { level = clamp(l, 1, 8); save('titanic.level', level); $('lvlOut').textContent = level; $('lvlNote').textContent = levelSummary(level); };
+  const eo = $('endingOpt'); if (eo) eo.addEventListener('change', () => setPref('ending', eo.checked));
+  const setLevel = l => { level = clamp(l, 1, 10); save('titanic.level', level); $('lvlOut').textContent = level; $('lvlNote').textContent = levelSummary(level); };
   on('lvlDown', () => setLevel(level - 1));
   on('lvlUp', () => setLevel(level + 1));
+}
+
+// ---------- Face maker ----------
+function drawFacePreview() {
+  const c = $('facePreview'); if (!c) return;
+  const g = c.getContext('2d'); g.clearRect(0, 0, 400, 400);
+  g.fillStyle = '#d9ab1c'; g.fillRect(150, 22, 100, 40);
+  g.fillStyle = SKIN; g.fillRect(70, 50, 260, 300);
+  const sh = g.createLinearGradient(70, 0, 330, 0); sh.addColorStop(0, 'rgba(255,255,255,0.25)'); sh.addColorStop(0.5, 'rgba(255,255,255,0)'); sh.addColorStop(1, 'rgba(0,0,0,0.15)');
+  g.fillStyle = sh; g.fillRect(70, 50, 260, 300);
+  g.fillStyle = KIDS[prefs.kid].hair; g.beginPath(); g.ellipse(200, 62, 150, 52, 0, Math.PI, 0); g.fill(); g.fillRect(50, 60, 300, 14);
+  g.drawImage(faceCanvas(prefs.face), 65, 80, 270, 270);
+}
+function drawPad() {
+  const c = $('facePad'); if (!c) return;
+  const g = c.getContext('2d');
+  g.fillStyle = SKIN; g.fillRect(0, 0, 288, 288);
+  g.strokeStyle = 'rgba(0,0,0,0.13)'; g.setLineDash([6, 6]); g.lineWidth = 2;
+  for (const x of [102, 186]) { g.beginPath(); g.arc(x, 126, 22, 0, 7); g.stroke(); }
+  g.beginPath(); g.arc(144, 168, 42, 0.35, Math.PI - 0.35); g.stroke(); g.setLineDash([]);
+  g.drawImage(faceLayer, 0, 0);
+}
+function wireFaceMaker() {
+  const changed = () => { setPref('face', prefs.face); faceChanged(); drawFacePreview(); };
+  const drawChips = () => cardEl.querySelectorAll('.chip').forEach(b => {
+    const f = { ...prefs.face, custom: false, [b.dataset.cat]: b.dataset.val }, g = b.firstChild.getContext('2d');
+    g.clearRect(0, 0, 96, 96); g.fillStyle = SKIN; g.beginPath(); g.arc(48, 48, 46, 0, 7); g.fill(); drawFace(g, f);
+    b.setAttribute('aria-pressed', String(!prefs.face.custom && prefs.face[b.dataset.cat] === b.dataset.val));
+  });
+  cardEl.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { prefs.face[b.dataset.cat] = b.dataset.val; prefs.face.custom = false; changed(); drawChips(); }));
+  cardEl.querySelectorAll('[data-ftab]').forEach(b => b.addEventListener('click', () => {
+    const draw = b.dataset.ftab === 'draw';
+    cardEl.querySelectorAll('[data-ftab]').forEach(o => o.setAttribute('aria-pressed', String(o === b)));
+    $('fParts').hidden = draw; $('fDraw').hidden = !draw;
+    prefs.face.custom = draw && hasDrawing; changed(); drawChips(); drawPad();
+  }));
+  // the drawing pad
+  let ink = '#1b1b1b', size = 7, last = null;
+  const pad = $('facePad');
+  cardEl.querySelectorAll('[data-ink]').forEach(b => b.addEventListener('click', () => { ink = b.dataset.ink; cardEl.querySelectorAll('[data-ink]').forEach(o => o.setAttribute('aria-pressed', String(o === b))); }));
+  cardEl.querySelectorAll('[data-size]').forEach(b => b.addEventListener('click', () => { size = +b.dataset.size; cardEl.querySelectorAll('[data-size]').forEach(o => o.setAttribute('aria-pressed', String(o === b))); }));
+  const finish = () => {
+    if (!last) return; last = null; hasDrawing = true; prefs.face.custom = true;
+    try { save('titanic.faceDraw', faceLayer.toDataURL('image/png')); } catch (_) {}
+    changed();
+  };
+  $('padClear').addEventListener('click', () => { faceLayer.getContext('2d').clearRect(0, 0, 288, 288); hasDrawing = false; prefs.face.custom = false; save('titanic.faceDraw', null); changed(); drawPad(); });
+  const pos = e => { const r = pad.getBoundingClientRect(); return [(e.clientX - r.left) / r.width * 288, (e.clientY - r.top) / r.height * 288]; };
+  const stroke = (a, b) => {
+    const g = faceLayer.getContext('2d');
+    g.globalCompositeOperation = ink === 'erase' ? 'destination-out' : 'source-over';
+    g.strokeStyle = ink === 'erase' ? '#000' : ink; g.lineWidth = ink === 'erase' ? 26 : size; g.lineCap = g.lineJoin = 'round';
+    g.beginPath(); g.moveTo(a[0], a[1]); g.lineTo(b[0] + 0.01, b[1]); g.stroke(); g.globalCompositeOperation = 'source-over';
+    drawPad();
+  };
+  pad.addEventListener('pointerdown', e => { e.preventDefault(); pad.setPointerCapture(e.pointerId); last = pos(e); stroke(last, last); });
+  pad.addEventListener('pointermove', e => { if (!last) return; const p = pos(e); stroke(last, p); last = p; });
+  pad.addEventListener('pointerup', finish); pad.addEventListener('pointercancel', finish);
+  drawChips(); drawPad(); drawFacePreview();
+}
+
+// ---------- Pause ----------
+function pauseGame() {
+  if (state !== 'play') return;
+  for (const k in input) input[k] = false;
+  showScreen('pause');
+}
+function resumeGame() {
+  state = 'play'; screenKind = 'none';
+  screenEl.classList.add('hide');
+  if (G.hit) warnEl.style.display = 'flex';
 }
 
 // ---------- Shop ----------
@@ -820,11 +1053,23 @@ function hitIceberg() {
   G.hit = true; G.shake = 1.4; G.flash = 1; G.hitAt = G.time;
   sfx.boom();
   warnEl.style.display = 'flex';
-  msg('We hit an iceberg! Go up to a lifeboat before the water touches you!', 6, 'ice');
+  if (G.lateKey || G.lateSilver) {
+    const hide = (want, what) => {
+      let c = G.spots.filter(s => !s.searched && want.includes(s.zone) && s.has !== 'key' && s.has !== 'silver' && (what !== 'silver' || s.deck === 1)); // never the boiler room, which floods first
+      if (!c.length) c = G.spots.filter(s => !s.searched && s.has !== 'key' && s.has !== 'silver');
+      if (c.length) pick(c).has = what;
+      else G.items.push({ deck: deckAt(player.y) >= 0 ? deckAt(player.y) : 1, x: freeX('d1', 1, G.items), type: 'key', taken: false, ph: 0 });
+    };
+    if (G.lateKey) hide(level >= 9 ? ['c1'] : ['c2', 'c1'], 'key');
+    if (G.lateSilver) hide(['low'], 'silver');
+    msg(G.lateSilver ? 'CRASH! Both keys fell into luggage somewhere! Find them before the water does!' : 'CRASH! The key fell into somebody\'s luggage! Find it before the water does!', 6, 'ice');
+  } else msg('We hit an iceberg! Go up to a lifeboat before the water touches you!', 6, 'ice');
   for (let i = 0; i < 30; i++) G.parts.push({ k: 'ice', x: BOW_X - rand(0, 80), y: rand(560, 760), vx: rand(-60, 60), vy: rand(-140, -40), life: 1.2, s: rand(3, 6) });
+  // more passengers come running
+  for (const [deck, a, b] of [[1, 180, 2220], [2, 180, 1350], [3, 180, 850], [1, 180, 2220]]) G.npcs.push({ deck, a, b, x: rand(a, b), tx: rand(a, b), wait: 0, face: 1, walkT: 0, moving: false, look: adultLook(), panic: true });
   // From level 4 the first two lifeboats leave early (the last one always waits)
   if (level >= 4) {
-    const first = 55 * (prefs.slow ? 1.5 : 1);
+    const first = (level >= 9 ? 42 : 55) * (prefs.slow ? 1.5 : 1);
     G.boats[0].leaveAt = G.time + first;
     G.boats[1].leaveAt = G.time + first + 35;
   }
@@ -900,7 +1145,7 @@ function movePlayer(dt) {
   // passengers slow you down from level 3
   let crowd = 1;
   if (level >= 3 && G.npcs.some(n => n.deck === d && Math.abs(n.x - player.x) < 26)) {
-    crowd = 0.6;
+    crowd = level >= 9 ? 0.45 : 0.6;
     if (!G.bumpMsg) { G.bumpMsg = true; msg('Excuse me! Passengers are in the way.', 2.5, 'people'); }
   }
   player.face = dir; player.walkT += dt; player.moving = true;
@@ -968,9 +1213,10 @@ function updateWorld(dt) {
   for (const n of G.npcs) {
     n.moving = false;
     if (n.wait > 0) { n.wait -= dt; continue; }
-    const dx = n.tx - n.x, sp = G.hit ? 85 : 35;
-    if (Math.abs(dx) < 4) { n.tx = rand(n.a, n.b); n.wait = G.hit ? rand(0, 0.6) : rand(1, 3); continue; }
-    n.face = Math.sign(dx); n.x += n.face * Math.min(Math.abs(dx), sp * dt); n.moving = true; n.walkT += dt * (G.hit ? 1.4 : 0.8);
+    const dx = n.tx - n.x, sp = G.hit ? 150 : 35;
+    n.panic = G.hit;
+    if (Math.abs(dx) < 4 || (G.hit && Math.random() < dt * 0.6)) { n.tx = rand(n.a, n.b); n.wait = G.hit ? rand(0, 0.25) : rand(1, 3); continue; }
+    n.face = Math.sign(dx); n.x += n.face * Math.min(Math.abs(dx), sp * dt); n.moving = true; n.walkT += dt * (G.hit ? 2 : 0.8);
   }
   // the puppy follows your footsteps
   if (player.moving) {
@@ -1019,7 +1265,7 @@ function lose() {
 
 function update(dt) {
   if (msgTimer > 0) { msgTimer -= dt; if (msgTimer <= 0) msgEl.classList.remove('show'); }
-  if (!G || state === 'shop') return;
+  if (!G || state === 'shop' || state === 'paused') return;
   for (const p of G.parts) {
     p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt;
     if (p.k === 'confetti') { p.vy = Math.min(p.vy + 160 * dt, 70); p.vx *= 0.99; p.r += dt * 6; }
@@ -1043,23 +1289,63 @@ function update(dt) {
     updateWorld(dt);
     interact();
     if (state === 'play' && G.water < player.y - 2) {
-      if (G.jacket) startSwim('float'); else lose();
+      if (G.jacket) startJump('float'); else lose();
     }
   } else if (state === 'winning') {
     G.endT += dt;
+    G.water = Math.max(FLOOR(4) + 20, G.water - G.rate * 3 * dt); // the ship keeps filling while you're lowered
     updateWorld(dt);
     const sea = seaY();
-    if (G.boat.y < sea - 2) G.boat.y = Math.min(sea - 2, G.boat.y + 90 * dt);
+    if (G.boat.y < sea - 2) G.boat.y = Math.min(sea - 2, G.boat.y + 110 * dt);
     else G.boat.x -= 50 * dt;
-    if (G.endT > 4.5) showScreen('win');
+    if (G.endT > 6.5) finishEscape();
   } else if (state === 'sinking') {
     G.endT += dt;
     player.y += 25 * dt;
     if (G.endT > 1.8) showScreen('lose');
-  } else if (state === 'swim') updateSwim(dt);
-  else if (state === 'swimwin') { G.endT += dt; swimDrift(dt); if (G.endT > 3) showScreen('win'); }
+  } else if (state === 'jumping') updateJump(dt);
+  else if (state === 'swim') updateSwim(dt);
+  else if (state === 'swimwin') { G.endT += dt; swimDrift(dt); if (G.endT > 3) finishEscape(); }
+  else if (state === 'ending') updateEnding(dt);
+  else if (state === 'dive') updateDive(dt);
   else if (state === 'swimlose') { G.endT += dt; if (G.endT > 1.8) showScreen('lose'); }
   updateHud();
+}
+
+// ---------- Jumping (or floating) out of the ship, before the swim ----------
+function startJump(how) {
+  state = 'jumping';
+  warnEl.style.display = 'none';
+  const door = DOORS.find(o => o.deck === deckAt(player.y));
+  G.jump = { t: 0, how, x0: player.x, y0: player.y, dx: door ? door.x : player.x, landed: false, air: false };
+  if (how === 'jump') { sfx.open(); msg('Here goes... JUMP!', 2.5, 'jacket'); }
+  else msg('Whoa! Your life jacket floats you out of the ship!', 3, 'jacket');
+}
+function jumpPos(J, t) {
+  const land = Math.min(SEA_BASE, G.water) + 30;
+  if (J.how === 'float') { const k = clamp(t / 1.8, 0, 1); return { x: J.x0 + (40 - J.x0) * k, y: J.y0 + (land - J.y0) * k - Math.sin(Math.PI * k) * 25, k, air: false }; }
+  if (t < 0.5) { const k = clamp(t / 0.5, 0, 1); return { x: J.x0 + (J.dx - J.x0) * k, y: J.y0, k: 0, walk: true, air: false }; }
+  const k = clamp((t - 0.5) / 1.3, 0, 1);
+  return { x: J.dx + (40 - J.dx) * k, y: J.y0 + (land - J.y0) * k - Math.sin(Math.PI * k) * 90, k, air: k < 1 };
+}
+function jumpZ(J, t) { // how far out in front of the ship (3D only)
+  if (J.how === 'float') return 0.6 + 11.8 * clamp(t / 1.8, 0, 1);
+  if (t < 0.5) return 0.6 - 5 * clamp(t / 0.5, 0, 1);
+  return 5.4 + 7 * Math.sqrt(clamp((t - 0.5) / 1.3, 0, 1));
+}
+function updateJump(dt) {
+  const J = G.jump; J.t += dt;
+  const p = jumpPos(J, J.t);
+  if (J.how === 'jump' && !J.flashed && J.t >= 0.5) { J.flashed = true; G.flash = 0.45; }
+  player.x = p.x; player.y = p.y + (p.k >= 1 ? Math.sin(J.t * 3) * 2 : 0);
+  player.face = -1; player.moving = !!p.walk; player.walkT += dt; player.climb = false; J.air = p.air;
+  if (G.dog.following) { const d = jumpPos(J, J.t - 0.35); G.dog.x = d.x + 20; G.dog.y = d.k >= 1 ? d.y - 24 : d.y; G.dog.face = -1; G.dog.moving = !!d.walk; G.dog.walkT += dt; }
+  if (!J.landed && p.k >= 1) {
+    J.landed = true; J.landT = J.t; sfx.splash(); G.shake = 0.3;
+    for (let i = 0; i < 24; i++) G.parts.push({ k: 'drop', x: p.x, y: p.y - 30, z: jumpZ(J, J.t), vx: rand(-120, 120), vy: rand(-280, -90), life: 1, s: rand(3, 6) });
+    msg('SPLASH! You landed in the sea!', 2.5, 'wave');
+  }
+  if (J.t > 3.2) startSwim(J.how);
 }
 
 // ---------- Swimming to a lifeboat (needs a life jacket) ----------
@@ -1069,7 +1355,7 @@ const nearDoor = d => DOORS.some(o => o.deck === d && Math.abs(o.x - player.x) <
 function useDoor() {
   if (!G.hit) { msg('The ship is safe for now. Keep exploring!', 3, 'open'); return; }
   if (!G.jacket) { sfx.nope(); msg('You need a life jacket to jump into the sea. The shop sells them.', 4, 'jacket'); return; }
-  startSwim('jump');
+  startJump('jump');
 }
 function bergShape(r, seed) {
   const pts = [];
@@ -1570,10 +1856,7 @@ function drawPerson(x, y, o) { // a minifigure
   rr(-8, -63, 16, 16, 4); cx.fill();
   cx.fillRect(-4, -66, 8, 4);
   cx.fillStyle = 'rgba(255,255,255,0.18)'; cx.fillRect(-6, -62, 3, 12);
-  cx.fillStyle = '#1b1b1b'; ellipse(1.5, -57.5, 1.3, 1.8); cx.fill(); ellipse(6, -57.5, 1.3, 1.8); cx.fill();
-  cx.fillStyle = '#fff'; circle(1.9, -58.3, 0.5); cx.fill(); circle(6.4, -58.3, 0.5); cx.fill();
-  cx.strokeStyle = '#1b1b1b'; cx.lineCap = 'round'; cx.lineWidth = 1.5; cx.beginPath(); cx.arc(3.8, -55, 3.6, 0.35, Math.PI - 0.35); cx.stroke();
-  cx.lineWidth = 1; line(0, -60.6, 3, -61); line(4.6, -61, 7.6, -60.6);
+  cx.save(); rr(-8, -63, 16, 16, 4); cx.clip(); cx.drawImage(faceCanvas(o.faceLook || FACE_DEFAULT), -2.5, -63.4, 12.5, 12.5); cx.restore();
   // hair piece
   cx.fillStyle = o.hair;
   if (o.hat === 'none' || o.hat === 'cap' || o.hat === 'bowler' || o.hat === 'bonnet' || o.hat === 'purser' || o.hat === 'sailor' || o.hat === undefined) {
@@ -1608,7 +1891,7 @@ function drawPerson(x, y, o) { // a minifigure
 }
 function drawKid(x, y, opts = {}) {
   drawPerson(x, y, {
-    ...KID_STYLE[G.cls], ...KIDS[prefs.kid],
+    ...KID_STYLE[G.cls], ...KIDS[prefs.kid], faceLook: prefs.face,
     face: player.face, walkT: player.walkT, moving: player.moving, climbing: player.climb,
     key: G.hasKey, jacket: G.jacket, shoes: G.shoes, ...opts,
   });
@@ -2060,7 +2343,7 @@ function drawClassic(now) {
   const pd = deckAt(player.y);
   for (const s of G.spots) {
     // from level 3, luggage holding a key wobbles and twinkles when you're near it on the same deck
-    const hot = level >= 3 && (s.has === 'key' || (s.has === 'silver' && G.hatch)) && !s.searched && s.deck === pd && Math.abs(s.x - player.x) < 380;
+    const hot = level >= 3 && level <= 8 && (s.has === 'key' || (s.has === 'silver' && G.hatch)) && !s.searched && s.deck === pd && Math.abs(s.x - player.x) < 380;
     const wob = hot ? Math.sin(t * 14) * Math.max(0, Math.sin(t * 2.2)) * 0.06 : 0;
     if (wob) { cx.save(); cx.translate(s.x, FLOOR(s.deck)); cx.rotate(wob); cx.translate(-s.x, -FLOOR(s.deck)); }
     drawSpot(s, FLOOR(s.deck));
@@ -2082,7 +2365,7 @@ function drawClassic(now) {
   }
 
   // passengers, the puppy, and you
-  for (const n of G.npcs) drawPerson(n.x, FLOOR(n.deck), { ...n.look, face: n.face, walkT: n.walkT, moving: n.moving });
+  for (const n of G.npcs) drawPerson(n.x, FLOOR(n.deck), { ...n.look, face: n.face, walkT: n.walkT, moving: n.moving, climbing: n.panic && n.moving });
   for (const c of CREW) {
     if (G.water <= FLOOR(c.deck) + 2) continue; // crew move up when their deck floods
     const near = pd === c.deck && Math.abs(player.x - c.x) < 260;
@@ -2095,7 +2378,7 @@ function drawClassic(now) {
       drawDog(G.dog.x, G.dog.y, G.dog.face, 0, false, t);
       if (Math.sin(t * 3) > 0.3) { cx.fillStyle = '#ff7a8a'; drawHeart(G.dog.x + 8, G.dog.y - 38, 6); }
     } else drawDog(G.dog.x, G.dog.y, G.dog.face, G.dog.walkT, G.dog.moving, t);
-    drawKid(player.x, player.y);
+    drawKid(player.x, player.y, state === 'jumping' && G.jump && G.jump.air ? { climbing: true } : {});
   }
 
   // prompts
@@ -2183,6 +2466,13 @@ function drawClassic(now) {
   drawMiniMap(W, H);
 }
 
+function shout(text) { // a little speech bubble
+  cx.font = `700 14px ${FONT}`;
+  const w = cx.measureText(text).width + 18;
+  cx.fillStyle = 'rgba(255,255,255,0.95)'; rr(-w / 2, -26, w, 24, 10); cx.fill();
+  cx.beginPath(); cx.moveTo(-5, -3); cx.lineTo(5, -3); cx.lineTo(0, 5); cx.fill();
+  cx.fillStyle = '#c91a09'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(text, 0, -13.5);
+}
 function drawUpBadge(x, y, a) {
   cx.globalAlpha = a;
   cx.fillStyle = '#e5484d'; circle(x, y, 20); cx.fill();
@@ -2367,18 +2657,11 @@ function glowSprite(color, size, parent, x, y, z, opacity = 0.5) {
 }
 
 // ---------- Minifigures ----------
-function faceMat(skin) {
-  const key = 'face' + skin;
+function faceMat(skin, f) {
+  f = f || FACE_DEFAULT;
+  const key = 'face' + skin + faceKey(f);
   if (!R3.mats[key]) {
-    const t = canvasTex(256, 128, (g) => {
-      g.fillStyle = skin; g.fillRect(0, 0, 256, 128);
-      g.fillStyle = '#1b1b1b';
-      g.beginPath(); g.ellipse(112, 54, 6, 9, 0, 0, 7); g.fill(); g.beginPath(); g.ellipse(144, 54, 6, 9, 0, 0, 7); g.fill();
-      g.fillStyle = '#fff'; g.beginPath(); g.arc(114, 50, 2.4, 0, 7); g.fill(); g.beginPath(); g.arc(146, 50, 2.4, 0, 7); g.fill();
-      g.strokeStyle = '#1b1b1b'; g.lineCap = 'round'; g.lineWidth = 6;
-      g.beginPath(); g.arc(128, 70, 20, 0.35, Math.PI - 0.35); g.stroke();
-      g.lineWidth = 4; g.beginPath(); g.moveTo(102, 36); g.lineTo(118, 34); g.moveTo(138, 34); g.lineTo(154, 36); g.stroke();
-    });
+    const t = canvasTex(256, 128, (g) => { g.fillStyle = skin; g.fillRect(0, 0, 256, 128); g.drawImage(faceCanvas(f), 80, 16, 96, 96); });
     R3.mats[key] = new THREE.MeshStandardMaterial({ map: t, roughness: 0.3 });
   }
   return R3.mats[key];
@@ -2428,7 +2711,7 @@ function makeMinifig(o) {
     arms.push(piv);
   }
   mesh(G3.neck, M(o.skin), body, 0, 2.9, 0);
-  const head = new THREE.Mesh(G3.head, [faceMat(o.skin), M(o.skin), M(o.skin)]); head.position.set(0, 3.3, 0); head.castShadow = true; body.add(head);
+  const head = new THREE.Mesh(G3.head, [faceMat(o.skin, o.faceLook), M(o.skin), M(o.skin)]); head.position.set(0, 3.3, 0); head.castShadow = true; body.add(head);
   mesh(G3.headStud, M(o.skin), body, 0, 3.7, 0);
   addHair(body, o);
   const key = new THREE.Group(); key.visible = false; arms[1].add(key); key.position.set(0.25, -1.0, 0.35);
@@ -2477,8 +2760,9 @@ function poseFig(f, s) { // place and animate a minifigure. s: {x, y, z, face, m
   if (s.climbing) { f.arms[0].rotation.set(-Math.PI + sw * 0.35, 0, 0); f.arms[1].rotation.set(-Math.PI - sw * 0.35, 0, 0); }
   else if (s.swim) { f.arms[0].rotation.set(-1.6 + Math.sin(s.t * 6) * 0.9, 0, 0); f.arms[1].rotation.set(-1.6 - Math.sin(s.t * 6) * 0.9, 0, 0); }
   else {
-    f.arms[0].rotation.set(-sw * 0.6, 0, 0);
-    if (s.pose === 'point') f.arms[1].rotation.set(-2.2, 0, 0);
+    if (s.pose !== 'panic') f.arms[0].rotation.set(-sw * 0.6, 0, 0);
+    if (s.pose === 'panic') { f.arms[0].rotation.set(-2.9 + Math.sin(s.t * 14) * 0.4, 0, -0.3); f.arms[1].rotation.set(-2.9 - Math.sin(s.t * 14) * 0.4, 0, 0.3); }
+    else if (s.pose === 'point') f.arms[1].rotation.set(-2.2, 0, 0);
     else if (s.pose === 'wave') f.arms[1].rotation.set(-2.8, 0, Math.sin((s.t || 0) * 9) * 0.45);
     else f.arms[1].rotation.set(sw * 0.6, 0, 0);
   }
@@ -2717,8 +3001,8 @@ function refreshShipSign() {
 }
 
 function buildWorld() { // sea, iceberg, swim scene
-  const sea = new THREE.Mesh(R3.geo.plane, baseplateMaterial('#3a80cc', 900, 420)); sea.scale.set(900, 420, 1);
-  sea.rotation.x = -Math.PI / 2; sea.position.set(1350 * U, Y3(SEA_BASE), -150); sea.receiveShadow = true; R3.scene.add(sea); R3.sea = sea;
+  const sea = new THREE.Mesh(R3.geo.plane, baseplateMaterial('#3a80cc', 900, 760)); sea.scale.set(900, 760, 1);
+  sea.rotation.x = -Math.PI / 2; sea.position.set(1350 * U, Y3(SEA_BASE), -120); sea.receiveShadow = true; R3.scene.add(sea); R3.sea = sea;
   const berg = new THREE.Group();
   const rows = [[-122, 244], [-104, 200], [-86, 164], [-60, 120], [-38, 80], [-18, 44], [-8, 24]];
   rows.forEach(([lx, w], i) => { const d = Math.max(2, w * U * 0.75); brickBox(w * U, 24 * U, d, i % 2 ? '#cfe7f5' : '#f6fbff', (lx + w / 2) * U, i * 24 * U, -2, berg, { roughness: 0.15 }); });
@@ -2728,6 +3012,8 @@ function buildWorld() { // sea, iceberg, swim scene
   const bp = new THREE.Mesh(R3.geo.plane, baseplateMaterial('#3a80cc', SEA_W * U + 160, SEA_H * U + 160));
   bp.scale.set(SEA_W * U + 160, SEA_H * U + 160, 1); bp.rotation.x = -Math.PI / 2; bp.position.set(SEA_W * U / 2, 0, SEA_H * U / 2); bp.receiveShadow = true; sw.add(bp);
   R3.swimDyn = new THREE.Group(); sw.add(R3.swimDyn);
+  R3.splash = new THREE.Mesh(R3.geo.keyRing, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8, depthWrite: false }));
+  R3.splash.rotation.x = Math.PI / 2; R3.splash.visible = false; R3.scene.add(R3.splash);
 }
 
 function init3D() {
@@ -2780,7 +3066,7 @@ function rebuild3D() { // per-game objects
   if (!use3D || !G) return;
   const dyn = R3.dyn; clearGroup(dyn);
   const F = R3.figs = {};
-  F.player = makeMinifig({ ...KID_STYLE[3], ...KIDS[prefs.kid] }); dyn.add(F.player.root); F.playerCls = 3; F.playerJacket = false; F.playerShoes = false;
+  F.player = makeMinifig({ ...KID_STYLE[3], ...KIDS[prefs.kid], faceLook: prefs.face }); dyn.add(F.player.root); F.playerCls = 3; F.playerJacket = false; F.playerShoes = false;
   F.npcs = G.npcs.map(n => { const f = makeMinifig(n.look); dyn.add(f.root); n.fig3 = f; return f; });
   F.crew = CREW.map(() => { const f = makeMinifig(SAILOR); dyn.add(f.root); return f; });
   F.dog = makeDog3D(); dyn.add(F.dog.root);
@@ -2809,7 +3095,7 @@ function syncFig(f, look) { // swap the player figure when the class (outfit) or
   if (F.playerCls === want.cls && F.playerJacket === want.jacket && F.playerShoes === want.shoes) return;
   F.playerCls = want.cls; F.playerJacket = want.jacket; F.playerShoes = want.shoes;
   const parent = F.player.root.parent; parent.remove(F.player.root);
-  F.player = makeMinifig({ ...KID_STYLE[G.cls], ...KIDS[prefs.kid], jacket: G.jacket, shoes: G.shoes });
+  F.player = makeMinifig({ ...KID_STYLE[G.cls], ...KIDS[prefs.kid], faceLook: prefs.face, jacket: G.jacket, shoes: G.shoes });
   parent.add(F.player.root);
 }
 
@@ -2838,7 +3124,7 @@ function buildSwim3D() {
     if (d.k === 'ring') for (let i = 0; i < 4; i++) { const q = mesh(R3.geo.ringQuarter, M(i % 2 ? '#ffffff' : '#e5484d'), grp, 0, 0.1, 0); q.rotation.set(Math.PI / 2, 0, i * Math.PI / 2); q.scale.setScalar(1.4); }
     else brickBox(d.k === 'crate' ? 1.6 : 2, d.k === 'crate' ? 1.2 : 0.4, 1.6, d.k === 'crate' ? '#a87b4f' : '#8a613b', 0, -0.4, 0, grp);
     return grp; });
-  S.fig = makeMinifig({ ...KID_STYLE[G.cls], ...KIDS[prefs.kid], jacket: true, shoes: G.shoes }); g.add(S.fig.root);
+  S.fig = makeMinifig({ ...KID_STYLE[G.cls], ...KIDS[prefs.kid], faceLook: prefs.face, jacket: true, shoes: G.shoes }); g.add(S.fig.root);
   if (S.dog) { S.dog3 = makeDog3D(); g.add(S.dog3.root); }
 }
 
@@ -2860,16 +3146,22 @@ function update3D(t, dusk, lights) {
     s.visible = !(G && G.hit);
     s.position.set(s.userData.fx - k * 7, s.userData.top + k * 5, -4.1); s.scale.setScalar(2.5 + k * 4); s.material.opacity = 0.35 * (1 - k);
   }
-  const swimming = !!(G && G.swim);
+  const special = !!G && (state === 'ending' || state === 'dive');
+  const swimming = !!(G && G.swim) && !special;
   R3.swimGroup.visible = swimming; R3.sea.visible = !swimming; R3.berg.visible = !swimming;
   R3.dyn.visible = !!G && !swimming;
+  if (!special) { R3.shipRoot.visible = true; if (R3.endGroup) R3.endGroup.visible = false; if (R3.diveGroup) R3.diveGroup.visible = false; }
+  const fog = R3.scene.fog;
+  if (state === 'dive') { fog.color.copy(col('#0e3f6e')); fog.near = 70; fog.far = 230; } else { fog.near = 120; fog.far = 420; }
   R3.water.visible = !!G && !swimming && G.water < HULL_BOTTOM + 5;
 
   if (!G) { // title screen: drift slowly along the ship
     R3.shipRoot.rotation.z = 0; R3.shipRoot.position.set(PIVOT_X * U, Y3(PIVOT_Y), 0);
     const x = 70 + Math.sin(t * 0.08) * 45;
     lerpTo(R3.camPos, x + 8, 26, 78, ease * 0.4); lerpTo(R3.camLook, x, 18, 0, ease * 0.4);
-  } else if (swimming) updateSwim3D(t);
+  } else if (state === 'ending') updateEnding3D(t);
+  else if (state === 'dive') updateDive3D(t);
+  else if (swimming) updateSwim3D(t);
   else {
     ship.position.set(PIVOT_X * U, Y3(PIVOT_Y), 0); ship.rotation.z = -G.tilt;
     R3.sea.position.y = Y3(seaY());
@@ -2883,9 +3175,21 @@ function update3D(t, dusk, lights) {
     const pVisible = state !== 'winning';
     F.player.root.visible = pVisible;
     if (pVisible) { poseFig(F.player, { x: player.x * U, y: Y3(player.y), z: player.climb ? -0.6 : 0.6, face: player.face, moving: player.moving, climbing: player.climb, walkT: player.walkT, t, scale: 1.1 }); F.player.key.visible = G.hasKey && !player.climb; F.player.jacket.visible = G.jacket; }
+    if (state === 'jumping' && G.jump) {
+      const J = G.jump, jp = jumpPos(J, J.t), z = jumpZ(J, J.t);
+      poseFig(F.player, { x: player.x * U, y: Y3(player.y), z, face: -1, facing: 0.4, moving: !!jp.walk, walkT: player.walkT, t, scale: 1.1 });
+      if (jp.air || J.how === 'float') { F.player.arms[0].rotation.set(-2.9, 0, -0.3); F.player.arms[1].rotation.set(-2.9, 0, 0.3); F.player.legs[0].rotation.x = 0.5; F.player.legs[1].rotation.x = -0.3; }
+      F.player.key.visible = false;
+      R3.splash.visible = !!J.landed;
+      if (J.landed) { const k = J.t - J.landT; R3.splash.position.set(jp.x * U, Y3(Math.min(SEA_BASE, G.water)) + 0.05, z); R3.splash.scale.setScalar(1 + k * 5); R3.splash.material.opacity = Math.max(0, 0.8 - k * 0.5); }
+    } else R3.splash.visible = false;
     // passengers + crew
     for (const f of F.npcs) f.root.visible = false; // passengers leave when their deck floods
-    for (const n of G.npcs) { if (!n.fig3) continue; n.fig3.root.visible = true; poseFig(n.fig3, { x: n.x * U, y: Y3(FLOOR(n.deck)), z: -1.2, face: n.face, moving: n.moving, walkT: n.walkT, t, scale: 1.18 }); }
+    for (const n of G.npcs) {
+      if (!n.fig3) { n.fig3 = makeMinifig(n.look); R3.dyn.add(n.fig3.root); F.npcs.push(n.fig3); }
+      n.fig3.root.visible = true;
+      poseFig(n.fig3, { x: n.x * U, y: Y3(FLOOR(n.deck)), z: -1.2, face: n.face, moving: n.moving, walkT: n.walkT, t, scale: 1.18, pose: n.panic ? 'panic' : null });
+    }
     for (let i = 0; i < CREW.length; i++) {
       const c = CREW[i], f = F.crew[i], gone = G.water <= FLOOR(c.deck) + 2;
       f.root.visible = !gone; if (gone) continue;
@@ -2895,14 +3199,14 @@ function update3D(t, dusk, lights) {
     }
     // puppy
     const dog = G.dog; F.dog.root.visible = state !== 'winning';
-    poseDog(F.dog, dog.x * U, Y3(dog.y), 1.6, dog.face, dog.moving, dog.walkT, t);
+    poseDog(F.dog, dog.x * U, Y3(dog.y), state === 'jumping' && G.jump ? jumpZ(G.jump, G.jump.t - 0.35) + 1 : 1.6, dog.face, dog.moving, dog.walkT, t);
     // coins, bags, keys
     G.items.forEach((it, i) => { const m = F.items[i]; m.visible = !it.taken; if (it.taken) return; if (it.type === 'coin') { m.rotation.y = t * 2.5 + it.ph; m.position.y = Y3(FLOOR(it.deck)) + 1.2 + Math.sin(t * 3 + it.ph) * 0.15; } else if (it.type === 'key') { m.position.y = Y3(FLOOR(it.deck)) + 1.4 + Math.sin(t * 3) * 0.15; m.rotation.y = Math.sin(t * 1.5) * 0.6; } });
     // luggage
     G.spots.forEach((s, i) => {
       const g = F.spots[i];
       if (s.searched && !g.userData.done) { g.userData.done = true; fadeGroup(g, 0.45); }
-      const hot = level >= 3 && (s.has === 'key' || (s.has === 'silver' && G.hatch)) && !s.searched && s.deck === pd && Math.abs(s.x - player.x) < 380;
+      const hot = level >= 3 && level <= 8 && (s.has === 'key' || (s.has === 'silver' && G.hatch)) && !s.searched && s.deck === pd && Math.abs(s.x - player.x) < 380;
       g.rotation.z = hot ? Math.sin(t * 14) * Math.max(0, Math.sin(t * 2.2)) * 0.06 : 0;
     });
     // gates
@@ -2923,7 +3227,8 @@ function update3D(t, dusk, lights) {
     // camera follows you (or your lifeboat)
     const fx = state === 'winning' && G.boat ? G.boat.x : player.x, fy = state === 'winning' && G.boat ? G.boat.y - 40 : player.y;
     const p = tilted(fx, fy), tx = p.x * U, ty = Y3(p.y);
-    lerpTo(R3.camPos, tx + 3.2, ty + 5.2, 29, ease); lerpTo(R3.camLook, tx, ty + 2.4, -1, ease);
+    const cz = state === 'jumping' && G.jump ? jumpZ(G.jump, G.jump.t) : 0, far = state === 'jumping' ? 12 : state === 'winning' ? 14 : 0;
+    lerpTo(R3.camPos, tx + 3.2 - far * 0.3, ty + 5.2 + far * 0.25, 29 + cz + far, ease); lerpTo(R3.camLook, tx, ty + 2.4, -1 + cz * 0.6, ease);
     if (G.shake > 0) { R3.camPos.x += rand(-0.25, 0.25) * G.shake; R3.camPos.y += rand(-0.25, 0.25) * G.shake; }
   }
   cam.position.copy(R3.camPos); cam.lookAt(R3.camLook);
@@ -2976,6 +3281,12 @@ function drawSky3D(t, W, H, dusk) {
   if (!skyCx) skyCx = c.getContext('2d');
   const saved = cx; cx = skyCx;
   cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (G && state === 'dive') { // deep under the sea
+    const u = cx.createLinearGradient(0, 0, 0, H); u.addColorStop(0, '#2f7fbf'); u.addColorStop(1, '#06203f');
+    cx.fillStyle = u; cx.fillRect(0, 0, W, H);
+    for (let i = 0; i < 6; i++) { const x = W * (0.1 + i * 0.17) + Math.sin(t * 0.3 + i) * 30; const r = cx.createLinearGradient(0, 0, 0, H); r.addColorStop(0, 'rgba(200,235,255,0.16)'); r.addColorStop(1, 'rgba(200,235,255,0)'); cx.fillStyle = r; cx.beginPath(); cx.moveTo(x - 30, 0); cx.lineTo(x + 30, 0); cx.lineTo(x + 140, H); cx.lineTo(x + 40, H); cx.fill(); }
+    cx = saved; return;
+  }
   const g = cx.createLinearGradient(0, 0, 0, H);
   g.addColorStop(0, mixColor('#3d4597', '#070d26', dusk)); g.addColorStop(0.5, mixColor('#d8668c', '#1c2654', dusk)); g.addColorStop(1, mixColor('#ffb56b', '#3a3466', dusk));
   cx.fillStyle = g; cx.fillRect(0, 0, W, H);
@@ -3004,6 +3315,8 @@ function drawOverlay3D(t, W, H) {
   if (!G) return;
   const k = 1.2;
   const at = (p, fn) => { if (p.off) return; cx.save(); cx.setTransform(dpr * k, 0, 0, dpr * k, p.x * dpr, p.y * dpr); fn(); cx.restore(); };
+  if (state === 'dive') { overlayDive(t, W, H, at); return; }
+  if (state === 'ending') { vignette(W, H); if (G.flash > 0) { cx.fillStyle = `rgba(255,255,255,${G.flash * 0.5})`; cx.fillRect(0, 0, W, H); } return; }
   if (G.swim) { overlaySwim3D(t, W, H, at); return; }
   const pd = deckAt(player.y);
   if (state === 'play' && pd >= 0) {
@@ -3026,8 +3339,9 @@ function drawOverlay3D(t, W, H) {
       at(shipToScreen(g.x - 40, FLOOR(g.deck) - 96), () => g.need === 'key' ? needBubble(0, 0, 'key', '?') : needBubble(0, 0, 'coin', `${Math.min(G.earned, cost)}/${cost}`));
     }
     if (!G.dog.following && Math.sin(t * 3) > 0.3) at(shipToScreen(G.dog.x + 8, G.dog.y - 48, 1.6), () => { cx.fillStyle = '#ff7a8a'; drawHeart(0, 0, 6); });
+    G.npcs.forEach((n, i) => { if (n.panic && n.deck === pd && Math.sin(t * 1.3 + i * 2.1) > 0.55) at(shipToScreen(n.x, FLOOR(n.deck) - 96, -1.2), () => shout(i % 3 === 0 ? 'Help!' : i % 3 === 1 ? 'Oh no!' : 'Hurry!')); });
   }
-  drawParticles3D(p => shipToScreen(p.x, p.y), at);
+  drawParticles3D(p => shipToScreen(p.x, p.y, p.z !== undefined ? p.z : 0.6), at);
   vignette(W, H);
   if (G.flash > 0) { cx.fillStyle = `rgba(255,255,255,${G.flash * 0.5})`; cx.fillRect(0, 0, W, H); }
   if (state === 'play') {
@@ -3088,7 +3402,8 @@ function overlaySwim3D(t, W, H, at) {
 function draw3D(now) {
   const t = now / 1000, W = innerWidth, H = innerHeight;
   let dusk = 0, lights = 1;
-  if (G && G.swim) dusk = 0.55;
+  if (G && state === 'ending') dusk = clamp(0.55 + G.end.t * 0.04, 0, 0.95);
+  else if (G && G.swim) dusk = 0.55;
   else if (G && G.hit) {
     const fill = clamp((HULL_BOTTOM - G.water) / (HULL_BOTTOM - FLOOR(4)), 0, 1);
     dusk = clamp(fill * 1.3, 0, 1);
@@ -3106,6 +3421,185 @@ function resize3D() {
   const s = document.getElementById('sky'); s.width = Math.floor(innerWidth * dpr); s.height = Math.floor(innerHeight * dpr);
 }
 
+// =====================================================================
+// THE ENDING (3D only): the Titanic splits in two and sinks, then you
+// guide the stern down to the sea floor without bumping any fish.
+// =====================================================================
+const SPLIT_X = 1180 * U;                 // between the 3rd and 4th funnels
+const DIVE = { half: 55, floor: -92, speed: 6.5, scale: 0.36 };
+
+function startEnding() {
+  state = 'ending';
+  G.end = { t: 0, cracked: false };
+  warnEl.style.display = 'none';
+  msg('Look back... the Titanic is sinking.', 4, 'boat');
+}
+function updateEnding(dt) {
+  const E = G.end; E.t += dt;
+  if (!E.cracked && E.t >= 3) {
+    E.cracked = true; G.shake = 1.2; sfx.boom();
+    msg('CRACK! The Titanic broke in two!', 4, 'ice');
+  }
+  if (E.t >= 13.5) startDive();
+}
+function startDive() {
+  state = 'dive';
+  const rows = [];
+  for (const y of [-24, -38, -52, -66, -79]) {
+    const fish = [], gap = 15 + Math.random() * 3, dir = Math.random() < 0.5 ? 1 : -1;
+    for (let o = gap + 2.75; o < DIVE.half * 2 + 20; o += 5.5) { fish.push({ off: o, bumped: false }); fish.push({ off: -o, bumped: false }); }
+    rows.push({ y, fish, base: rand(-30, 30), ph: rand(0, 6), speed: rand(0.35, 0.7), dir, color: pick(['#f28c28', '#f2cd37', '#1e9bd7', '#ef7b8b', '#5bd18b']) });
+  }
+  G.dive = { t: 0, x: 0, vx: 0, y: -8, rows, bumped: 0, landed: false, landT: 0, landX: rand(-28, 28) };
+  G.dive.total = rows.reduce((n, r) => n + r.fish.filter(f => Math.abs(r.base + f.off) < DIVE.half + 6).length, 0);
+  msg('Help guide the Titanic down to the sea floor. Steer around the fish!', 5, 'wave');
+}
+function fishX(row, f, t) { return row.base + Math.sin(t * row.speed + row.ph) * 16 + f.off; }
+function updateDive(dt) {
+  const D = G.dive; D.t += dt;
+  if (D.landed) { if (D.t - D.landT > 3.2) showScreen('win'); return; }
+  const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+  D.vx += (dir * 24 - D.vx) * Math.min(1, dt * 4);
+  D.x = clamp(D.x + D.vx * dt, -DIVE.half + 12, DIVE.half - 12);
+  const sp = input.up ? 3.5 : input.down ? 10 : DIVE.speed;
+  D.y -= sp * dt;
+  // bumping fish
+  for (const r of D.rows) {
+    if (Math.abs(r.y - D.y) > 7.4) continue;
+    for (const f of r.fish) {
+      if (f.bumped) continue;
+      const fx = fishX(r, f, D.t);
+      if (Math.abs(fx) > DIVE.half + 6) continue;
+      if (Math.abs(fx - D.x) < 13.2) { f.bumped = true; f.bx = fx; f.by = r.y; f.bt = D.t; f.bvx = Math.sign(fx - D.x || 1) * rand(10, 18); D.bumped++; sfx.nope(); }
+    }
+  }
+  if (D.y - 7 <= DIVE.floor) {
+    D.y = DIVE.floor + 7; D.landed = true; D.landT = D.t; G.shake = 0.6; sfx.splash();
+    const safe = D.total - D.bumped, onSpot = Math.abs(D.x - D.landX) < 10;
+    D.onSpot = onSpot;
+    msg((D.bumped === 0 ? 'Perfect! The Titanic is resting on the sea floor and every fish is safe!' : `The Titanic is resting on the sea floor. You kept ${safe} of ${D.total} fish safe!`) + (onSpot ? ' Right on the spot!' : ''), 5, 'wave');
+  }
+}
+
+// ---------- 3D models for the ending ----------
+function buildHalf(stern) { // a simplified half of the ship; x = 0 is the break, y = 0 is the keel
+  const g = new THREE.Group();
+  const x0 = stern ? 5.6 - SPLIT_X : 0, x1 = stern ? 0 : BOW_X * U - SPLIT_X, w = x1 - x0, cxm = (x0 + x1) / 2;
+  box(w, 4.5, 10, '#d0302a', cxm, 2.25, 0, g);
+  box(w, 22, 10, '#25282e', cxm, 15.5, 0, g);
+  box(w, 1.2, 10.2, '#f2cd37', cxm, 26.4, 0, g);
+  brickBox(w, 0.8, 10, '#e2c693', cxm, 27, 0, g);
+  const dh0 = stern ? Math.max(x0 + 8, 360 * U - SPLIT_X) : 0, dh1 = stern ? -1 : 10;
+  if (dh1 > dh0) brickBox(dh1 - dh0, 3, 6, '#f2f2f2', (dh0 + dh1) / 2, 27.8, -1.5, g);
+  const funnels = FUNNELS.map(f => f * U - SPLIT_X).filter(x => stern ? x < 0 : x > 0);
+  for (const fx of funnels) {
+    const f = mesh(R3.geo.cyl, M('#f5a623'), g, fx, 27.8 + 6, -1.5); f.scale.set(2.1, 12, 1.7);
+    const top = mesh(R3.geo.cyl, M('#1c1c1c'), g, fx, 27.8 + 12.6, -1.5); top.scale.set(2.12, 1.8, 1.72);
+  }
+  // rows of lit portholes
+  const lit = M('#ffe1a0', { emissive: '#ffbe5c', emissiveIntensity: 1 });
+  for (const y of [9, 14, 19, 23.5]) for (let x = x0 + 2; x < x1 - 1; x += 2.2) box(0.7, 0.7, 0.1, lit, x, y, 5.05, g);
+  // a jagged broken edge
+  for (let y = 1; y < 27; y += 2.5) box(1.2 + Math.random() * 2, 2.4, 9 + Math.random(), '#3a3d42', stern ? -0.4 : 0.4, y, 0, g);
+  g.traverse(m => { if (m.isMesh) m.castShadow = true; });
+  return g;
+}
+function makeFish(color) {
+  const g = new THREE.Group();
+  box(2.2, 1.1, 0.8, color, 0, 0, 0, g);
+  const tail = box(0.9, 0.9, 0.2, color, -1.4, 0, 0, g); tail.rotation.z = Math.PI / 4;
+  box(0.6, 0.4, 0.2, shadeHex(color, -30), 0.1, 0.7, 0, g);
+  box(0.28, 0.28, 0.9, '#ffffff', 0.75, 0.2, 0, g); box(0.14, 0.14, 0.95, '#111111', 0.82, 0.2, 0, g);
+  return g;
+}
+function buildEndingScene() {
+  if (R3.endGroup) return;
+  const eg = new THREE.Group(); R3.scene.add(eg); R3.endGroup = eg;
+  R3.endStern = new THREE.Group(); R3.endBow = new THREE.Group(); eg.add(R3.endStern, R3.endBow);
+  R3.endStern.add(buildHalf(true)); R3.endBow.add(buildHalf(false));
+  // your lifeboat in front, with you (and the puppy) in it
+  R3.endBoat = makeLifeboat3D(); eg.add(R3.endBoat);
+  R3.endOthers = [0, 1].map(i => { const b = makeLifeboat3D(); eg.add(b); [0, 1].forEach(k => { const f = makeMinifig(adultLook()); poseFig(f, { x: (k ? 1.6 : -1.6), y: 0.6, z: 0, face: 1, facing: 0 }); b.add(f.root); }); return b; });
+  // the dive
+  const dg = new THREE.Group(); dg.visible = false; R3.scene.add(dg); R3.diveGroup = dg;
+  const sand = new THREE.Mesh(R3.geo.plane, baseplateMaterial('#d9b77e', 320, 160)); sand.scale.set(320, 160, 1); sand.rotation.x = -Math.PI / 2; sand.position.set(0, DIVE.floor, -20); sand.receiveShadow = true; dg.add(sand);
+  for (let i = 0; i < 26; i++) {
+    const x = rand(-80, 80), z = rand(-40, 8);
+    if (Math.random() < 0.4) brickBox(rand(2, 6), rand(1, 3), rand(2, 5), pick(['#7a828d', '#5f6670', '#8d99a6']), x, DIVE.floor, z, dg);
+    else if (Math.random() < 0.5) { const c = pick(['#ef7b8b', '#f28c28', '#c91a09', '#b05ad9']); for (let k = 0; k < 3; k++) brickBox(2 - k * 0.5, 1.2, 2 - k * 0.5, c, x + rand(-0.4, 0.4), DIVE.floor + k * 1.2, z, dg); }
+    else { const s = new THREE.Group(); s.position.set(x, DIVE.floor, z); dg.add(s); for (let k = 0; k < 4; k++) box(0.5, 1.6, 0.5, '#3b9a52', 0, 0.8 + k * 1.6, 0, s); s.userData.weed = rand(0, 6); }
+  }
+  R3.diveMarker = new THREE.Group(); dg.add(R3.diveMarker);
+  for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; mesh(R3.geo.stud, M('#ffe066', { emissive: '#ffcc33', emissiveIntensity: 0.9 }), R3.diveMarker, Math.cos(a) * 9, 0.1, Math.sin(a) * 4).scale.setScalar(2); }
+  R3.divePiece = new THREE.Group(); dg.add(R3.divePiece);
+  const half = buildHalf(true); half.scale.setScalar(DIVE.scale); half.position.set(34 * DIVE.scale, -14 * DIVE.scale, 0); R3.divePiece.add(half);
+  R3.bubbles = [];
+  for (let i = 0; i < 24; i++) { const b = new THREE.Sprite(new THREE.SpriteMaterial({ map: R3.glowTex, color: col('#dff3ff'), transparent: true, opacity: 0.6, depthWrite: false })); b.userData.ph = Math.random(); dg.add(b); R3.bubbles.push(b); }
+  R3.fishGroup = new THREE.Group(); dg.add(R3.fishGroup);
+}
+function buildDiveFish() {
+  clearGroup(R3.fishGroup);
+  for (const r of G.dive.rows) for (const f of r.fish) { f.m = makeFish(r.color); f.m.rotation.y = r.dir > 0 ? 0 : Math.PI; R3.fishGroup.add(f.m); }
+}
+function updateEnding3D(t) {
+  buildEndingScene();
+  const E = G.end, k = E.t;
+  R3.shipRoot.visible = false; R3.endGroup.visible = true; R3.diveGroup.visible = false; R3.sea.visible = true; R3.berg.visible = false; R3.sea.position.y = Y3(SEA_BASE);
+  const base = Y3(SEA_BASE), sx = SPLIT_X, z = -34;
+  if (!E.cracked) {
+    const bend = k * 0.025;
+    R3.endStern.position.set(sx, base - 6 - k * 1.5, z); R3.endStern.rotation.z = bend;
+    R3.endBow.position.set(sx, base - 6 - k * 1.5, z); R3.endBow.rotation.z = -bend * 1.6;
+  } else {
+    const a = clamp((k - 3) / 7, 0, 1), b = clamp((k - 9) / 4, 0, 1), ease = x => x * x * (3 - 2 * x);
+    R3.endBow.position.set(sx + ease(a) * 6, base - 10.5 - ease(a) * 55, z); R3.endBow.rotation.z = -0.12 - ease(a) * 0.8;
+    R3.endStern.position.set(sx - ease(a) * 4, base - 10.5 + Math.sin(a * Math.PI) * 4 - ease(b) * 75, z); R3.endStern.rotation.z = 0.08 + ease(a) * 1.2 + b * 0.15;
+  }
+  // lifeboats rowing away in front
+  const by = base - 0.9 + Math.sin(t * 1.2) * 0.1;
+  R3.endBoat.position.set(sx - 8 - k * 0.8, by, 26); R3.endBoat.userData.hull.material.color.copy(col(prefs.boat));
+  if (!R3.endFig || R3.endFigRev !== faceRev + ':' + prefs.kid + ':' + G.cls) {
+    if (R3.endFig) R3.endBoat.remove(R3.endFig.root);
+    R3.endFig = makeMinifig({ ...KID_STYLE[G.cls], ...KIDS[prefs.kid], faceLook: prefs.face, jacket: G.jacket }); R3.endBoat.add(R3.endFig.root);
+    R3.endFigRev = faceRev + ':' + prefs.kid + ':' + G.cls;
+    if (!R3.endDog) { R3.endDog = makeDog3D(); R3.endBoat.add(R3.endDog.root); }
+  }
+  poseFig(R3.endFig, { x: -1, y: 0.6, z: 0, face: 1, facing: Math.PI * 0.9, t, pose: 'wave', scale: 1.05 });
+  R3.endDog.root.visible = !!G.dog.following; if (G.dog.following) poseDog(R3.endDog, 1.6, 2.2, 0, 1, false, 0, t);
+  R3.endOthers.forEach((b, i) => b.position.set(sx + 22 + i * 14 - k * 0.5, by, 12 - i * 6));
+  lerpTo(R3.camPos, sx - 6, base + 10, 96, R3.ease * 0.5); lerpTo(R3.camLook, sx - 2, base + 8, -20, R3.ease * 0.5);
+  if (G.shake > 0) { R3.camPos.x += rand(-0.6, 0.6) * G.shake; R3.camPos.y += rand(-0.6, 0.6) * G.shake; }
+}
+function updateDive3D(t) {
+  buildEndingScene();
+  const D = G.dive;
+  if (!D.built) { D.built = true; buildDiveFish(); R3.diveMarker.position.set(D.landX, DIVE.floor, 0); R3.camPos.set(0, D.y + 6, 100); R3.camLook.set(0, D.y - 4, 0); }
+  R3.shipRoot.visible = false; R3.endGroup.visible = false; R3.diveGroup.visible = true; R3.sea.visible = false; R3.berg.visible = false;
+  R3.divePiece.position.set(D.x, D.y, 0); R3.divePiece.rotation.z = 0.1 + Math.sin(t * 1.2) * 0.04 - D.vx * 0.004;
+  for (const r of D.rows) for (const f of r.fish) {
+    if (f.bumped) { const k = D.t - f.bt; f.m.position.set(f.bx + f.bvx * k, f.by + k * 9, 0); f.m.rotation.z = k * 8; f.m.visible = k < 2; continue; }
+    const x = fishX(r, f, D.t); f.m.visible = Math.abs(x) < DIVE.half + 6; f.m.position.set(x, r.y + Math.sin(t * 3 + f.off) * 0.3, 0);
+  }
+  R3.diveGroup.traverse(o => { if (o.userData.weed !== undefined) o.rotation.z = Math.sin(t * 1.5 + o.userData.weed) * 0.15; });
+  R3.bubbles.forEach((b, i) => { const k = (t * 0.4 + b.userData.ph) % 1; b.position.set(D.x + Math.sin(i * 7.1) * 10, D.y + k * 22, Math.cos(i * 3.3) * 3); b.scale.setScalar(0.6 + (i % 3) * 0.3); b.material.opacity = 0.6 * (1 - k); });
+  R3.diveMarker.children.forEach((m, i) => { m.material.emissiveIntensity = 0.6 + 0.4 * Math.sin(t * 4 + i); });
+  lerpTo(R3.camPos, D.x * 0.3, D.y + 5, 100, R3.ease); lerpTo(R3.camLook, D.x * 0.3, D.y - 6, 0, R3.ease);
+  if (G.shake > 0) { R3.camPos.x += rand(-0.6, 0.6) * G.shake; R3.camPos.y += rand(-0.6, 0.6) * G.shake; }
+}
+function overlayDive(t, W, H, at) {
+  const D = G.dive;
+  vignette(W, H);
+  if (!D.landed && D.y - DIVE.floor < 40) {
+    const p = project3(D.landX, DIVE.floor + 4, 0);
+    at(p, () => { cx.fillStyle = '#ffe066'; cx.font = `700 15px ${FONT}`; cx.textAlign = 'center'; cx.fillText('Land here!', 0, -18); cx.beginPath(); cx.moveTo(-8, -12); cx.lineTo(8, -12); cx.lineTo(0, -2); cx.fill(); });
+  }
+  if (D.t < 6 && !D.landed) { // steering hint
+    const p = project3(D.x, D.y + 10, 0);
+    at(p, () => { cx.fillStyle = 'rgba(9,18,40,0.85)'; rr(-70, -22, 140, 30, 15); cx.fill(); cx.fillStyle = '#fff'; cx.font = `600 14px ${FONT}`; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(isTouch ? '◀ ▶ to steer' : '← → to steer', 0, -7); });
+  }
+}
+
+function finishEscape() { if (use3D && prefs.ending) startEnding(); else showScreen('win'); }
 function draw(now) { if (use3D) draw3D(now); else drawClassic(now); }
 function start3D() {
   if (use3D) return;
