@@ -23,12 +23,13 @@ Open `index.html` in any modern browser. There's nothing to install or build.
   - Collect 12 coins to become **1st Class** and open the 1st Class Ballroom.
   - Your hat changes as you move up: flat cap, then bowler hat, then top hat.
 - **The lifeboat gate is locked.** You need the key to open it.
-- **The iceberg hits at a random time.** The lookout rings a bell just before. Once it hits, water rises from the bottom, the ship slowly tips and the lights start to flicker.
+- **The iceberg hits at a random time.** The lookout rings a bell just before. Once it hits, water rises from the bottom, the ship slowly tips and the lights slowly dim.
 - **If the water touches you, you lose.** If you get into a lifeboat first, you survive.
 
 ## Extras
 
-- **The shop.** The purser's desk in 3rd Class sells a **life jacket** (4 coins, saves you from the water once) and **fast shoes** (3 coins, run and climb faster). Spending coins doesn't lower your class, because class counts everything you've collected.
+- **The shop.** The purser's desk in 3rd Class sells a **life jacket** (4 coins) and **fast shoes** (3 coins, run and climb faster). Spending coins doesn't lower your class, because class counts everything you've collected.
+- **Swimming to a lifeboat.** With a life jacket on, you can jump into the sea through the gangway doors on the two lower passenger decks once the iceberg has hit. If the water reaches you, the jacket floats you out instead of you losing. Then the view switches to the open sea from above: swim to a lifeboat before your warmth bar runs out. Icebergs block the way and make you colder if you touch them. Sharks chase you if you swim close, but you can outswim them. More sharks appear at higher levels.
 - **The lost puppy.** A puppy is hiding somewhere on the ship. Walk up to it and it follows you. Get it into the lifeboat with you to save it too.
 - **Picture hints.** Locked gates show what you still need, like a coin with "3/5". After the iceberg hits, a red arrow over your head reminds you to go up.
 - **Guide arrow.** A gold arrow points to the next place to go: coins, then the key, then a lifeboat. It points at ladders when the next place is on another deck.
@@ -41,12 +42,12 @@ Every win moves you up a level. Your level is saved in the browser.
 | --- | --- |
 | 1 | The key lies out in the open on one of the bottom two decks, and the guide arrow is on. |
 | 2 | The key is out in the open on any deck. |
-| 3 | The key is hidden in luggage, and passengers walking around slow you down. |
-| 4 | The key is hidden in the 2nd Class Lounge (5 coins), and two lifeboats leave early. Red dots on a boat count down to when it leaves. One boat always waits. |
+| 3 | The key is hidden in luggage, and passengers walking around slow you down. Luggage holding a key wobbles and twinkles when you're near it on the same deck. |
+| 4 | The key is hidden in the 2nd Class Lounge (5 coins), and two lifeboats leave early (about a minute after the iceberg). Red dots on a boat count down to when it leaves. One boat always waits. |
 | 5 | The key is hidden in the 1st Class Ballroom (12 coins). |
 | 6+ | A locked hatch on the way up needs a silver key, hidden in luggage on the bottom decks. |
 
-From level 2 on, the iceberg comes sooner and the water rises faster, up to a limit.
+From level 2 on, the iceberg comes sooner and the water rises faster, up to level 6. After that, the levels stay the same.
 
 ## Make it yours
 
@@ -59,7 +60,7 @@ From the title screen:
 
 The **Grown-ups** button on the title screen has:
 
-- **Slow mode:** the iceberg comes 10 seconds later and the water rises 40% slower.
+- **Slow mode:** the iceberg comes 10 seconds later, the water rises 40% slower, lifeboats wait longer, and sharks and cold are gentler when swimming.
 - **Guide arrow:** Auto (levels 1–2 only), Always, or Never.
 - **Level:** jump to any level from 1 to 8, or go back to 1.
 
