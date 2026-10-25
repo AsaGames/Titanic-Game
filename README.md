@@ -6,7 +6,7 @@ The Titanic is about to hit an iceberg. You start at the very bottom of the ship
 
 ## The story map
 
-**Play** opens a map of the whole voyage: nine stops played in order. Finishing a stop opens the next one, and you can replay any stop you've reached.
+**Play** opens a map of the whole voyage: ten stops played in order. Finishing a stop opens the next one, and you can replay any stop you've reached.
 
 | Stop | Game | How it works |
 | --- | --- | --- |
@@ -15,14 +15,15 @@ The Titanic is about to hit an iceberg. You start at the very bottom of the ship
 | 3 | Lookout | Look left and right through the binoculars and ring the bell when you spot the iceberg. Winning makes the next escape easier: the iceberg only scrapes the ship, so the water rises more slowly. |
 | 4 | Radio for help | Watch the lights, then copy them with the arrow keys to call the rescue ship. |
 | 5 | Escape the ship | The main game (see below). |
-| 6 | Swim to safety | The swim on its own: reach a lifeboat past sharks and icebergs. |
-| 7 | Row to the rescue | Row your lifeboat through the ice to the rescue ship before sunrise, picking up swimmers. |
-| 8 | Guide it down | Steer the wreck past the fish to the sea floor. |
-| 9 | Find the treasure | Explore the wreck in a submarine and find five treasures. No way to lose. |
+| 6 | Lifeboat rescue | Row around the sinking Titanic and pull people out of the water before it goes under. Watch out for falling funnels. |
+| 7 | Swim to safety | The swim on its own: reach a lifeboat past sharks and icebergs. |
+| 8 | Row to the rescue | Row your lifeboat through the ice to the rescue ship before sunrise, picking up swimmers. |
+| 9 | Guide it down | Steer the wreck past the fish to the sea floor. |
+| 10 | Find the treasure | Explore the wreck in a submarine and pick up five treasures: the ship's bell, the gold key, the puppy's collar, a teacup and a pocket watch. Steer next to something shiny and press Space (or tap): the claw reaches out, grabs it and lifts it into the submarine. Keep away from the sharks: they chase you when you get close, and three bumps ends the dive. |
 
 From the map you can also open:
 
-- **Sticker book:** 18 stickers to collect, like Puppy pal, Eagle eyes, Fish friend and Say cheese. A pop-up tells you when you earn one.
+- **Sticker book:** 19 stickers to collect, like Puppy pal, Eagle eyes, Fish friend and Say cheese. A pop-up tells you when you earn one.
 - **Souvenir shop:** spend the coins you earn (on the ship and from finishing stops) on puppy colours, a party hat for the puppy and a flag for your lifeboat.
 - **1 player / 2 players:** on a computer, two people can play Escape the ship together on one keyboard.
 
@@ -48,10 +49,11 @@ The game is drawn in 3D with [three.js](https://threejs.org/), loaded from a CDN
 - **The richer you are, the higher your class.** Coins (worth 1) and money bags (worth 3) are scattered around the ship and hidden in luggage.
   - Collect 5 coins to become **2nd Class** and open the 2nd Class Lounge.
   - Collect 12 coins to become **1st Class** and open the 1st Class Ballroom.
-  - Your hat changes as you move up: flat cap, then bowler hat, then top hat.
+  - Your hat changes as you move up: flat cap, then bowler hat, then a straw boater.
 - **The lifeboat gate is locked.** You need the key to open it.
 - **The iceberg hits at a random time.** The lookout rings a bell just before. Once it hits, water rises from the bottom, the ship slowly tips and the lights slowly dim.
 - **If the water touches you, you lose.** If you get into a lifeboat first, you survive.
+- **Then rescue people.** Once your lifeboat is in the water, row around the sinking ship and pick up as many people as you can (8 seats) before it goes under.
 
 ## Extras
 
@@ -100,6 +102,7 @@ The **Grown-ups** button on the title screen has:
 - **Guide arrow:** Auto (levels 1–2 only), Always, or Never.
 - **Level:** jump to any level from 1 to 10.
 - **Sinking ending:** turn the split-and-sink ending on or off.
+- **Open every stop:** unlocks the whole story map so you can jump straight to any mini-game.
 - **Reset everything:** goes back to level 1 and clears the story map, stickers, coins, face, names and settings (tap twice to confirm).
 
 Other notes:
