@@ -569,7 +569,11 @@ function faceCanvas(f) {
 let soundOn = load('titanic.sound', true);
 let AC = null;
 function ac() {
-  if (!AC) { try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
+  if (!AC) {
+    try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; }
+    AC.master = AC.createGain(); AC.master.gain.value = 2.4; // effects were too quiet; this makes everything louder
+    const comp = AC.createDynamicsCompressor(); AC.master.connect(comp).connect(AC.destination);
+  }
   if (AC.state === 'suspended') AC.resume();
   return AC;
 }
@@ -580,7 +584,7 @@ function tone(freq, dur, type = 'sine', vol = 0.2, when = 0, slide = 0) {
   o.type = type; o.frequency.setValueAtTime(freq, t);
   if (slide) o.frequency.exponentialRampToValueAtTime(slide, t + dur);
   g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
-  o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + 0.05);
+  o.connect(g).connect(a.master); o.start(t); o.stop(t + dur + 0.05);
 }
 function noise(dur, vol, freq) {
   const a = ac(); if (!a || !soundOn) return;
@@ -590,9 +594,57 @@ function noise(dur, vol, freq) {
   const src = a.createBufferSource(), f = a.createBiquadFilter(), g = a.createGain();
   src.buffer = buf; f.type = 'lowpass'; f.frequency.value = freq;
   g.gain.setValueAtTime(vol, a.currentTime); g.gain.exponentialRampToValueAtTime(0.001, a.currentTime + dur);
-  src.connect(f).connect(g).connect(a.destination); src.start();
+  src.connect(f).connect(g).connect(a.master); src.start();
 }
-const sfx = { // soft chimes only
+// ---------- Music: a little tune that changes with the mood ----------
+const N = s => s; // notes are MIDI numbers; 0 = rest
+const SONGS = {
+  calm: { bpm: 116, lead: 'triangle', vol: 0.05,
+    mel: [67, 0, 72, 0, 72, 74, 76, 0, 74, 0, 72, 0, 69, 0, 67, 0, 65, 0, 69, 0, 72, 0, 71, 69, 67, 0, 0, 0, 64, 0, 67, 0,
+          67, 0, 72, 0, 72, 74, 76, 0, 79, 0, 77, 76, 74, 0, 72, 0, 74, 0, 76, 0, 74, 0, 71, 0, 72, 0, 0, 0, 0, 0, 0, 0],
+    bass: [48, 48, 53, 53, 48, 48, 55, 55, 48, 48, 53, 53, 55, 55, 48, 48] },
+  urgent: { bpm: 152, lead: 'square', vol: 0.03,
+    mel: [69, 72, 76, 72, 69, 72, 76, 79, 77, 76, 74, 72, 71, 0, 64, 0, 69, 72, 76, 72, 69, 72, 76, 81, 79, 77, 76, 74, 76, 0, 0, 0],
+    bass: [45, 45, 41, 41, 43, 43, 40, 40] },
+  deep: { bpm: 72, lead: 'sine', vol: 0.05,
+    mel: [63, 67, 70, 75, 0, 0, 74, 0, 72, 0, 70, 0, 67, 0, 0, 0, 65, 68, 72, 77, 0, 0, 75, 0, 74, 0, 70, 0, 0, 0, 0, 0],
+    bass: [39, 39, 44, 44, 41, 41, 46, 46] },
+  arcade: { bpm: 140, lead: 'square', vol: 0.028,
+    mel: [72, 76, 79, 76, 72, 76, 79, 84, 81, 79, 77, 76, 74, 0, 79, 0, 77, 81, 84, 81, 77, 76, 74, 72, 74, 76, 74, 71, 72, 0, 0, 0],
+    bass: [48, 48, 53, 53, 55, 55, 48, 48] },
+};
+let musicOn = load('titanic.music', true) !== false;
+const mus = { song: null, step: 0, next: 0, timer: null };
+function musicMood() {
+  if (MG) return ['treasure'].includes(MG.id) ? 'deep' : MG.id === 'fishing' ? 'arcade' : (MG.id === 'rescue' || MG.id === 'lookout') ? 'urgent' : 'calm';
+  if (!G) return 'calm';
+  if (state === 'dive' || state === 'ending') return 'deep';
+  if (G.hit || G.swim) return 'urgent';
+  return 'calm';
+}
+function noteAt(m, t, dur, type, vol) {
+  const a = AC, o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.setValueAtTime(440 * Math.pow(2, (m - 69) / 12), t);
+  g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(vol, t + 0.015); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(mus.out); o.start(t); o.stop(t + dur + 0.05);
+}
+function musicTick() {
+  if (!AC || !musicOn || !soundOn || document.hidden || ['paused'].includes(state)) { mus.next = 0; return; }
+  if (!mus.out) { mus.out = AC.createGain(); mus.out.gain.value = 1; mus.out.connect(AC.master || AC.destination); }
+  const mood = musicMood();
+  if (mus.song !== mood) { mus.song = mood; mus.step = 0; mus.next = 0; }
+  const S = SONGS[mood], eighth = 60 / S.bpm / 2;
+  if (!mus.next || mus.next < AC.currentTime) mus.next = AC.currentTime + 0.05;
+  while (mus.next < AC.currentTime + 0.25) {
+    const i = mus.step % S.mel.length, m = S.mel[i];
+    if (m) noteAt(m, mus.next, eighth * (S.mel[(i + 1) % S.mel.length] ? 0.95 : 1.9), S.lead, S.vol);
+    if (mus.step % 4 === 0) { const b = S.bass[Math.floor(mus.step / 4) % S.bass.length]; noteAt(b, mus.next, eighth * 3.6, 'sine', S.vol * 2.2); }
+    if (mood !== 'deep' && mus.step % 2 === 0) noteAt(mus.step % 4 ? 96 : 84, mus.next, 0.04, 'triangle', S.vol * 0.35); // a soft tick
+    mus.step++; mus.next += eighth;
+  }
+}
+setInterval(musicTick, 90);
+const sfx = { // soft chimes
   coin()   { tone(1047, .12, 'sine', .07); tone(1397, .2, 'sine', .06, .07); },
   key()    { [784, 988, 1175, 1568].forEach((f, i) => tone(f, .3, 'sine', .08, i * .1)); },
   boom()   { noise(1.2, .35, 180); tone(55, 1.2, 'sine', .3, 0, 30); },
@@ -623,6 +675,8 @@ if (isTouch) document.body.classList.add('touch');
 
 function updateSoundBtn() { $('soundBtn').innerHTML = soundOn ? ICONS.soundOn : ICONS.soundOff; }
 updateSoundBtn();
+addEventListener('pointerdown', () => ac(), { once: true });
+addEventListener('keydown', () => ac(), { once: true });
 $('soundBtn').addEventListener('click', () => { soundOn = !soundOn; save('titanic.sound', soundOn); updateSoundBtn(); });
 $('pauseBtn').innerHTML = ICONS.home;
 $('photoBtn').innerHTML = ICONS.camera;
@@ -906,6 +960,9 @@ function showScreen(kind) {
         <div class="field"><label class="switch"><span><span class="lbl" style="margin:0">Slow mode</span>
           <span class="help" style="display:block">The iceberg comes later and the water rises more slowly.</span></span>
           <input type="checkbox" id="slowMode" ${prefs.slow ? 'checked' : ''}></label></div>
+        <div class="field"><label class="switch"><span><span class="lbl" style="margin:0">Music</span>
+          <span class="help" style="display:block">A little tune that changes with the game. The speaker button turns off all sound.</span></span>
+          <input type="checkbox" id="musicOpt" ${musicOn ? 'checked' : ''}></label></div>
         <div class="field"><span class="lbl">Guide arrow</span><div class="seg">${seg}</div>
           <div class="help">Auto shows the arrow on levels 1 and 2 only.</div></div>
         <div class="field"><span class="lbl">Level</span>
@@ -1033,6 +1090,7 @@ function wireScreen(kind) {
   const dn = $('dogName'); if (dn) dn.addEventListener('input', () => setPref('dog', dn.value.slice(0, 14)));
   const sg = $('shipSign'); if (sg) sg.addEventListener('input', () => { setPref('sign', sg.value.slice(0, 20)); if (use3D) refreshShipSign(); });
   const sm = $('slowMode'); if (sm) sm.addEventListener('change', () => setPref('slow', sm.checked));
+  const mo = $('musicOpt'); if (mo) mo.addEventListener('change', () => { musicOn = mo.checked; save('titanic.music', musicOn); });
   const eo = $('endingOpt'); if (eo) eo.addEventListener('change', () => setPref('ending', eo.checked));
   const setLevel = l => { level = clamp(l, 1, 10); save('titanic.level', level); $('lvlOut').textContent = level; $('lvlNote').textContent = levelSummary(level); };
   on('lvlDown', () => setLevel(level - 1));
@@ -1812,6 +1870,7 @@ const FISH_KINDS = [
   { body: '#f6c92b', fin: '#e8a812', spot: '#1b1b1b' },                      // butterflyfish
   { body: '#ef7b8b', fin: '#c94f6d', stripe: '#ffe3ea' },                    // angelfish
   { body: '#3bb273', fin: '#1f7a4d', stripe: '#d9f99d' },                    // wrasse
+  { body: '#f2c94c', fin: '#f28c28', spot: '#fff6c2' },                      // the giant golden fish
 ];
 function drawFish2D(x, y, L, kind, dir, t, ph = 0) { // L = length in pixels
   const K = FISH_KINDS[kind] || FISH_KINDS[0], h = L * 0.56, wag = Math.sin(t * 9 + ph) * 0.35;
@@ -3825,6 +3884,7 @@ function overlayDive(t, W, H, at) {
 const STOPS = [
   { id: 'boarding', name: 'Boarding day', icon: 'suitcase', desc: 'Load the suitcases onto the ship with the crane.' },
   { id: 'coal', name: 'Shovel the coal', icon: 'flame', desc: 'Shovel coal in time to get the ship to full speed.' },
+  { id: 'fishing', name: 'Gone fishing', icon: 'fish', desc: 'Fish off the deck. Bigger fish win more tickets!' },
   { id: 'lookout', name: 'Lookout', icon: 'bell', desc: 'Spot the iceberg through the fog and ring the bell.' },
   { id: 'radio', name: 'Radio for help', icon: 'radio', desc: 'Copy the signal to call the rescue ship.' },
   { id: 'escape', name: 'Escape the ship', icon: 'keyGold', desc: 'Find the key and get to a lifeboat.' },
@@ -3834,7 +3894,9 @@ const STOPS = [
   { id: 'dive', name: 'Guide it down', icon: 'wave', desc: 'Steer the wreck past the fish to the sea floor.' },
   { id: 'treasure', name: 'Find the treasure', icon: 'chest', desc: 'Explore the wreck in a little submarine.' },
 ];
-let story = clamp(Number(load('titanic.story', 1)) || 1, 1, STOPS.length);  // how many stops are open
+let story = clamp(Number(load('titanic.story', 1)) || 1, 1, STOPS.length);
+if (doneStopsRaw().includes('coal') && story < 3) story = 3; // keep 'Gone fishing' open for players who were past it  // how many stops are open
+function doneStopsRaw() { const v = load('titanic.done', []); return Array.isArray(v) ? v : []; }
 let doneStops = (() => { const v = load('titanic.done', []); return Array.isArray(v) ? v.filter(id => STOPS.some(s => s.id === id)) : []; })();
 function finishStop(id) {
   const i = STOPS.findIndex(s => s.id === id);
@@ -3862,6 +3924,7 @@ const STICKERS = [
   { id: 'cheese', name: 'Say cheese', hint: 'Take a photo', icon: 'camera', color: '#4a4f57' },
   { id: 'artist', name: 'Artist', hint: 'Draw your own face', icon: 'palette', color: '#ff9f43' },
   { id: 'shopper', name: 'Shopper', hint: 'Buy a souvenir', icon: 'coin', color: '#b05ad9' },
+  { id: 'angler', name: 'Big catch', hint: 'Catch the giant golden fish', icon: 'fish', color: '#d9a52b' },
   { id: 'lifesaver', name: 'Lifesaver', hint: 'Fill every seat in your lifeboat', icon: 'jacket', color: '#c91a09' },
 ];
 let stickers = (() => { const v = load('titanic.stickers', []); return Array.isArray(v) ? v.filter(id => STICKERS.some(s => s.id === id)) : []; })();
@@ -4260,6 +4323,178 @@ const MINIS = {
         if (S.carry && !S.done) { const tp = top(); const okAim = Math.abs(S.hookX - tp.x) <= tp.w / 2 - 4; cx.strokeStyle = okAim ? 'rgba(91,209,139,0.8)' : 'rgba(255,255,255,0.35)'; cx.setLineDash([6, 8]); cx.lineWidth = 2; line(S.hookX, 170, S.hookX, tp.y); cx.setLineDash([]); }
         drawPops(S.pops, 1 / 60);
         miniHud(`Suitcases ${S.stack.length}/${GOAL}   Splashes ${'●'.repeat(S.misses)}${'○'.repeat(3 - S.misses)}`, W);
+      },
+    };
+  },
+
+  // ---------------------------------------------------------------
+  // Gone fishing: an arcade fishing game off the side of the ship
+  fishing() {
+    const DECK = 132, SEA = 196, FLOOR = 512, TIME = 60, PASS = 100;
+    const TYPES = [ // the deeper and bigger, the more tickets
+      { id: 'small', L: 30, pts: 10, y0: 215, y1: 270, sp: [70, 110], name: 'a little fish' },
+      { id: 'medium', L: 48, pts: 25, y0: 285, y1: 350, sp: [55, 85], name: 'a medium fish' },
+      { id: 'big', L: 74, pts: 50, y0: 365, y1: 425, sp: [40, 65], name: 'a big fish' },
+      { id: 'giant', L: 120, pts: 100, y0: 445, y1: 480, sp: [30, 45], name: 'the GIANT golden fish', kind: 5 },
+      { id: 'boot', L: 34, pts: 0, y0: 225, y1: 400, sp: [0, 0], name: 'an old boot' },
+    ];
+    const best = Number(load('titanic.fishBest', 0)) || 0;
+    const S = { x: 480, hook: { y: DECK + 20, state: 'idle', fish: null }, fish: [], sharks: [], time: TIME, score: 0, shown: 0, caught: [], gotGiant: false,
+      spawn: 0, done: false, endT: 0, pops: [], tickets: [], chest: { x: rand(160, 800), got: false }, best };
+    const spawn = (type) => {
+      const T = TYPES.find(q => q.id === type), dir = Math.random() < 0.5 ? 1 : -1;
+      S.fish.push({ T, x: type === 'boot' ? rand(120, 840) : dir > 0 ? -T.L : 960 + T.L, y: rand(T.y0, T.y1), dir, sp: rand(T.sp[0], T.sp[1]),
+        kind: T.kind !== undefined ? T.kind : Math.floor(Math.random() * 5), ph: rand(0, 6), drift: type === 'boot' ? rand(-0.3, 0.3) : 0 });
+    };
+    for (const [ty, n] of [['small', 4], ['medium', 3], ['big', 2], ['boot', 1]]) for (let i = 0; i < n; i++) { spawn(ty); S.fish[S.fish.length - 1].x = rand(60, 900); }
+    S.sharks.push({ x: -120, y: 330, dir: 1, sp: 60 });
+    const H = S.hook;
+    const end = () => {
+      if (S.score > best) save('titanic.fishBest', S.score);
+      if (S.gotGiant) award('angler');
+      const won = S.score >= PASS;
+      miniResult('fishing', won, { coins: Math.floor(S.score / 25), title: `${S.score} tickets!`,
+        text: (won ? `You caught ${S.caught.length} things off the side of the Titanic.` : `You need ${PASS} tickets to win. Drop your hook deeper for the big fish!`)
+          + (S.score > best ? ' A new high score!' : best ? ` Your best is ${best}.` : '') });
+    };
+    const catchIt = f => {
+      H.fish = f; H.state = 'up'; S.fish.splice(S.fish.indexOf(f), 1);
+      tone(f.T.pts >= 50 ? 330 : 660, 0.15, 'sine', 0.08);
+      if (f.T.id === 'giant') msg('WHOA! The giant golden fish! Reel it in!', 3, 'fish');
+    };
+    return {
+      S, icon: 'fish', intro: `← → move along the rail. Press Space to drop your hook, and again to reel it up. Bigger fish deeper down are worth more tickets. Get ${PASS} tickets in ${TIME} seconds!`,
+      action() {
+        if (S.done) return;
+        if (H.state === 'idle') { H.state = 'down'; sfx.search(); }
+        else if (H.state === 'down') H.state = 'up';
+      },
+      tap(x) { if (Math.abs(x - S.x) > 60 && H.state === 'idle') S.x = clamp(x, 90, 870); else this.action(); },
+      update(dt) {
+        // tickets fly to the counter; the counter spins up
+        for (const tk of S.tickets) tk.t += dt;
+        S.tickets = S.tickets.filter(tk => tk.t < 1);
+        if (S.shown < S.score) { S.shown = Math.min(S.score, S.shown + dt * 60); if (Math.random() < 0.3) tone(1400, 0.03, 'square', 0.02); }
+        if (S.done) { S.endT += dt; if (S.endT > 2.5 && S.shown >= S.score && !this.finished) end(); return; }
+        if (S.time > 0) S.time = Math.max(0, S.time - dt);
+        if (S.time <= 0 && H.state === 'idle') { S.done = true; sfx.bell(); msg(`Time's up! You won ${S.score} tickets!`, 3, 'fish'); return; }
+        // move along the rail (only while the hook is up)
+        const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+        if (H.state === 'idle') S.x = clamp(S.x + dir * 260 * dt, 90, 870);
+        // the hook
+        if (H.state === 'down') {
+          H.y += 230 * dt;
+          if (H.y >= FLOOR - 10) { H.y = FLOOR - 10; H.state = 'up'; }
+          if (!S.chest.got && H.y > FLOOR - 30 && Math.abs(S.chest.x - S.x) < 34) { S.chest.got = true; H.fish = { T: { id: 'chest', pts: 75, name: 'a treasure chest!' } }; H.state = 'up'; }
+        }
+        if (H.state === 'up') {
+          const heavy = H.fish ? (H.fish.T.L || 50) : 0;
+          H.y -= (300 - heavy * 1.3) * dt;
+          if (H.y <= DECK + 20) {
+            H.y = DECK + 20; H.state = 'idle';
+            if (H.fish) {
+              const f = H.fish, pts = f.T.pts; H.fish = null;
+              S.score += pts; S.caught.push(f.T.id); if (f.T.id === 'giant') S.gotGiant = true;
+              if (pts) { popText(S.pops, `+${pts}`, S.x, DECK - 30); for (let i = 0; i < Math.min(8, pts / 10 + 1); i++) S.tickets.push({ x: S.x, y: DECK, t: -i * 0.06 }); sfx.coin(); }
+              else { popText(S.pops, 'A boot!', S.x, DECK - 30, '#c8d4e8'); sfx.nope(); }
+              if (f.T.id === 'chest') { msg('A treasure chest from the bottom of the sea!', 2.5, 'chest'); }
+            }
+          }
+        }
+        // grab the first fish the hook touches
+        if ((H.state === 'down' || H.state === 'up') && !H.fish) {
+          for (const f of S.fish) if (Math.hypot(f.x + f.dir * f.T.L * 0.35 - S.x, f.y - H.y) < f.T.L * 0.3 + 12) { catchIt(f); break; }
+        }
+        // fish swim; new ones keep coming
+        for (const f of S.fish) { f.x += f.dir * f.sp * dt; if (f.T.id === 'boot') { f.y += Math.sin(this.t + f.ph) * 6 * dt; f.x += f.drift * 10 * dt; } }
+        S.fish = S.fish.filter(f => f.x > -160 && f.x < 1120);
+        S.spawn -= dt;
+        const count = ty => S.fish.filter(f => f.T.id === ty).length;
+        if (S.spawn <= 0) {
+          S.spawn = 0.6;
+          if (count('small') < 4) spawn('small'); else if (count('medium') < 3) spawn('medium'); else if (count('big') < 2) spawn('big');
+          else if (count('giant') < 1 && Math.random() < 0.25) spawn('giant'); else if (count('boot') < 1 && Math.random() < 0.3) spawn('boot');
+        }
+        // the shark: it snaps the line and steals your fish
+        for (const k of S.sharks) {
+          k.x += k.dir * k.sp * dt; if (k.x > 1100) { k.dir = -1; k.y = rand(300, 420); } if (k.x < -140) { k.dir = 1; k.y = rand(300, 420); }
+          if (H.fish && H.fish.T.id !== 'chest' && H.y > k.y - 40 && Math.abs(k.x - S.x) < 60 && Math.abs(H.y - k.y) < 50) {
+            popText(S.pops, 'Snap! The shark ate it!', S.x, H.y - 30, '#ff8a8a'); sfx.nope(); H.fish = null;
+          }
+        }
+      },
+      draw(t, W, H2) {
+        screenFill(W, H2, '#13285a', '#051530');
+        const v = mview(W, H2); VIEW = null;
+        // sky + sun + clouds
+        const sg = cx.createLinearGradient(0, v.y0, 0, SEA); sg.addColorStop(0, '#3d4597'); sg.addColorStop(0.6, '#d8668c'); sg.addColorStop(1, '#ffb56b');
+        cx.fillStyle = sg; cx.fillRect(v.x0, v.y0, v.x1 - v.x0, SEA - v.y0);
+        cx.fillStyle = '#ffd166'; circle(820, 120, 40); cx.fill();
+        drawCloud(150, 50, 0.5); drawCloud(620, 30, 0.4);
+        // the sea, darker as it gets deeper
+        const wg = cx.createLinearGradient(0, SEA, 0, FLOOR + 40); wg.addColorStop(0, '#3a8ad6'); wg.addColorStop(0.5, '#1e5aa8'); wg.addColorStop(1, '#0b2a5c');
+        cx.fillStyle = wg; cx.fillRect(v.x0, SEA, v.x1 - v.x0, v.y1 - SEA);
+        for (let i = 0; i < 6; i++) { const x = i * 190 + Math.sin(t * 0.3 + i) * 30; cx.fillStyle = 'rgba(200,235,255,0.06)'; cx.beginPath(); cx.moveTo(x, SEA); cx.lineTo(x + 40, SEA); cx.lineTo(x + 140, FLOOR); cx.lineTo(x + 60, FLOOR); cx.fill(); }
+        // depth bands with their ticket values
+        cx.font = `700 13px ${FONT}`; cx.textAlign = 'right'; cx.textBaseline = 'middle';
+        for (const T of TYPES.slice(0, 4)) { cx.fillStyle = 'rgba(255,255,255,0.05)'; cx.fillRect(v.x0, T.y0 - 8, v.x1 - v.x0, T.y1 - T.y0 + 16); cx.fillStyle = 'rgba(255,224,102,0.75)'; cx.fillText(`${T.pts} TICKETS`, v.x1 - 12, (T.y0 + T.y1) / 2); }
+        // sea floor + chest
+        brick(v.x0, FLOOR, v.x1 - v.x0, v.y1 - FLOOR + 10, '#d9b77e', true);
+        for (let i = 0; i < 8; i++) { const x = 60 + i * 120; cx.strokeStyle = '#3b9a52'; cx.lineWidth = 5; cx.beginPath(); cx.moveTo(x, FLOOR); for (let k = 1; k < 4; k++) cx.lineTo(x + Math.sin(t * 1.4 + i + k) * 5, FLOOR - k * 14); cx.stroke(); }
+        if (!S.chest.got) { brick(S.chest.x - 22, FLOOR - 26, 44, 26, '#8b5a2b', true); cx.fillStyle = '#d4af37'; cx.fillRect(S.chest.x - 22, FLOOR - 16, 44, 3); cx.fillRect(S.chest.x - 3, FLOOR - 18, 6, 8); glow(S.chest.x, FLOOR - 14, 40, 'rgba(255,224,102,A)', 0.25 + 0.15 * Math.sin(t * 3)); }
+        // fish, boots, shark
+        for (const f of S.fish) {
+          if (f.T.id === 'boot') { cx.save(); cx.translate(f.x, f.y); cx.rotate(Math.sin(t + f.ph) * 0.2); cx.fillStyle = '#5a3a22'; cx.fillRect(-8, -16, 14, 22); cx.fillRect(-8, 2, 26, 10); cx.fillStyle = '#3a2412'; cx.fillRect(-10, 10, 30, 4); cx.restore(); }
+          else { drawFish2D(f.x, f.y, f.T.L, f.kind, f.dir, t, f.ph); if (f.T.id === 'giant') { cx.fillStyle = '#fff6c2'; drawSpark(f.x + 30, f.y - 30, 5 + 2 * Math.sin(t * 6)); } }
+        }
+        for (const k of S.sharks) { cx.save(); cx.translate(k.x, k.y); cx.scale(0.7, 0.7); drawShark2D(0, 0, k.dir, t, false); cx.restore(); }
+        // the ship's side, deck and railing
+        brickWall(v.x0, DECK, v.x1 - v.x0, SEA - DECK + 6, '#25282e'); brick(v.x0, SEA - 14, v.x1 - v.x0, 14, '#d0302a', false);
+        for (let x = 30; x < 960; x += 70) { cx.fillStyle = 'rgba(255,225,150,0.9)'; circle(x, DECK + 24, 5); cx.fill(); }
+        brick(v.x0, DECK - 10, v.x1 - v.x0, 12, '#e2c693', true);
+        cx.fillStyle = 'rgba(245,245,245,0.9)'; cx.fillRect(v.x0, DECK - 44, v.x1 - v.x0, 4); cx.fillRect(v.x0, DECK - 28, v.x1 - v.x0, 2);
+        for (let x = 0; x < 960; x += 32) cx.fillRect(x, DECK - 44, 3, 34);
+        // you, with a rod
+        drawPerson(S.x - 30, DECK - 10, { ...myLook(2), face: 1, walkT: t, moving: H.state === 'idle' && (input.left || input.right), scale: 1.05 });
+        if (G && G.dog && G.dog.following) {} // no puppy here
+        drawDog(S.x - 75, DECK - 10, 1, t, false, t);
+        const tipX = S.x + 10, tipY = DECK - 70;
+        cx.strokeStyle = '#8a5a30'; cx.lineWidth = 4; cx.lineCap = 'round'; line(S.x - 22, DECK - 34, tipX, tipY);
+        cx.fillStyle = '#4a4f57'; circle(S.x - 14, DECK - 40, 5); cx.fill();
+        // line, bobber and hook
+        cx.strokeStyle = 'rgba(255,255,255,0.85)'; cx.lineWidth = 1.5; line(tipX, tipY, S.x, H.y);
+        if (H.y > SEA) { cx.fillStyle = '#e5484d'; circle(S.x, SEA - 2 + Math.sin(t * 3) * 2, 6); cx.fill(); cx.fillStyle = '#fff'; cx.fillRect(S.x - 6, SEA - 4 + Math.sin(t * 3) * 2, 12, 3); }
+        cx.strokeStyle = '#c9d1da'; cx.lineWidth = 2.5; cx.beginPath(); cx.moveTo(S.x, H.y); cx.lineTo(S.x, H.y + 8); cx.arc(S.x - 5, H.y + 8, 5, 0, Math.PI); cx.stroke();
+        if (H.fish) {
+          const f = H.fish;
+          if (f.T.id === 'chest') { brick(S.x - 20, H.y + 10, 40, 24, '#8b5a2b', true); cx.fillStyle = '#d4af37'; cx.fillRect(S.x - 20, H.y + 18, 40, 3); }
+          else if (f.T.id === 'boot') { cx.fillStyle = '#5a3a22'; cx.fillRect(S.x - 7, H.y + 10, 14, 22); cx.fillRect(S.x - 7, H.y + 26, 24, 10); }
+          else { cx.save(); cx.translate(S.x, H.y + 10 + f.T.L * 0.42); cx.rotate(Math.PI / 2 + Math.sin(t * 12) * 0.25); drawFish2D(0, 0, f.T.L, f.kind, -1, t * 2, f.ph); cx.restore(); }
+        }
+        if (H.state === 'idle' && !S.done && Math.sin(t * 4) > -0.3) { cx.save(); cx.translate(S.x, DECK - 92); prompt(0, 0, 'down'); cx.restore(); }
+        // tickets flying to the counter
+        for (const tk of S.tickets) { if (tk.t < 0) continue; const k = tk.t; const x = tk.x + (900 - tk.x) * k, y = tk.y + (40 - tk.y) * k - Math.sin(Math.PI * k) * 80;
+          cx.save(); cx.translate(x, y); cx.rotate(k * 6); cx.fillStyle = '#f2994a'; cx.fillRect(-12, -7, 24, 14); cx.fillStyle = '#fff1d6'; cx.fillRect(-9, -4, 18, 8); cx.restore(); }
+        drawPops(S.pops, 1 / 60);
+        // arcade frame: chasing marquee lights
+        cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const n = Math.floor((W + H2) / 26);
+        for (let i = 0; i < n * 2; i++) {
+          const per = 2 * (W + H2), d = (i / (n * 2)) * per; let x, y;
+          if (d < W) { x = d; y = 4; } else if (d < W + H2) { x = W - 4; y = d - W; } else if (d < 2 * W + H2) { x = W - (d - W - H2); y = H2 - 4; } else { x = 4; y = H2 - (d - 2 * W - H2); }
+          cx.fillStyle = (i + Math.floor(t * 8)) % 3 === 0 ? '#ffe066' : 'rgba(255,224,102,0.25)'; circle(x, y, 3.5); cx.fill();
+        }
+        // ticket counter (LED style) and timer
+        const bx = W / 2 - 150, by = isTouch ? 118 : H2 - 70;
+        cx.fillStyle = 'rgba(9,18,40,0.9)'; rr(bx, by, 300, 54, 14); cx.fill(); cx.strokeStyle = '#ffe066'; cx.lineWidth = 2; cx.stroke();
+        cx.fillStyle = '#1a0606'; rr(bx + 12, by + 9, 130, 36, 6); cx.fill();
+        cx.font = `700 26px ui-monospace, Menlo, Consolas, monospace`; cx.textAlign = 'right'; cx.textBaseline = 'middle';
+        cx.fillStyle = 'rgba(255,60,60,0.15)'; cx.fillText('8888', bx + 134, by + 28);
+        cx.fillStyle = '#ff4d4d'; cx.shadowColor = '#ff4d4d'; cx.shadowBlur = 8; cx.fillText(String(Math.floor(S.shown)).padStart(4, ' '), bx + 134, by + 28); cx.shadowBlur = 0;
+        cx.font = `600 13px ${FONT}`; cx.fillStyle = '#ffe066'; cx.textAlign = 'left'; cx.fillText('TICKETS', bx + 150, by + 20);
+        cx.fillStyle = '#fff'; cx.font = `700 18px ${FONT}`; cx.fillText(`${Math.ceil(S.time)}s`, bx + 150, by + 40);
+        cx.fillStyle = 'rgba(255,255,255,0.15)'; rr(bx + 200, by + 34, 88, 8, 4); cx.fill(); cx.fillStyle = S.time < 10 ? '#e5484d' : '#5bd18b'; rr(bx + 200, by + 34, Math.max(6, 88 * S.time / TIME), 8, 4); cx.fill();
+        miniHud(`Goal ${PASS} tickets${best ? `   Best ${best}` : ''}`, W);
       },
     };
   },

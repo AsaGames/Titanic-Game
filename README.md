@@ -6,24 +6,25 @@ The Titanic is about to hit an iceberg. You start at the very bottom of the ship
 
 ## The story map
 
-**Play** opens a map of the whole voyage: ten stops played in order. Finishing a stop opens the next one, and you can replay any stop you've reached.
+**Play** opens a map of the whole voyage: eleven stops played in order. Finishing a stop opens the next one, and you can replay any stop you've reached.
 
 | Stop | Game | How it works |
 | --- | --- | --- |
 | 1 | Boarding day | Drop suitcases from the crane onto the ship. Stack 8 before 3 fall in the sea. |
 | 2 | Shovel the coal | Press Space when the coal is in the gold ring to get the ship to full speed before time runs out. |
-| 3 | Lookout | Look left and right through the binoculars and ring the bell when you spot the iceberg. Winning makes the next escape easier: the iceberg only scrapes the ship, so the water rises more slowly. |
-| 4 | Radio for help | Watch the lights, then copy them with the arrow keys to call the rescue ship. |
-| 5 | Escape the ship | The main game (see below). |
-| 6 | Lifeboat rescue | Row around the sinking Titanic and pull people out of the water before it goes under. Watch out for falling funnels. |
-| 7 | Swim to safety | The swim on its own: reach a lifeboat past sharks and icebergs. |
-| 8 | Row to the rescue | Row your lifeboat through the ice to the rescue ship before sunrise, picking up swimmers. |
-| 9 | Guide it down | Steer the wreck past the fish to the sea floor. |
-| 10 | Find the treasure | Explore the wreck in a submarine and pick up five treasures: the ship's bell, the gold key, the puppy's collar, a teacup and a pocket watch. Steer next to something shiny and press Space (or tap): the claw reaches out, grabs it and lifts it into the submarine. Keep away from the sharks: they chase you when you get close, and three bumps ends the dive. |
+| 3 | Gone fishing | An arcade fishing game off the side of the ship. Move along the rail with ← →, press Space to drop your hook and again to reel it in. Deeper, bigger fish win more tickets (10, 25, 50, and 100 for the giant golden fish), there's a treasure chest on the bottom, boots are worth nothing, and the shark steals your catch if you reel it past him. Get 100 tickets in 60 seconds. Your best score is saved. |
+| 4 | Lookout | Look left and right through the binoculars and ring the bell when you spot the iceberg. Winning makes the next escape easier: the iceberg only scrapes the ship, so the water rises more slowly. |
+| 5 | Radio for help | Watch the lights, then copy them with the arrow keys to call the rescue ship. |
+| 6 | Escape the ship | The main game (see below). |
+| 7 | Lifeboat rescue | Row around the sinking Titanic and pull people out of the water before it goes under. Watch out for falling funnels. |
+| 8 | Swim to safety | The swim on its own: reach a lifeboat past sharks and icebergs. |
+| 9 | Row to the rescue | Row your lifeboat through the ice to the rescue ship before sunrise, picking up swimmers. |
+| 10 | Guide it down | Steer the wreck past the fish to the sea floor. |
+| 11 | Find the treasure | Explore the wreck in a submarine and pick up five treasures: the ship's bell, the gold key, the puppy's collar, a teacup and a pocket watch. Steer next to something shiny and press Space (or tap): the claw reaches out, grabs it and lifts it into the submarine. Keep away from the sharks: they chase you when you get close, and three bumps ends the dive. |
 
 From the map you can also open:
 
-- **Sticker book:** 19 stickers to collect, like Puppy pal, Eagle eyes, Fish friend and Say cheese. A pop-up tells you when you earn one.
+- **Sticker book:** 20 stickers to collect, like Puppy pal, Eagle eyes, Fish friend and Say cheese. A pop-up tells you when you earn one.
 - **Souvenir shop:** spend the coins you earn (on the ship and from finishing stops) on puppy colours, a party hat for the puppy and a flag for your lifeboat.
 - **1 player / 2 players:** on a computer, two people can play Escape the ship together on one keyboard.
 
@@ -107,6 +108,6 @@ The **Grown-ups** button on the title screen has:
 
 Other notes:
 
-- Sound effects are soft chimes. The speaker button in the top-right corner turns them off.
+- There are sound effects and background music that changes with the game: calm on the voyage, urgent after the iceberg, arcade-style for fishing, and dreamy under the sea. The speaker button in the top-right corner turns all sound off, and Grown-ups has a separate Music switch. On tablets and phones, make sure the device isn't on silent.
 - It's a single file: `index.html`, with plain JavaScript. It loads three.js (r128) from cdnjs for the 3D world and the Fredoka font from Google Fonts. Without either, it still works, in 2D and with a fallback font.
 - To put it online, enable **GitHub Pages** for this repository (Settings → Pages → deploy from the `main` branch) and share the link.
