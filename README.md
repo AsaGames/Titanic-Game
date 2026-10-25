@@ -25,7 +25,10 @@ The Titanic is about to hit an iceberg. You start at the very bottom of the ship
 From the map you can also open:
 
 - **Sticker book:** 21 stickers to collect, like Puppy pal, Eagle eyes, Fish friend and Say cheese. A pop-up tells you when you earn one.
-- **Souvenir shop:** spend the coins you earn (on the ship and from finishing stops) on puppy colours, a party hat for the puppy and a flag for your lifeboat.
+- **Souvenir shop:** spend the coins you earn (on the ship, from finishing stops and from fishing tickets). It has three tabs:
+  - **Pets:** seven puppies (golden, pink, chocolate, black, ginger, husky, spotty) and five kitties (orange, black, white, grey tabby, calico). Whichever you choose is the pet you rescue on the ship, in 2D and 3D.
+  - **Fish:** seahorses (30 tickets), rainbow fish (35), pufferfish (40, puffs up when hooked), octopus (60) and swordfish (80). Fish you buy start swimming in Gone fishing; switch any of them on or off.
+  - **Extras:** a party hat for your pet and a flag for your lifeboat.
 - **1 player / 2 players:** on a computer, two people can play Escape the ship together on one keyboard.
 
 ## How to play
