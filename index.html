@@ -3904,6 +3904,21 @@ function capturePhoto() {
   showScreen('photo');
 }
 
+async function savePhoto() {
+  const note = document.getElementById('saveNote');
+  const blob = await (await fetch(photoURL)).blob();
+  // inside the claude.ai viewer, saving goes through its downloads permission
+  let dl = null;
+  try { dl = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { dl = null; }
+  if (dl) {
+    try { await dl.save({ filename: 'titanic-photo.png', data: blob }); if (note) note.textContent = 'Saved!'; }
+    catch (e) { if (note) note.textContent = e && e.code === 'declined' ? 'Not saved.' : 'Saving is not available here. Right-click (or long-press) the photo to save it.'; }
+    return;
+  }
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'titanic-photo.png';
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
 // ---------- Screens for the story ----------
 function extraScreen(kind) {
   if (kind === 'map') {
@@ -3973,7 +3988,7 @@ function extraScreen(kind) {
       <h2>Say cheese!</h2>
       <img class="photo" src="${photoURL}" alt="A photo from your game">
       <p class="hint">To keep it, press Save picture, or right-click (long-press on a tablet) the photo and save it.</p>
-      <div class="actions"><a class="primary as-btn" id="savePhoto" href="${photoURL}" download="titanic-photo.png">Save picture</a>
+      <div class="actions"><button class="primary" id="savePhoto">Save picture</button><div class="hint" id="saveNote" aria-live="polite"></div>
         <button class="secondary" id="resumeBtn">Keep playing</button></div>`;
   }
   return null;
@@ -3994,6 +4009,7 @@ function drawSouvenirPics() {
 function wireExtra(kind) {
   const on = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
   on('mapBtn', () => showScreen('map'));
+  on('savePhoto', savePhoto);
   on('bookBtn', () => showScreen('stickers'));
   on('souvBtn', () => showScreen('souvenirs'));
   on('nextStop', () => { const i = STOPS.findIndex(s => s.id === lastResult.id); startStop(STOPS[i + 1].id); });
