@@ -78,6 +78,55 @@
   #soundBtn { pointer-events: auto; cursor: pointer; color: var(--text); width: 44px; padding: 0; justify-content: center; font: inherit; }
   #soundBtn svg { width: 22px; height: 22px; }
 
+  #toast { position: fixed; left: 50%; bottom: 72px; transform: translate(-50%, 8px); display: flex; align-items: center; gap: 10px;
+    background: var(--glass-strong); border: 1px solid rgba(232,193,90,0.7); border-radius: 999px; padding: 6px 16px 6px 6px;
+    font-size: 16px; pointer-events: none; opacity: 0; transition: opacity 0.25s, transform 0.25s; box-shadow: 0 10px 30px rgba(0,0,0,0.35); z-index: 5; }
+  #toast.show { opacity: 1; transform: translate(-50%, 0); }
+  body:has(#screen:not(.hide)) #toast { bottom: auto; top: 12px; }
+  #photoBtn { pointer-events: auto; cursor: pointer; color: var(--text); width: 44px; padding: 0; justify-content: center; font: inherit; }
+  #photoBtn svg { width: 22px; height: 22px; }
+  body.three.mini #sky, body.three.mini #gl { display: none; }
+  body.mini #hud > .panel:first-child, body.mini .lvl, body.mini #warn { display: none !important; }
+  .sticker { --c: #1e5aa8; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; flex: none;
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.35), rgba(255,255,255,0) 55%), var(--c);
+    border: 3px solid #fff; box-shadow: 0 3px 0 rgba(0,0,0,0.25); }
+  .sticker svg { width: 28px; height: 28px; filter: drop-shadow(0 1px 0 rgba(0,0,0,0.2)); color: #fff; }
+  .sticker.sm { width: 34px; height: 34px; border-width: 2px; }
+  .sticker.sm svg { width: 18px; height: 18px; }
+  .sticker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 12px; margin: 16px 0 20px; }
+  .sticker-cell { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 12px 6px; border-radius: 14px;
+    background: rgba(255,255,255,0.05); border: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+  .sticker-cell b { color: var(--text); font-size: 15px; font-weight: 600; }
+  .sticker-cell.locked .sticker { opacity: 0.35; filter: grayscale(1); }
+  .new-stickers { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 4px 0 14px; }
+  .sticker-mini { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 13px; font-weight: 600; animation: pop 0.5s ease-out; }
+  @keyframes pop { 0% { transform: scale(0.4); opacity: 0; } 70% { transform: scale(1.12); } 100% { transform: scale(1); opacity: 1; } }
+  .route { list-style: none; padding: 0; margin: 4px 0 16px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; counter-reset: stop; }
+  .stop { width: 100%; height: 100%; display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; gap: 4px 10px; align-items: start;
+    text-align: left; padding: 12px; border-radius: 16px; cursor: pointer; font: inherit; color: var(--text);
+    background: rgba(255,255,255,0.06); border: 1.5px solid var(--line); position: relative; }
+  .stop:not(:disabled):hover { border-color: var(--gold); background: rgba(232,193,90,0.1); }
+  .stop:disabled { cursor: not-allowed; opacity: 0.45; }
+  .stop .num { position: absolute; top: -8px; left: -8px; width: 24px; height: 24px; border-radius: 50%; background: var(--gold); color: #2b1d00; font-weight: 700; font-size: 13px; display: grid; place-items: center; }
+  .stop-icon svg { width: 34px; height: 34px; }
+  .stop-text { display: flex; flex-direction: column; gap: 2px; font-size: 13px; line-height: 1.3; color: var(--muted); min-width: 0; }
+  .stop-text b { color: var(--text); font-size: 16px; font-weight: 600; }
+  .stop-text .sub { color: var(--gold); font-weight: 600; }
+  .tag { grid-column: 1 / -1; justify-self: start; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,0.1); color: var(--muted); }
+  .tag svg { width: 12px; height: 12px; }
+  .tag.done { background: rgba(46,139,87,0.3); color: #b9f5cf; }
+  .tag.new { background: rgba(232,193,90,0.25); color: var(--gold); }
+  .map-tools { margin-bottom: 8px; }
+  .count { background: rgba(255,255,255,0.14); border-radius: 999px; padding: 1px 8px; font-size: 13px; }
+  .big-icon { width: 76px; height: 76px; }
+  .big-icon svg { width: 76px; height: 76px; }
+  img.photo { width: 100%; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); margin: 10px 0 8px; transform: rotate(-1.5deg); }
+  a.as-btn { text-decoration: none; display: inline-block; }
+  .souv-items { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+  .souv-pic { width: 120px; height: 90px; }
+  @media (max-width: 700px) { .route { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 460px) { .route { grid-template-columns: 1fr; } }
   #msg { position: fixed; left: 50%; top: 70px; transform: translate(-50%, -8px); max-width: min(92vw, 640px);
     display: flex; align-items: center; gap: 12px;
     background: var(--glass-strong); border: 1px solid rgba(232, 193, 90, 0.55); border-radius: 14px; padding: 10px 20px;
@@ -96,6 +145,7 @@
   #touch { display: none; }
   body.touch #touch { display: block; }
   body.touch #warn { bottom: auto; top: 118px; }
+  body.touch #toast { bottom: auto; top: 170px; }
   .pad { position: fixed; bottom: 18px; display: flex; gap: 12px; align-items: flex-end; }
   #padL { left: 18px; }
   #padR { right: 18px; }
@@ -242,11 +292,13 @@
   </div>
   <div class="spacer"></div>
   <div class="panel lvl">Level<b id="levelNum">1</b></div>
+  <button class="panel" id="photoBtn" aria-label="Take a photo"></button>
   <button class="panel" id="pauseBtn" aria-label="Pause"></button>
   <button class="panel" id="fsBtn" aria-label="Full screen" hidden></button>
   <button class="panel" id="soundBtn" aria-label="Toggle sound"></button>
 </div>
 <div id="msg"></div>
+<div id="toast"></div>
 <div id="warn"><span class="dot"></span>Get to a lifeboat &mdash; don't touch the water</div>
 
 <div id="touch">
@@ -297,6 +349,14 @@ const ICONS = {
   left: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>',
   right: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>',
   down: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l7 7 7-7"/></svg>',
+  suitcase: '<svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2" fill="#a0632e"/><path d="M9 7V4.5h6V7" fill="none" stroke="#5e3a19" stroke-width="2"/><path d="M7 7v13M17 7v13" stroke="#5e3a19" stroke-width="2"/><rect x="10.5" y="9.5" width="3" height="2" fill="#f2cd37"/></svg>',
+  flame: '<svg viewBox="0 0 24 24"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-7 0 2 1 3 2 3 0-3-1-5 1-8z" fill="#f28c28"/><path d="M12 12c1 2 3 3 3 5a3 3 0 0 1-6 0c0-1.5 1-2.5 3-5z" fill="#ffd166"/></svg>',
+  radio: '<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="12" rx="2" fill="#5b6470"/><circle cx="9" cy="14" r="3.2" fill="#f2cd37"/><rect x="14" y="11" width="5" height="2" rx="1" fill="#e5484d"/><rect x="14" y="15" width="5" height="2" rx="1" fill="#3bb273"/><path d="M8 8l8-5" stroke="#9aa3ad" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  chest: '<svg viewBox="0 0 24 24"><path d="M3 10a5 5 0 0 1 5-5h8a5 5 0 0 1 5 5v1H3z" fill="#a0632e"/><rect x="3" y="11" width="18" height="9" rx="1.5" fill="#8b5a2b"/><path d="M3 11h18M8 5v15M16 5v15" stroke="#d4af37" stroke-width="1.8"/><rect x="10.5" y="11" width="3" height="4" fill="#f2cd37"/></svg>',
+  star: '<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5-4.8-4.6 6.6-.9z" fill="#f2cd37" stroke="#b8860b" stroke-width="1.2" stroke-linejoin="round"/></svg>',
+  camera: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 8h3.5L9 5.5h6L16.5 8H20a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13" r="3.6"/></svg>',
+  fish: '<svg viewBox="0 0 24 24"><path d="M3 12c3-5 10-6 14 0-4 6-11 5-14 0z" fill="#1e9bd7"/><path d="M17 12l4-4v8z" fill="#1e9bd7"/><circle cx="7.5" cy="11" r="1.3" fill="#fff"/></svg>',
+  target: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#fff"/><circle cx="12" cy="12" r="9" fill="none" stroke="#e5484d" stroke-width="3"/><circle cx="12" cy="12" r="4" fill="#e5484d"/></svg>',
   smile: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#f6c92b"/><circle cx="8.7" cy="10" r="1.4" fill="#1b1b1b"/><circle cx="15.3" cy="10" r="1.4" fill="#1b1b1b"/><path d="M7.5 14.2a5 5 0 0 0 9 0" fill="none" stroke="#1b1b1b" stroke-width="1.8" stroke-linecap="round"/></svg>',
   home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M9 5v14M15 5v14"/></svg>',
   palette: '<svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2a4 4 0 0 0 4-4c0-4.4-4-8-9-8z" fill="#e8c15a"/><circle cx="7.5" cy="11" r="1.7" fill="#e5484d"/><circle cx="10" cy="7" r="1.7" fill="#5aa9e6"/><circle cx="15" cy="7" r="1.7" fill="#5bd18b"/></svg>',
@@ -565,6 +625,8 @@ function updateSoundBtn() { $('soundBtn').innerHTML = soundOn ? ICONS.soundOn : 
 updateSoundBtn();
 $('soundBtn').addEventListener('click', () => { soundOn = !soundOn; save('titanic.sound', soundOn); updateSoundBtn(); });
 $('pauseBtn').innerHTML = ICONS.home;
+$('photoBtn').innerHTML = ICONS.camera;
+$('photoBtn').addEventListener('click', () => takePhoto());
 $('pauseBtn').addEventListener('click', () => pauseGame());
 
 // Full screen (where the browser allows it — not on iPhone)
@@ -588,15 +650,22 @@ addEventListener('keydown', e => {
 });
 
 // ---------- Input ----------
-const input = { left: false, right: false, up: false, down: false };
+let input = { left: false, right: false, up: false, down: false };
 let actionQueued = false;
-const KEYMAP = { ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right', ArrowUp: 'up', KeyW: 'up', ArrowDown: 'down', KeyS: 'down' };
+const ARROWS = { ArrowLeft: 'left', ArrowRight: 'right', ArrowUp: 'up', ArrowDown: 'down' };
+const WASD = { KeyA: 'left', KeyD: 'right', KeyW: 'up', KeyS: 'down' };
+const twoP = () => !!(G && G.p2 && !MG);
+const keyFor = code => ARROWS[code] || (!twoP() && WASD[code]) || null;
 addEventListener('keydown', e => {
   if (e.target && e.target.tagName === 'INPUT') return; // typing a name
-  const k = KEYMAP[e.code];
-  if (k && (state === 'play' || state === 'swim' || state === 'dive')) { input[k] = true; e.preventDefault(); }
+  const k = keyFor(e.code), k2 = twoP() ? WASD[e.code] : null;
+  const live = ['play', 'swim', 'dive', 'mini'].includes(state);
+  if (k && live) { if (state === 'mini' && !input[k] && MG.key) MG.key(k); input[k] = true; e.preventDefault(); }
+  if (k2 && live) { input2[k2] = true; e.preventDefault(); }
+  if (e.code === 'KeyP' && screenEl.classList.contains('hide')) { takePhoto(); return; }
+  if (state === 'mini' && (e.code === 'Space' || e.code === 'Enter')) { e.preventDefault(); if (MG.action) MG.action(); return; }
   if (state === 'ending' && (e.code === 'Space' || e.code === 'Enter')) { e.preventDefault(); startDive(); return; }
-  if (e.code === 'Escape' && state === 'play') { pauseGame(); return; }
+  if (e.code === 'Escape' && live) { pauseGame(); return; }
   if (state === 'paused' && (e.code === 'Escape' || e.code === 'Space')) { e.preventDefault(); resumeGame(); return; }
   if (state === 'shop') {
     if (e.code === 'Digit1') buy(SHOP_ITEMS[0].id);
@@ -605,21 +674,30 @@ addEventListener('keydown', e => {
     return;
   }
   if (e.code === 'Space' || e.code === 'Enter' || e.code === 'KeyE') {
-    if (state === 'play') { actionQueued = true; e.preventDefault(); }
-    else if (['menu', 'win', 'lose'].includes(screenKind) && !screenEl.classList.contains('hide') &&
+    if (state === 'play') { if (e.code === 'KeyE' && twoP()) actionQueued2 = true; else actionQueued = true; e.preventDefault(); }
+    else if (['menu', 'win', 'lose', 'miniEnd'].includes(screenKind) && !screenEl.classList.contains('hide') &&
              performance.now() - screenShownAt > 900 && e.code !== 'KeyE') {
-      e.preventDefault(); startGame();
+      e.preventDefault();
+      if (screenKind === 'menu') showScreen('map');
+      else if (screenKind === 'miniEnd') { const b = $('nextStop') || $('replayStop'); if (b) b.click(); }
+      else startGame();
     }
   }
 });
-addEventListener('keyup', e => { const k = KEYMAP[e.code]; if (k) input[k] = false; });
-addEventListener('blur', () => { for (const k in input) input[k] = false; });
+addEventListener('keyup', e => { const k = keyFor(e.code); if (k) input[k] = false; if (WASD[e.code]) input2[WASD[e.code]] = false; });
+addEventListener('blur', () => { for (const k in input) input[k] = false; for (const k in input2) input2[k] = false; });
+cv.addEventListener('pointerdown', e => {
+  if (state !== 'mini' || !MG || !MG.tap || !MG.view) return;
+  ac(); MG.tap((e.clientX - MG.view.ox) / MG.view.s, (e.clientY - MG.view.oy) / MG.view.s);
+});
 document.querySelectorAll('.tbtn').forEach(btn => {
   const k = btn.dataset.k;
   const down = e => {
     e.preventDefault(); ac();
     btn.classList.add('on');
-    if (k) input[k] = true; else if (state === 'play') actionQueued = true;
+    if (k) { if (state === 'mini' && !input[k] && MG.key) MG.key(k); input[k] = true; }
+    else if (state === 'play') actionQueued = true;
+    else if (state === 'mini' && MG.action) MG.action();
     try { btn.setPointerCapture(e.pointerId); } catch (_) {}
   };
   const up = () => { btn.classList.remove('on'); if (k) input[k] = false; };
@@ -715,13 +793,18 @@ function newGame() {
 
 function startGame() {
   ac();
+  MG = null; document.body.classList.remove('mini'); curStop = 'escape';
   newGame();
+  if (prefs.players === 2 && !isTouch) setupTwoPlayers();
+  const bonus = load('titanic.lookoutBonus', false);
+  if (bonus) { G.rate *= 0.75; save('titanic.lookoutBonus', false); }
   if (use3D) rebuild3D();
   state = 'play';
   screenKind = 'none';
   screenEl.classList.add('hide');
   warnEl.style.display = 'none';
-  msg('Explore the Titanic! Find coins and the key.', 5, 'keyGold');
+  if (bonus) msg('Your sharp lookout spotted the iceberg early! It will only scrape the ship, so the water rises more slowly.', 6, 'bell');
+  else msg(G.p2 ? 'Two players! Find coins and the key, then BOTH of you get to a lifeboat.' : 'Explore the Titanic! Find coins and the key.', 5, 'keyGold');
 }
 
 // ---------- Screens ----------
@@ -753,15 +836,24 @@ function avatarURL(i) {
 }
 
 function showScreen(kind) {
+  if ((kind === 'win' || kind === 'lose') && G && G.mode) { // a stop from the story map
+    const won = kind === 'win', D = G.dive, S = G.swim;
+    if (G.mode === 'dive') return miniResult('dive', won, { coins: D ? 3 + Math.round((D.total - D.bumped) / 8) : 3, title: 'The Titanic is resting on the sea floor',
+      text: D ? (D.bumped === 0 ? 'You guided it down and every fish stayed safe!' : `You guided it down and kept ${D.total - D.bumped} of ${D.total} fish safe.`) + (D.onSpot ? ' And you landed right on the spot!' : '') : '' });
+    return miniResult('swim', won, { coins: won ? 5 : 1, title: won ? 'Safe in a lifeboat!' : (S && S.cause === 'shark' ? 'A shark got you' : 'You got too cold'),
+      text: won ? 'You swam all the way to a lifeboat and they pulled you out of the water.' : (S && S.cause === 'shark' ? 'Sharks chase you when you swim close. Swim away and go around them!' : 'Swim straight to a lifeboat, and stay away from the ice. It makes you colder.') });
+  }
+  if ((kind === 'win' || kind === 'lose') && G && !G.mode && !G.banked) { G.banked = true; G.bankedCoins = bankCoins(G.earned); if (kind === 'win') finishStop('escape'); }
+  if (!['miniEnd', 'pause', 'photo'].includes(kind)) { MG = null; document.body.classList.remove('mini'); }
   screenKind = kind;
-  if (kind === 'menu' || kind === 'make' || kind === 'grown' || kind === 'face') state = 'menu';
-  else if (kind === 'pause') state = 'paused';
+  if (['menu', 'make', 'grown', 'face', 'map', 'stickers', 'souvenirs'].includes(kind)) state = 'menu';
+  else if (kind === 'pause' || kind === 'photo') state = 'paused';
   else if (kind !== 'shop') state = 'over';
   screenShownAt = performance.now();
   if (kind !== 'shop' && kind !== 'pause') warnEl.style.display = 'none';
   const keysHint = isTouch ? '' : '<div class="hint">or press Space</div>';
-  let html;
-  if (kind === 'menu') {
+  let html = extraScreen(kind);
+  if (html) {} else if (kind === 'menu') {
     const avatars = KIDS.map((k, i) => `<button class="avatar" data-kid="${i}" aria-pressed="${i === prefs.kid}" aria-label="Player ${i + 1}"><img alt="" src="${avatarURL(i)}"></button>`).join('');
     html = `
       <div class="hero">${ICONS.shipHero}</div>
@@ -784,7 +876,7 @@ function showScreen(kind) {
       </div>`}
       ${pips()}
       <div class="actions">
-        <button class="primary" id="playBtn">Play</button>
+        <button class="primary" id="openMap">Play</button>
         <div class="row">
           <button class="secondary" id="faceBtn">${ICONS.smile}Face maker</button>
           <button class="secondary" id="makeBtn">${ICONS.palette}Make it yours</button>
@@ -823,7 +915,7 @@ function showScreen(kind) {
           <span class="help" style="display:block">After you escape, watch the ship split and sink, then guide it to the sea floor (3D only).</span></span>
           <input type="checkbox" id="endingOpt" ${prefs.ending ? 'checked' : ''}></label></div>
         <div class="field"><span class="lbl">Start over</span><button class="secondary" id="resetAll">Reset everything</button>
-          <div class="help">Goes back to level 1 and clears the face, names and settings.</div></div>
+          <div class="help">Goes back to level 1 and clears the story map, stickers, coins, face, names and settings.</div></div>
       </div>
       <div class="actions"><button class="primary" id="backBtn">Done</button></div>`;
   } else if (kind === 'face') {
@@ -854,7 +946,7 @@ function showScreen(kind) {
       <h2>Take a break</h2>
       <div class="actions" style="margin-top:18px">
         <button class="primary" id="resumeBtn">Keep playing</button>
-        <div class="row"><button class="secondary" id="restartBtn">Start this level again</button><button class="secondary" id="menuBtn">Main menu</button></div>
+        <div class="row"><button class="secondary" id="restartBtn">Start again</button><button class="secondary" id="mapBtn">Story map</button><button class="secondary" id="menuBtn">Main menu</button></div>
       </div>`;
   } else if (kind === 'shop') {
     html = shopHTML();
@@ -867,11 +959,11 @@ function showScreen(kind) {
       <div class="eyebrow">You made it</div>
       <h2>You survived!</h2>
       <p class="lede">${G && G.swim ? 'You swam to a lifeboat and they pulled you out of the water!' : 'You got into a lifeboat in time.'}</p>
-      ${pup}
+      ${pup}${stickerRow()}${rewardRow(G ? G.bankedCoins : 0)}
       <div>${note}</div>
       ${pips()}
       <div class="actions"><button class="primary" id="playBtn">Play level ${level}</button>${keysHint}
-      <button class="link" id="menuBtn">Main menu</button></div>`;
+      <button class="link" id="mapBtn">Story map</button></div>`;
   } else {
     const sw = G && G.swim, shark = sw && sw.cause === 'shark';
     html = `
@@ -880,9 +972,9 @@ function showScreen(kind) {
       <h2>${sw ? (shark ? 'A shark got you' : 'You got too cold') : 'The water got you'}</h2>
       <p class="lede">${sw ? (shark ? 'Sharks chase you when you swim close. Swim away and go around them!' : 'Swim straight to a lifeboat, and stay away from the ice. It makes you colder.')
         : 'You didn\'t make it to a lifeboat this time. Try again &mdash; you can do it!'}</p>
-      ${pips()}
+      ${stickerRow()}${rewardRow(G ? G.bankedCoins : 0)}${pips()}
       <div class="actions"><button class="primary" id="playBtn">Try again</button>${keysHint}
-      <button class="link" id="menuBtn">Main menu</button></div>`;
+      <button class="link" id="mapBtn">Story map</button></div>`;
   }
   cardEl.innerHTML = html;
   screenEl.classList.remove('hide');
@@ -901,20 +993,23 @@ function levelSummary(l) {
 function wireScreen(kind) {
   const on = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
   on('playBtn', startGame);
+  on('openMap', () => showScreen('map'));
   on('menuBtn', () => showScreen('menu'));
   on('makeBtn', () => showScreen('make'));
   on('faceBtn', () => showScreen('face'));
   on('resumeBtn', resumeGame);
-  on('restartBtn', startGame);
+  on('restartBtn', () => startStop(curStop || 'escape'));
   on('resetAll', e => {
     const b = e.currentTarget;
     if (!b.dataset.sure) { b.dataset.sure = '1'; b.textContent = 'Tap again to reset everything'; return; }
     try { Object.keys(localStorage).filter(k => k.startsWith('titanic.')).forEach(k => localStorage.removeItem(k)); } catch (_) {}
-    level = 1; Object.assign(prefs, { kid: 0, dog: 'Biscuit', boat: '#ffffff', sign: '', slow: false, guide: 'auto', ending: true, face: { ...FACE_DEFAULT } });
+    level = 1; story = 1; stickers = []; doneStops = []; Object.assign(souv, { bank: 0, owned: [], dog: 'golden', dogHat: false, flag: false });
+    Object.assign(prefs, { players: 1, kid: 0, dog: 'Biscuit', boat: '#ffffff', sign: '', slow: false, guide: 'auto', ending: true, face: { ...FACE_DEFAULT } });
     faceLayer.getContext('2d').clearRect(0, 0, 288, 288); hasDrawing = false; faceChanged(); if (use3D) refreshShipSign();
     showScreen('menu');
   });
   if (kind === 'face') wireFaceMaker();
+  wireExtra(kind);
   on('grownBtn', () => showScreen('grown'));
   on('backBtn', () => showScreen('menu'));
   on('closeShop', closeShop);
@@ -980,7 +1075,7 @@ function wireFaceMaker() {
   cardEl.querySelectorAll('[data-ink]').forEach(b => b.addEventListener('click', () => { ink = b.dataset.ink; cardEl.querySelectorAll('[data-ink]').forEach(o => o.setAttribute('aria-pressed', String(o === b))); }));
   cardEl.querySelectorAll('[data-size]').forEach(b => b.addEventListener('click', () => { size = +b.dataset.size; cardEl.querySelectorAll('[data-size]').forEach(o => o.setAttribute('aria-pressed', String(o === b))); }));
   const finish = () => {
-    if (!last) return; last = null; hasDrawing = true; prefs.face.custom = true;
+    if (!last) return; last = null; hasDrawing = true; prefs.face.custom = true; award('artist');
     try { save('titanic.faceDraw', faceLayer.toDataURL('image/png')); } catch (_) {}
     changed();
   };
@@ -1001,14 +1096,15 @@ function wireFaceMaker() {
 
 // ---------- Pause ----------
 function pauseGame() {
-  if (state !== 'play') return;
+  if (!['play', 'swim', 'dive', 'mini'].includes(state)) return;
+  pausedFrom = state;
   for (const k in input) input[k] = false;
   showScreen('pause');
 }
 function resumeGame() {
-  state = 'play'; screenKind = 'none';
+  state = pausedFrom || 'play'; screenKind = 'none';
   screenEl.classList.add('hide');
-  if (G.hit) warnEl.style.display = 'flex';
+  if (state === 'play' && G && G.hit) warnEl.style.display = 'flex';
 }
 
 // ---------- Shop ----------
@@ -1197,7 +1293,7 @@ function interact() {
   if (d === 4 && G.gates[2].open) {
     const b = G.boats.find(b => b.state === 'docked' && Math.abs(b.x - player.x) < 70);
     if (b) {
-      if (G.hit) win(b);
+      if (G.hit) boardBoat(b);
       else if (!G.waitMsg) {
         G.waitMsg = true;
         G.tHit = Math.min(G.tHit, G.time + 5);
@@ -1252,19 +1348,30 @@ function win(b) {
   sfx.win();
   msg(G.dog.following ? `All aboard! You and ${dogName()} made it!` : 'All aboard! You made it!', 4, 'boat');
   level++; save('titanic.level', level);
+  escapeStickers();
   const colors = ['#e8c15a', '#5aa9e6', '#e5484d', '#5bd18b', '#f4f1e8'];
   for (let i = 0; i < 60; i++) G.parts.push({ k: 'confetti', x: b.x + rand(-120, 120), y: FLOOR(4) - rand(80, 200), vx: rand(-80, 80), vy: rand(-160, 0), life: rand(2, 3.5), c: pick(colors), r: rand(0, 6) });
 }
 
+function escapeStickers() {
+  award('survivor');
+  if (G.dog.following) award('puppy');
+  if (G.cls === 1) award('fancy');
+  if (level >= 5) award('salt');
+  if (level >= 10) award('captain');
+}
 function lose() {
   state = 'sinking'; G.endT = 0;
   warnEl.style.display = 'none';
   sfx.splash(); setTimeout(sfx.lose, 500);
   for (let i = 0; i < 18; i++) G.parts.push({ k: 'drop', x: player.x, y: G.water, vx: rand(-90, 90), vy: rand(-220, -80), life: 1, s: rand(3, 6) });
+  if (G.p2) G.pl.forEach(p => { p.aboard = false; });
 }
 
 function update(dt) {
   if (msgTimer > 0) { msgTimer -= dt; if (msgTimer <= 0) msgEl.classList.remove('show'); }
+  if (toastTimer > 0) { toastTimer -= dt; if (toastTimer <= 0) toastEl.classList.remove('show'); }
+  if (MG) { if (state === 'mini') { MG.t += dt; MG.update(dt); } return; }
   if (!G || state === 'shop' || state === 'paused') return;
   for (const p of G.parts) {
     p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt;
@@ -1285,11 +1392,18 @@ function update(dt) {
     }
     if (!G.hit && G.time >= G.tHit) hitIceberg();
     if (G.hit) G.water -= G.rate * dt;
-    movePlayer(dt);
+    if (!player.aboard && !player.wet) movePlayer(dt);
+    if (G.p2) withP2(() => { if (!player.aboard && !player.wet) movePlayer(dt); });
     updateWorld(dt);
-    interact();
-    if (state === 'play' && G.water < player.y - 2) {
-      if (G.jacket) startJump('float'); else lose();
+    if (!player.aboard && !player.wet) interact();
+    if (G.p2 && state === 'play') withP2(() => { if (!player.aboard && !player.wet) interact(); });
+    if (!G.p2) {
+      if (state === 'play' && G.water < player.y - 2) { if (G.jacket) startJump('float'); else lose(); }
+    } else if (state === 'play') {
+      for (const pl of G.pl) {
+        if (pl.wet) { pl.y = G.water + 6 + Math.sin(G.time * 3) * 2; pl.moving = false; continue; }
+        if (!pl.aboard && G.water < pl.y - 2 && state === 'play') wetPlayer(pl);
+      }
     }
   } else if (state === 'winning') {
     G.endT += dt;
@@ -1354,6 +1468,7 @@ const DOORS = [{ deck: 1, x: 175 }, { deck: 2, x: 175 }]; // gangway doors on th
 const nearDoor = d => DOORS.some(o => o.deck === d && Math.abs(o.x - player.x) < 40);
 function useDoor() {
   if (!G.hit) { msg('The ship is safe for now. Keep exploring!', 3, 'open'); return; }
+  if (G.p2) { msg('With two players, take the lifeboats together!', 3, 'people'); return; }
   if (!G.jacket) { sfx.nope(); msg('You need a life jacket to jump into the sea. The shop sells them.', 4, 'jacket'); return; }
   startJump('jump');
 }
@@ -1448,7 +1563,7 @@ function swimWin(boat) {
   state = 'swimwin'; G.endT = 0; S.boat = boat;
   sfx.win();
   msg(S.dog ? `They pulled you and ${dogName()} into the lifeboat!` : 'They pulled you into the lifeboat! You made it!', 4, 'boat');
-  level++; save('titanic.level', level);
+  if (!G.mode) { level++; save('titanic.level', level); escapeStickers(); award('splash'); }
   const colors = ['#e8c15a', '#5aa9e6', '#e5484d', '#5bd18b', '#f4f1e8'];
   for (let i = 0; i < 50; i++) G.parts.push({ k: 'confetti', x: boat.x + rand(-90, 90), y: boat.y - rand(40, 140), vx: rand(-80, 80), vy: rand(-160, 0), life: rand(2, 3), c: pick(colors), r: rand(0, 6) });
 }
@@ -1611,8 +1726,8 @@ function drawSwimmer(x, y, ang, t, moving, a) { // a minifigure from above
 function drawTopDog(x, y, ang, t) {
   cx.save(); cx.translate(x, y); cx.rotate(ang);
   cx.strokeStyle = 'rgba(210,235,255,0.3)'; cx.lineWidth = 2; circle(0, 0, 16 + Math.sin(t * 4) * 2); cx.stroke();
-  cx.fillStyle = '#c58b52'; ellipse(-2, 0, 10, 7); cx.fill(); circle(8, 0, 6); cx.fill();
-  cx.fillStyle = '#8a5a30'; ellipse(7, -6, 3, 2); cx.fill(); ellipse(7, 6, 3, 2); cx.fill();
+  cx.fillStyle = dogPal().main; ellipse(-2, 0, 10, 7); cx.fill(); circle(8, 0, 6); cx.fill();
+  cx.fillStyle = dogPal().dark; ellipse(7, -6, 3, 2); cx.fill(); ellipse(7, 6, 3, 2); cx.fill();
   cx.fillStyle = '#222'; circle(13.5, 0, 1.5); cx.fill();
   cx.restore();
 }
@@ -1900,17 +2015,19 @@ function drawDog(x, y, face, walkT, moving, t) { // a brick-built puppy
   const sw = moving ? Math.sin(walkT * 16) : 0;
   cx.save(); cx.translate(x, y); cx.scale(face, 1);
   cx.fillStyle = 'rgba(0,0,0,0.22)'; ellipse(0, 0, 13, 2.5); cx.fill();
-  cx.fillStyle = '#9a6a3c';
+  cx.fillStyle = dogPal().leg;
   for (const [lx, k] of [[-10, 1], [-4, -1], [4, 1], [9, -1]]) cx.fillRect(lx + sw * 2 * k, -9, 4, 9);
   const wag = Math.sin(t * (moving ? 18 : 10)) * 0.5;
-  cx.save(); cx.translate(-12, -16); cx.rotate(-0.8 + wag * 0.5); cx.fillStyle = '#8a5a30'; cx.fillRect(-2, -10, 4, 10); cx.restore();
-  brick(-13, -18, 24, 10, '#c58b52', false);
-  stud(-1, -18, '#c58b52');
-  brick(5, -29, 12, 12, '#c58b52', false);
-  cx.fillStyle = '#e8c39a'; cx.fillRect(15, -24, 7, 6);
+  cx.save(); cx.translate(-12, -16); cx.rotate(-0.8 + wag * 0.5); cx.fillStyle = dogPal().dark; cx.fillRect(-2, -10, 4, 10); cx.restore();
+  brick(-13, -18, 24, 10, dogPal().main, false);
+  stud(-1, -18, dogPal().main);
+  brick(5, -29, 12, 12, dogPal().main, false);
+  cx.fillStyle = dogPal().light; cx.fillRect(15, -24, 7, 6);
   cx.fillStyle = '#222'; cx.fillRect(20, -25, 3, 3); cx.fillRect(12, -26, 2, 2);
-  cx.fillStyle = '#8a5a30'; cx.fillRect(5, -29, 4, 10);
+  cx.fillStyle = dogPal().dark; cx.fillRect(5, -29, 4, 10);
   cx.fillStyle = '#e5484d'; cx.fillRect(5, -18, 10, 2.5);
+  if (souv.dogHat) { cx.fillStyle = '#ef7b8b'; cx.beginPath(); cx.moveTo(6, -29); cx.lineTo(16, -29); cx.lineTo(11, -42); cx.fill(); cx.fillStyle = '#f2cd37'; circle(11, -43, 2.5); cx.fill(); }
+  if (souv.dog === 'spotty') { cx.fillStyle = '#2b2b2b'; cx.fillRect(-8, -16, 5, 4); cx.fillRect(2, -14, 4, 3); cx.fillRect(9, -27, 3, 3); }
   cx.restore();
 }
 function drawKey(x, y, s, glowA, silver) {
@@ -2040,6 +2157,7 @@ function drawLifeboat(x, y) {
   cx.lineTo(x - 40, y); cx.lineTo(x - 50, y - 16); cx.closePath(); cx.fill();
   cx.fillStyle = 'rgba(0,0,0,0.18)'; cx.fillRect(x - 50, y - 17, 100, 2);
   brick(x - 68, y - 38, 136, 7, '#8a5a30');
+  if (souv.flag) { cx.fillStyle = '#8a5a30'; cx.fillRect(x - 54, y - 92, 3, 56); cx.fillStyle = '#c91a09'; cx.fillRect(x - 51, y - 92, 26, 16); cx.fillStyle = '#fff'; cx.fillRect(x - 51, y - 86, 26, 4); }
 }
 function drawSpark(x, y, s) {
   cx.beginPath();
@@ -2252,7 +2370,8 @@ function drawClassic(now) {
 
   // camera follows the (tilted) player
   const viewW = W / viewScale, viewH = H / viewScale;
-  const pt = player ? tilted(player.x, player.y) : { x: 900, y: 520 };
+  const foc = player ? camFocus() : null;
+  const pt = player ? tilted(foc.x, foc.y) : { x: 900, y: 520 };
   let camX = viewW >= WORLD_W ? (WORLD_W - viewW) / 2 : clamp(pt.x - viewW / 2, 0, WORLD_W - viewW);
   let camY = viewH >= WORLD_H ? (WORLD_H - viewH) / 2 : clamp(pt.y - 70 - viewH / 2, 0, WORLD_H - viewH);
   if (G) {
@@ -2378,7 +2497,9 @@ function drawClassic(now) {
       drawDog(G.dog.x, G.dog.y, G.dog.face, 0, false, t);
       if (Math.sin(t * 3) > 0.3) { cx.fillStyle = '#ff7a8a'; drawHeart(G.dog.x + 8, G.dog.y - 38, 6); }
     } else drawDog(G.dog.x, G.dog.y, G.dog.face, G.dog.walkT, G.dog.moving, t);
-    drawKid(player.x, player.y, state === 'jumping' && G.jump && G.jump.air ? { climbing: true } : {});
+    if (!player.aboard) drawKid(player.x, player.y, state === 'jumping' && G.jump && G.jump.air ? { climbing: true } : {});
+    if (G.p2 && !player2.aboard) drawPerson(player2.x, player2.y, { ...p2Look(), face: player2.face, walkT: player2.walkT, moving: player2.moving, climbing: player2.climb });
+    if (G.p2) for (const pl of G.pl) if (!pl.aboard) { cx.fillStyle = pl.n === 1 ? '#1e5aa8' : '#c91a09'; circle(pl.x, pl.y - 96, 11); cx.fill(); cx.fillStyle = '#fff'; cx.font = `700 13px ${FONT}`; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(String(pl.n), pl.x, pl.y - 95); }
   }
 
   // prompts
@@ -2769,19 +2890,22 @@ function poseFig(f, s) { // place and animate a minifigure. s: {x, y, z, face, m
 }
 function makeDog3D() {
   const g = new THREE.Group(), b = new THREE.Group(); g.add(b);
-  const tan = '#c58b52', dark = '#8a5a30';
+  const P = dogPal(), tan = P.main, dark = P.dark;
   const legs = [];
-  for (const [x, z] of [[-0.6, -0.3], [-0.6, 0.3], [0.6, -0.3], [0.6, 0.3]]) { const l = box(0.28, 0.6, 0.28, '#9a6a3c', x, 0.3, z, b); legs.push(l); }
+  for (const [x, z] of [[-0.6, -0.3], [-0.6, 0.3], [0.6, -0.3], [0.6, 0.3]]) { const l = box(0.28, 0.6, 0.28, P.leg, x, 0.3, z, b); legs.push(l); }
   brickBox(1.8, 0.6, 1.0, tan, 0, 0.6, 0, b);
   box(0.9, 0.85, 0.9, tan, 1.05, 1.55, 0, b);
-  box(0.5, 0.42, 0.62, '#e8c39a', 1.65, 1.38, 0, b);
+  box(0.5, 0.42, 0.62, P.light, 1.65, 1.38, 0, b);
   box(0.16, 0.16, 0.2, '#222222', 1.95, 1.55, 0, b);
   box(0.12, 0.6, 0.3, dark, 0.95, 1.6, 0.5, b); box(0.12, 0.6, 0.3, dark, 0.95, 1.6, -0.5, b);
   box(0.95, 0.14, 0.95, '#e5484d', 1.0, 1.15, 0, b);
   for (const z of [0.25, -0.25]) box(0.1, 0.12, 0.1, '#111111', 1.42, 1.75, z, b);
   const tail = new THREE.Group(); tail.position.set(-0.9, 1.1, 0); b.add(tail); box(0.18, 0.7, 0.18, dark, 0, 0.3, 0, tail);
+  if (souv.dog === 'spotty') { box(0.5, 0.05, 0.4, '#2b2b2b', -0.3, 1.22, 0.1, b); box(0.3, 0.05, 0.3, '#2b2b2b', 0.4, 1.22, -0.2, b); }
+  const dog = { root: g, body: b, legs, tail };
+  addDogHat3D(dog);
   g.traverse(m => { if (m.isMesh) m.castShadow = true; });
-  return { root: g, body: b, legs, tail };
+  return dog;
 }
 function poseDog(d, x, y, z, face, moving, walkT, t) {
   d.root.position.set(x, y, z);
@@ -2801,6 +2925,7 @@ function makeLifeboat3D() {
   box(8.6, 0.36, 3.5, '#8a5a30', 0, 2.18, 0, g);
   studs(-4.3, 4.3, 2.36, -1.75, -1.0, '#8a5a30', g); studs(-4.3, 4.3, 2.36, 1.0, 1.75, '#8a5a30', g);
   box(0.5, 0.4, 2.6, '#8a5a30', -1.6, 1.85, 0, g); box(0.5, 0.4, 2.6, '#8a5a30', 1.6, 1.85, 0, g);
+  addFlag3D(g);
   return g;
 }
 function makeCoin() { const g = new THREE.Group(); const c = mesh(R3.geo.coin, M('#f2c94c', { metalness: 0.55, roughness: 0.22 }), g); c.rotation.x = Math.PI / 2; const r = mesh(R3.geo.coinRing, M('#c99a26', { metalness: 0.5, roughness: 0.3 }), g, 0, 0, 0.07); return g; }
@@ -3066,6 +3191,7 @@ function rebuild3D() { // per-game objects
   if (!use3D || !G) return;
   const dyn = R3.dyn; clearGroup(dyn);
   const F = R3.figs = {};
+  F.player2 = G.p2 ? makeMinifig(p2Look()) : null; if (F.player2) dyn.add(F.player2.root);
   F.player = makeMinifig({ ...KID_STYLE[3], ...KIDS[prefs.kid], faceLook: prefs.face }); dyn.add(F.player.root); F.playerCls = 3; F.playerJacket = false; F.playerShoes = false;
   F.npcs = G.npcs.map(n => { const f = makeMinifig(n.look); dyn.add(f.root); n.fig3 = f; return f; });
   F.crew = CREW.map(() => { const f = makeMinifig(SAILOR); dyn.add(f.root); return f; });
@@ -3097,6 +3223,7 @@ function syncFig(f, look) { // swap the player figure when the class (outfit) or
   const parent = F.player.root.parent; parent.remove(F.player.root);
   F.player = makeMinifig({ ...KID_STYLE[G.cls], ...KIDS[prefs.kid], faceLook: prefs.face, jacket: G.jacket, shoes: G.shoes });
   parent.add(F.player.root);
+  if (F.player2) { parent.remove(F.player2.root); F.player2 = makeMinifig(p2Look()); parent.add(F.player2.root); }
 }
 
 function buildSwim3D() {
@@ -3146,21 +3273,22 @@ function update3D(t, dusk, lights) {
     s.visible = !(G && G.hit);
     s.position.set(s.userData.fx - k * 7, s.userData.top + k * 5, -4.1); s.scale.setScalar(2.5 + k * 4); s.material.opacity = 0.35 * (1 - k);
   }
-  const special = !!G && (state === 'ending' || state === 'dive');
+  const vs = viewState();
+  const special = !!G && (vs === 'ending' || vs === 'dive');
   const swimming = !!(G && G.swim) && !special;
   R3.swimGroup.visible = swimming; R3.sea.visible = !swimming; R3.berg.visible = !swimming;
   R3.dyn.visible = !!G && !swimming;
   if (!special) { R3.shipRoot.visible = true; if (R3.endGroup) R3.endGroup.visible = false; if (R3.diveGroup) R3.diveGroup.visible = false; }
   const fog = R3.scene.fog;
-  if (state === 'dive') { fog.color.copy(col('#0e3f6e')); fog.near = 70; fog.far = 230; } else { fog.near = 120; fog.far = 420; }
+  if (vs === 'dive') { fog.color.copy(col('#0e3f6e')); fog.near = 70; fog.far = 230; } else { fog.near = 120; fog.far = 420; }
   R3.water.visible = !!G && !swimming && G.water < HULL_BOTTOM + 5;
 
   if (!G) { // title screen: drift slowly along the ship
     R3.shipRoot.rotation.z = 0; R3.shipRoot.position.set(PIVOT_X * U, Y3(PIVOT_Y), 0);
     const x = 70 + Math.sin(t * 0.08) * 45;
     lerpTo(R3.camPos, x + 8, 26, 78, ease * 0.4); lerpTo(R3.camLook, x, 18, 0, ease * 0.4);
-  } else if (state === 'ending') updateEnding3D(t);
-  else if (state === 'dive') updateDive3D(t);
+  } else if (vs === 'ending') updateEnding3D(t);
+  else if (vs === 'dive') updateDive3D(t);
   else if (swimming) updateSwim3D(t);
   else {
     ship.position.set(PIVOT_X * U, Y3(PIVOT_Y), 0); ship.rotation.z = -G.tilt;
@@ -3173,7 +3301,8 @@ function update3D(t, dusk, lights) {
     const pd = deckAt(player.y);
     // the player
     const pVisible = state !== 'winning';
-    F.player.root.visible = pVisible;
+    F.player.root.visible = pVisible && !player.aboard;
+    if (F.player2) { F.player2.root.visible = state !== 'winning' && !player2.aboard; poseFig(F.player2, { x: player2.x * U, y: Y3(player2.y), z: player2.climb ? -0.6 : 0.9, face: player2.face, moving: player2.moving, climbing: player2.climb, walkT: player2.walkT, t, scale: 1.1 }); F.player2.key.visible = false; }
     if (pVisible) { poseFig(F.player, { x: player.x * U, y: Y3(player.y), z: player.climb ? -0.6 : 0.6, face: player.face, moving: player.moving, climbing: player.climb, walkT: player.walkT, t, scale: 1.1 }); F.player.key.visible = G.hasKey && !player.climb; F.player.jacket.visible = G.jacket; }
     if (state === 'jumping' && G.jump) {
       const J = G.jump, jp = jumpPos(J, J.t), z = jumpZ(J, J.t);
@@ -3225,10 +3354,11 @@ function update3D(t, dusk, lights) {
       } else m.visible = false;
     });
     // camera follows you (or your lifeboat)
-    const fx = state === 'winning' && G.boat ? G.boat.x : player.x, fy = state === 'winning' && G.boat ? G.boat.y - 40 : player.y;
+    const foc = camFocus(), fx = state === 'winning' && G.boat ? G.boat.x : foc.x, fy = state === 'winning' && G.boat ? G.boat.y - 40 : foc.y;
     const p = tilted(fx, fy), tx = p.x * U, ty = Y3(p.y);
     const cz = state === 'jumping' && G.jump ? jumpZ(G.jump, G.jump.t) : 0, far = state === 'jumping' ? 12 : state === 'winning' ? 14 : 0;
-    lerpTo(R3.camPos, tx + 3.2 - far * 0.3, ty + 5.2 + far * 0.25, 29 + cz + far, ease); lerpTo(R3.camLook, tx, ty + 2.4, -1 + cz * 0.6, ease);
+    const spread = foc.spread ? Math.min(40, foc.spread * U * 0.9) : 0;
+    lerpTo(R3.camPos, tx + 3.2 - far * 0.3, ty + 5.2 + far * 0.25 + spread * 0.2, 29 + cz + far + spread, ease); lerpTo(R3.camLook, tx, ty + 2.4, -1 + cz * 0.6, ease);
     if (G.shake > 0) { R3.camPos.x += rand(-0.25, 0.25) * G.shake; R3.camPos.y += rand(-0.25, 0.25) * G.shake; }
   }
   cam.position.copy(R3.camPos); cam.lookAt(R3.camLook);
@@ -3281,7 +3411,7 @@ function drawSky3D(t, W, H, dusk) {
   if (!skyCx) skyCx = c.getContext('2d');
   const saved = cx; cx = skyCx;
   cx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  if (G && state === 'dive') { // deep under the sea
+  if (G && viewState() === 'dive') { // deep under the sea
     const u = cx.createLinearGradient(0, 0, 0, H); u.addColorStop(0, '#2f7fbf'); u.addColorStop(1, '#06203f');
     cx.fillStyle = u; cx.fillRect(0, 0, W, H);
     for (let i = 0; i < 6; i++) { const x = W * (0.1 + i * 0.17) + Math.sin(t * 0.3 + i) * 30; const r = cx.createLinearGradient(0, 0, 0, H); r.addColorStop(0, 'rgba(200,235,255,0.16)'); r.addColorStop(1, 'rgba(200,235,255,0)'); cx.fillStyle = r; cx.beginPath(); cx.moveTo(x - 30, 0); cx.lineTo(x + 30, 0); cx.lineTo(x + 140, H); cx.lineTo(x + 40, H); cx.fill(); }
@@ -3315,7 +3445,7 @@ function drawOverlay3D(t, W, H) {
   if (!G) return;
   const k = 1.2;
   const at = (p, fn) => { if (p.off) return; cx.save(); cx.setTransform(dpr * k, 0, 0, dpr * k, p.x * dpr, p.y * dpr); fn(); cx.restore(); };
-  if (state === 'dive') { overlayDive(t, W, H, at); return; }
+  if (viewState() === 'dive') { overlayDive(t, W, H, at); return; }
   if (state === 'ending') { vignette(W, H); if (G.flash > 0) { cx.fillStyle = `rgba(255,255,255,${G.flash * 0.5})`; cx.fillRect(0, 0, W, H); } return; }
   if (G.swim) { overlaySwim3D(t, W, H, at); return; }
   const pd = deckAt(player.y);
@@ -3351,6 +3481,10 @@ function drawOverlay3D(t, W, H) {
       drawUpBadge(p.x, p.y - Math.abs(Math.sin(t * 5)) * 8, 0.6 + 0.4 * Math.abs(Math.sin(t * 5)));
     }
     if (guideOn()) drawGuide((x, y) => shipToScreen(x, y), W, H, t);
+    if (G.p2) for (const pl of G.pl) if (!pl.aboard) { const q = shipToScreen(pl.x, pl.y - 108); if (!q.off) { cx.fillStyle = pl.n === 1 ? '#1e5aa8' : '#c91a09'; circle(q.x, q.y, 13); cx.fill(); cx.strokeStyle = '#fff'; cx.lineWidth = 2; cx.stroke(); cx.fillStyle = '#fff'; cx.font = `700 15px ${FONT}`; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(String(pl.n), q.x, q.y + 1); } }
+    if (G.p2) withP2(() => { const d2 = deckAt(player.y); if (d2 < 0 || player.aboard || player.wet) return;
+      for (const s2 of G.spots) if (!s2.searched && s2.deck === d2 && Math.abs(s2.x - player.x) < 48) at(shipToScreen(s2.x, FLOOR(d2) - 70, -2.6), () => prompt(0, 0, 'search'));
+      for (const l of LADDERS) if (Math.abs(l.x - player.x) <= 40) { if (l.from === d2) at(shipToScreen(l.x, FLOOR(d2) - 100, -1.4), () => prompt(0, 0, 'up')); if (l.from + 1 === d2) at(shipToScreen(l.x, FLOOR(d2) - 100, -1.4), () => prompt(0, 0, 'down')); } });
   }
   drawMiniMap(W, H);
 }
@@ -3474,6 +3608,8 @@ function updateDive(dt) {
     }
   }
   if (D.y - 7 <= DIVE.floor) {
+    if (D.bumped === 0) award('fishfriend');
+    if (Math.abs(D.x - D.landX) < 10) award('bullseye');
     D.y = DIVE.floor + 7; D.landed = true; D.landT = D.t; G.shake = 0.6; sfx.splash();
     const safe = D.total - D.bumped, onSpot = Math.abs(D.x - D.landX) < 10;
     D.onSpot = onSpot;
@@ -3599,8 +3735,938 @@ function overlayDive(t, W, H, at) {
   }
 }
 
-function finishEscape() { if (use3D && prefs.ending) startEnding(); else showScreen('win'); }
-function draw(now) { if (use3D) draw3D(now); else drawClassic(now); }
+// =====================================================================
+// THE STORY MAP: nine stops played in order, from boarding day to
+// finding treasure in the wreck. Plus stickers, the souvenir shop,
+// two players and photo mode.
+// =====================================================================
+const STOPS = [
+  { id: 'boarding', name: 'Boarding day', icon: 'suitcase', desc: 'Load the suitcases onto the ship with the crane.' },
+  { id: 'coal', name: 'Shovel the coal', icon: 'flame', desc: 'Shovel coal in time to get the ship to full speed.' },
+  { id: 'lookout', name: 'Lookout', icon: 'bell', desc: 'Spot the iceberg through the fog and ring the bell.' },
+  { id: 'radio', name: 'Radio for help', icon: 'radio', desc: 'Copy the signal to call the rescue ship.' },
+  { id: 'escape', name: 'Escape the ship', icon: 'keyGold', desc: 'Find the key and get to a lifeboat.' },
+  { id: 'swim', name: 'Swim to safety', icon: 'jacket', desc: 'Swim past sharks and icebergs to a lifeboat.' },
+  { id: 'row', name: 'Row to the rescue', icon: 'boat', desc: 'Row through the ice and pick up swimmers.' },
+  { id: 'dive', name: 'Guide it down', icon: 'wave', desc: 'Steer the wreck past the fish to the sea floor.' },
+  { id: 'treasure', name: 'Find the treasure', icon: 'chest', desc: 'Explore the wreck in a little submarine.' },
+];
+let story = clamp(Number(load('titanic.story', 1)) || 1, 1, STOPS.length);  // how many stops are open
+let doneStops = (() => { const v = load('titanic.done', []); return Array.isArray(v) ? v.filter(id => STOPS.some(s => s.id === id)) : []; })();
+function finishStop(id) {
+  const i = STOPS.findIndex(s => s.id === id);
+  if (!doneStops.includes(id)) { doneStops.push(id); save('titanic.done', doneStops); }
+  if (i + 2 > story) { story = Math.min(STOPS.length, i + 2); save('titanic.story', story); }
+}
+
+// ---------- Stickers ----------
+const STICKERS = [
+  { id: 'survivor', name: 'Survivor', hint: 'Escape the ship', icon: 'boat', color: '#1e5aa8' },
+  { id: 'puppy', name: 'Puppy pal', hint: 'Save the puppy', icon: 'dog', color: '#c58b52' },
+  { id: 'splash', name: 'Big splash', hint: 'Escape by swimming', icon: 'jacket', color: '#f28c28' },
+  { id: 'fancy', name: 'Fancy!', hint: 'Become 1st Class', icon: 'coin', color: '#d9a52b' },
+  { id: 'salt', name: 'Old salt', hint: 'Reach level 5', icon: 'star', color: '#2e8b57' },
+  { id: 'captain', name: 'Captain', hint: 'Reach level 10', icon: 'star', color: '#c91a09' },
+  { id: 'packer', name: 'Perfect packer', hint: 'Stack all 8 suitcases without a splash', icon: 'suitcase', color: '#8b5a2b' },
+  { id: 'steam', name: 'Full steam', hint: 'Shovel the ship to full speed', icon: 'flame', color: '#e8590c' },
+  { id: 'eagle', name: 'Eagle eyes', hint: 'Spot the iceberg really fast', icon: 'ice', color: '#1e9bd7' },
+  { id: 'sparks', name: 'Sparks', hint: 'Radio for help', icon: 'radio', color: '#7a3b6e' },
+  { id: 'rescuer', name: 'Rescuer', hint: 'Pick up every swimmer', icon: 'people', color: '#2e8b57' },
+  { id: 'fishfriend', name: 'Fish friend', hint: 'Guide the wreck down without bumping a fish', icon: 'fish', color: '#0a8fd0' },
+  { id: 'bullseye', name: 'Bullseye', hint: 'Land the wreck on the glowing spot', icon: 'target', color: '#e5484d' },
+  { id: 'treasure', name: 'Treasure hunter', hint: 'Find all the treasure', icon: 'chest', color: '#b8860b' },
+  { id: 'team', name: 'Teamwork', hint: 'Escape together with 2 players', icon: 'people', color: '#ef7b8b' },
+  { id: 'cheese', name: 'Say cheese', hint: 'Take a photo', icon: 'camera', color: '#4a4f57' },
+  { id: 'artist', name: 'Artist', hint: 'Draw your own face', icon: 'palette', color: '#ff9f43' },
+  { id: 'shopper', name: 'Shopper', hint: 'Buy a souvenir', icon: 'coin', color: '#b05ad9' },
+];
+let stickers = (() => { const v = load('titanic.stickers', []); return Array.isArray(v) ? v.filter(id => STICKERS.some(s => s.id === id)) : []; })();
+let newStickers = [];
+const toastEl = document.getElementById('toast');
+let toastTimer = 0;
+function award(id) {
+  if (stickers.includes(id)) return;
+  stickers.push(id); newStickers.push(id); save('titanic.stickers', stickers);
+  const s = STICKERS.find(s => s.id === id);
+  toastEl.innerHTML = `<span class="sticker sm" style="--c:${s.color}">${ICONS[s.icon]}</span><span>New sticker: <b>${esc(s.name)}</b></span>`;
+  toastEl.classList.add('show'); toastTimer = 3.5;
+  tone(1319, 0.2, 'sine', 0.07, 0.05); tone(1760, 0.3, 'sine', 0.07, 0.18);
+}
+function stickerRow() {
+  if (!newStickers.length) return '';
+  const html = `<div class="new-stickers">${newStickers.map(id => { const s = STICKERS.find(x => x.id === id); return `<div class="sticker-mini"><span class="sticker" style="--c:${s.color}">${ICONS[s.icon]}</span><span>${esc(s.name)}</span></div>`; }).join('')}</div>`;
+  newStickers = [];
+  return html;
+}
+const rewardRow = coins => coins > 0 ? `<div class="saved">${ICONS.coin}<span>+${coins} coins for the souvenir shop</span></div>` : '';
+
+// ---------- Souvenir shop (coins you keep between games) ----------
+const SOUVENIRS = [
+  { id: 'dog-chocolate', name: 'Chocolate puppy', price: 6, dog: 'chocolate' },
+  { id: 'dog-black', name: 'Black puppy', price: 6, dog: 'black' },
+  { id: 'dog-spotty', name: 'Spotty puppy', price: 8, dog: 'spotty' },
+  { id: 'dogHat', name: 'Puppy party hat', price: 5, toggle: true },
+  { id: 'flag', name: 'Lifeboat flag', price: 8, toggle: true },
+];
+const souv = (() => {
+  const v = load('titanic.souv', null) || {};
+  return { bank: Math.max(0, Math.floor(Number(v.bank) || 0)), owned: Array.isArray(v.owned) ? v.owned : [],
+    dog: ['golden', 'chocolate', 'black', 'spotty'].includes(v.dog) ? v.dog : 'golden', dogHat: !!v.dogHat, flag: !!v.flag };
+})();
+const saveSouv = () => save('titanic.souv', souv);
+function bankCoins(n) { n = Math.max(0, Math.floor(n || 0)); if (n) { souv.bank += n; saveSouv(); } return n; }
+const DOG_PALS = {
+  golden: { main: '#c58b52', dark: '#8a5a30', light: '#e8c39a', leg: '#9a6a3c' },
+  chocolate: { main: '#6b4226', dark: '#3e2414', light: '#a0714a', leg: '#55331c' },
+  black: { main: '#2f2f33', dark: '#141416', light: '#6a6a70', leg: '#222226' },
+  spotty: { main: '#f4f4f4', dark: '#2b2b2b', light: '#ffffff', leg: '#dedede' },
+};
+const dogPal = () => DOG_PALS[souv.dog] || DOG_PALS.golden;
+
+// ---------- Two players ----------
+prefs.players = load('titanic.players', 1) === 2 ? 2 : 1;
+let player2 = null, input2 = { left: false, right: false, up: false, down: false }, actionQueued2 = false;
+function setupTwoPlayers() {
+  G.p2 = true;
+  player2 = { x: 330, y: FLOOR(0), face: 1, walkT: 0, climb: false, moving: false, label: 'Player 2', n: 2 };
+  player.label = 'Player 1'; player.n = 1;
+  G.pl = [player, player2];
+}
+function withP2(fn) { // run game code as Player 2 by swapping the globals it uses
+  let t = player; player = player2; player2 = t;
+  t = input; input = input2; input2 = t;
+  t = actionQueued; actionQueued = actionQueued2; actionQueued2 = t;
+  try { fn(); } finally {
+    t = player; player = player2; player2 = t;
+    t = input; input = input2; input2 = t;
+    t = actionQueued; actionQueued = actionQueued2; actionQueued2 = t;
+  }
+}
+const p2Look = () => ({ ...KID_STYLE[G.cls], ...KIDS[(prefs.kid + 1) % KIDS.length], faceLook: FACE_DEFAULT });
+function boardBoat(b) {
+  if (!G.p2) { win(b); return; }
+  player.aboard = true; G.lastBoat = b; sfx.open();
+  const waiting = G.pl.some(p => !p.aboard && !p.wet);
+  msg(waiting ? `${player.label} is in the lifeboat! Waiting for the other player...` : `${player.label} is in the lifeboat!`, 3.5, 'boat');
+  checkTeam();
+}
+function checkTeam() {
+  const ps = G.pl;
+  if (ps.every(p => p.aboard || p.wet) && ps.some(p => p.aboard)) {
+    if (ps.every(p => p.aboard)) award('team');
+    win(G.lastBoat);
+  } else if (ps.every(p => p.wet)) lose();
+}
+function wetPlayer(p) {
+  p.wet = true; sfx.splash();
+  for (let i = 0; i < 12; i++) G.parts.push({ k: 'drop', x: p.x, y: G.water, vx: rand(-90, 90), vy: rand(-200, -80), life: 1, s: rand(3, 6) });
+  const other = G.pl.find(o => o !== p);
+  if (!other.wet && !other.aboard) msg(`${p.label} got wet! ${other.label}, get to a lifeboat and they'll pick ${p.n === 1 ? 'Player 1' : 'Player 2'} up!`, 4.5, 'wave');
+  checkTeam();
+}
+function camFocus() {
+  if (!G || !G.p2 || state === 'winning') return player;
+  const ps = G.pl.filter(p => !p.aboard && !p.wet);
+  const list = ps.length ? ps : G.pl;
+  return { x: list.reduce((a, p) => a + p.x, 0) / list.length, y: list.reduce((a, p) => a + p.y, 0) / list.length,
+    spread: list.length > 1 ? Math.hypot(list[0].x - list[1].x, (list[0].y - list[1].y) * 2) : 0 };
+}
+
+// ---------- Photo mode ----------
+let photoPending = false, photoURL = null, pausedFrom = null;
+function takePhoto() {
+  if (!['play', 'swim', 'dive', 'mini', 'ending', 'winning', 'swimwin', 'jumping'].includes(state)) return;
+  photoPending = true;
+}
+function capturePhoto() {
+  const W = innerWidth, H = innerHeight, sc = Math.min(1, 1200 / W);
+  const shot = document.createElement('canvas'); shot.width = Math.round(W * sc); shot.height = Math.round(H * sc);
+  const g = shot.getContext('2d');
+  const three = document.body.classList.contains('three') && !MG;
+  try {
+    if (three) { g.drawImage(document.getElementById('sky'), 0, 0, shot.width, shot.height); g.drawImage(document.getElementById('gl'), 0, 0, shot.width, shot.height); }
+    g.drawImage(cv, 0, 0, shot.width, shot.height);
+  } catch (e) { return; }
+  // a white instant-photo frame with a caption
+  const pad = Math.round(shot.width * 0.04), foot = Math.round(shot.width * 0.12);
+  const out = document.createElement('canvas'); out.width = shot.width + pad * 2; out.height = shot.height + pad + foot;
+  const o = out.getContext('2d');
+  o.fillStyle = '#fbfaf6'; o.fillRect(0, 0, out.width, out.height);
+  o.drawImage(shot, pad, pad);
+  o.fillStyle = '#1d2340'; o.textAlign = 'center'; o.textBaseline = 'middle';
+  o.font = `600 ${Math.round(foot * 0.34)}px ${FONT}`;
+  o.fillText('The Titanic Game', out.width / 2, shot.height + pad + foot * 0.42);
+  o.font = `400 ${Math.round(foot * 0.2)}px ${FONT}`; o.fillStyle = '#6b7280';
+  o.fillText(new Date().toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }), out.width / 2, shot.height + pad + foot * 0.74);
+  photoURL = out.toDataURL('image/png');
+  sfx.search(); award('cheese');
+  pausedFrom = state; for (const k in input) input[k] = false;
+  showScreen('photo');
+}
+
+// ---------- Screens for the story ----------
+function extraScreen(kind) {
+  if (kind === 'map') {
+    const stops = STOPS.map((s, i) => {
+      const open = i < story, done = doneStops.includes(s.id);
+      const tag = !open ? `<span class="tag">${ICONS.lock}Locked</span>` : done ? `<span class="tag done">${ICONS.open}Done</span>` : `<span class="tag new">New</span>`;
+      const extra = s.id === 'escape' ? `<span class="sub">Level ${level}</span>` : '';
+      return `<li><button class="stop" data-stop="${s.id}" ${open ? '' : 'disabled'}><span class="num">${i + 1}</span>
+        <span class="stop-icon">${ICONS[s.icon]}</span><span class="stop-text"><b>${esc(s.name)}</b>${extra}<span>${esc(s.desc)}</span></span>${tag}</button></li>`;
+    }).join('');
+    const players = isTouch ? '' : `<div class="seg" role="group" aria-label="Players"><button data-players="1" aria-pressed="${prefs.players === 1}">1 player</button><button data-players="2" aria-pressed="${prefs.players === 2}">2 players</button></div>`;
+    return `
+      <div class="eyebrow">The voyage</div>
+      <h2>Story map</h2>
+      <p class="lede">Play the story in order. Finishing a stop opens the next one, and you can replay any stop you've reached.</p>
+      <ol class="route">${stops}</ol>
+      <div class="row map-tools">${players}
+        <button class="secondary" id="bookBtn">${ICONS.star}Sticker book <span class="count">${stickers.length}/${STICKERS.length}</span></button>
+        <button class="secondary" id="souvBtn">${ICONS.coin}Souvenir shop <span class="count">${souv.bank}</span></button></div>
+      ${prefs.players === 2 && !isTouch ? '<p class="hint">2 players: Player 1 uses the arrow keys and Space. Player 2 uses W A S D and E. Two players only applies to Escape the ship.</p>' : ''}
+      <div class="actions"><button class="link" id="backBtn">Back to the title screen</button></div>`;
+  }
+  if (kind === 'stickers') {
+    const cells = STICKERS.map(s => { const got = stickers.includes(s.id);
+      return `<div class="sticker-cell ${got ? '' : 'locked'}"><span class="sticker" style="--c:${got ? s.color : '#5b6474'}">${ICONS[s.icon]}</span><b>${got ? esc(s.name) : '???'}</b><span>${esc(s.hint)}</span></div>`; }).join('');
+    return `
+      <div class="eyebrow">Sticker book</div>
+      <h2>${stickers.length} of ${STICKERS.length} stickers</h2>
+      <div class="sticker-grid">${cells}</div>
+      <div class="actions"><button class="primary" id="mapBtn">Back to the map</button></div>`;
+  }
+  if (kind === 'souvenirs') {
+    const items = SOUVENIRS.map(it => {
+      const owned = souv.owned.includes(it.id);
+      const using = it.dog ? souv.dog === it.dog : souv[it.id];
+      const btn = !owned ? `<button class="buy" data-souv="${it.id}" ${souv.bank < it.price ? 'disabled' : ''}>${ICONS.coin}${it.price}</button>`
+        : `<button class="buy ${using ? 'owned' : ''}" data-use="${it.id}">${using ? (it.toggle ? 'On' : 'Using') : (it.toggle ? 'Off' : 'Use')}</button>`;
+      return `<div class="shop-item"><canvas class="souv-pic" data-pic="${it.id}" width="160" height="120"></canvas><h3>${esc(it.name)}</h3>${btn}</div>`;
+    }).join('');
+    const goldenBtn = souv.dog === 'golden' ? '' : `<button class="secondary" data-use="golden">Use the golden puppy</button>`;
+    return `
+      <div class="eyebrow">Souvenir shop</div>
+      <h2>Spend your coins</h2>
+      <div class="wallet">${ICONS.coin}<span>You have <b>${souv.bank}</b> coins</span></div>
+      <p class="lede" style="font-size:15px">You earn coins by collecting them on the ship and by finishing stops on the story map.</p>
+      <div class="shop-items souv-items">${items}</div>
+      <div class="actions">${goldenBtn}<button class="primary" id="mapBtn">Back to the map</button></div>`;
+  }
+  if (kind === 'miniEnd') {
+    const R = lastResult, s = STOPS.find(x => x.id === R.id), i = STOPS.indexOf(s), next = STOPS[i + 1];
+    const last = !next && R.won;
+    return `
+      <div class="hero big-icon">${ICONS[s.icon]}</div>
+      <div class="eyebrow">${esc(s.name)}</div>
+      <h2>${R.won ? esc(R.title || 'You did it!') : esc(R.title || 'So close!')}</h2>
+      <p class="lede">${esc(R.text)}</p>
+      ${last ? '<div class="next">' + ICONS.star + '<span>You finished the whole story! You can replay any stop from the map.</span></div>' : ''}
+      ${stickerRow()}${rewardRow(R.coins)}
+      <div class="actions">
+        ${R.won && next ? `<button class="primary" id="nextStop">Next: ${esc(next.name)}</button>` : `<button class="primary" id="replayStop">${R.won ? 'Play again' : 'Try again'}</button>`}
+        <div class="row">${R.won && next ? '<button class="secondary" id="replayStop">Play again</button>' : ''}<button class="secondary" id="mapBtn">Story map</button></div>
+      </div>`;
+  }
+  if (kind === 'photo') {
+    return `
+      <div class="eyebrow">Photo</div>
+      <h2>Say cheese!</h2>
+      <img class="photo" src="${photoURL}" alt="A photo from your game">
+      <p class="hint">To keep it, press Save picture, or right-click (long-press on a tablet) the photo and save it.</p>
+      <div class="actions"><a class="primary as-btn" id="savePhoto" href="${photoURL}" download="titanic-photo.png">Save picture</a>
+        <button class="secondary" id="resumeBtn">Keep playing</button></div>`;
+  }
+  return null;
+}
+function drawSouvenirPics() {
+  cardEl.querySelectorAll('[data-pic]').forEach(c => {
+    const id = c.dataset.pic, g = c.getContext('2d'), saved = cx; cx = g;
+    g.clearRect(0, 0, 160, 120); VIEW = null;
+    const keep = { dog: souv.dog, dogHat: souv.dogHat, flag: souv.flag };
+    const it = SOUVENIRS.find(s => s.id === id);
+    if (it.dog) { souv.dog = it.dog; souv.dogHat = false; }
+    if (id === 'dogHat') { souv.dogHat = true; }
+    if (id === 'flag') { souv.flag = true; g.setTransform(0.9, 0, 0, 0.9, 80, 100); drawLifeboat(0, 0); }
+    else { g.setTransform(2.6, 0, 0, 2.6, 74, 104); drawDog(0, 0, 1, 0, false, 0); }
+    Object.assign(souv, keep); cx = saved;
+  });
+}
+function wireExtra(kind) {
+  const on = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener('click', fn); };
+  on('mapBtn', () => showScreen('map'));
+  on('bookBtn', () => showScreen('stickers'));
+  on('souvBtn', () => showScreen('souvenirs'));
+  on('nextStop', () => { const i = STOPS.findIndex(s => s.id === lastResult.id); startStop(STOPS[i + 1].id); });
+  on('replayStop', () => startStop(lastResult ? lastResult.id : curStop));
+  cardEl.querySelectorAll('[data-stop]').forEach(b => b.addEventListener('click', () => startStop(b.dataset.stop)));
+  cardEl.querySelectorAll('[data-players]').forEach(b => b.addEventListener('click', () => { prefs.players = +b.dataset.players; save('titanic.players', prefs.players); showScreen('map'); }));
+  cardEl.querySelectorAll('[data-souv]').forEach(b => b.addEventListener('click', () => {
+    const it = SOUVENIRS.find(s => s.id === b.dataset.souv);
+    if (!it || souv.bank < it.price || souv.owned.includes(it.id)) return;
+    souv.bank -= it.price; souv.owned.push(it.id);
+    if (it.dog) souv.dog = it.dog; else souv[it.id] = true;
+    saveSouv(); sfx.up(); award('shopper'); showScreen('souvenirs');
+  }));
+  cardEl.querySelectorAll('[data-use]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.use;
+    if (id === 'golden') souv.dog = 'golden';
+    else { const it = SOUVENIRS.find(s => s.id === id); if (it.dog) souv.dog = it.dog; else souv[id] = !souv[id]; }
+    saveSouv(); showScreen('souvenirs');
+  }));
+  if (kind === 'souvenirs') drawSouvenirPics();
+}
+
+// ---------- Starting a stop ----------
+let MG = null, curStop = null, lastResult = null;
+function startStop(id) {
+  ac(); curStop = id; MG = null; document.body.classList.remove('mini');
+  for (const k in input) input[k] = false;
+  if (id === 'escape') { startGame(); return; }
+  screenEl.classList.add('hide'); screenKind = 'none'; warnEl.style.display = 'none';
+  if (id === 'swim' || id === 'dive') {
+    newGame(); G.mode = id; if (use3D) rebuild3D();
+    if (id === 'swim') { G.hit = true; G.hitAt = 0; G.jacket = true; G.water = SEA_BASE; startSwim('jump'); msg('Swim to a lifeboat! Stay away from the ice and outswim the sharks.', 5, 'jacket'); }
+    else startDive();
+    return;
+  }
+  G = null;
+  MG = MINIS[id](); MG.id = id; MG.t = 0;
+  state = 'mini';
+  document.body.classList.add('mini');
+  if (MG.intro) msg(MG.intro, 5, MG.icon);
+}
+function miniResult(id, won, info = {}) {
+  if (MG) MG.finished = true;
+  const coins = bankCoins(won ? info.coins : Math.floor((info.coins || 0) / 2));
+  if (won) finishStop(id);
+  lastResult = { id, won, coins, text: info.text || '', title: info.title };
+  showScreen('miniEnd');
+}
+
+// ---------- Mini-game helpers ----------
+function mview(W, H) { // a 960 x 540 stage, centred
+  const s = Math.min(W / 960, H / 540), ox = (W - 960 * s) / 2, oy = (H - 540 * s) / 2;
+  cx.setTransform(dpr * s, 0, 0, dpr * s, ox * dpr, oy * dpr);
+  if (MG) MG.view = { s, ox, oy };
+  return { s, ox, oy, x0: -ox / s, y0: -oy / s, x1: (W - ox) / s, y1: (H - oy) / s };
+}
+function screenFill(W, H, top, bottom) {
+  cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const g = cx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, top); g.addColorStop(1, bottom);
+  cx.fillStyle = g; cx.fillRect(0, 0, W, H);
+}
+function miniHud(text, W) { // a progress pill in the top-left corner
+  cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  cx.font = `600 18px ${FONT}`;
+  const w = cx.measureText(text).width + 32;
+  cx.fillStyle = 'rgba(9,18,40,0.82)'; rr(12, 12, w, 44, 14); cx.fill();
+  cx.strokeStyle = 'rgba(255,255,255,0.14)'; cx.lineWidth = 1; cx.stroke();
+  cx.fillStyle = '#fff'; cx.textAlign = 'left'; cx.textBaseline = 'middle'; cx.fillText(text, 28, 35);
+}
+function popText(list, text, x, y, color = '#ffe066') { list.push({ text, x, y, t: 0, color }); }
+function drawPops(list, dt) {
+  for (const p of list) {
+    p.t += dt;
+    cx.globalAlpha = clamp(1.4 - p.t, 0, 1);
+    cx.font = `700 28px ${FONT}`; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    cx.lineWidth = 5; cx.strokeStyle = 'rgba(20,12,0,0.75)'; cx.strokeText(p.text, p.x, p.y - p.t * 40);
+    cx.fillStyle = p.color; cx.fillText(p.text, p.x, p.y - p.t * 40);
+  }
+  cx.globalAlpha = 1;
+  for (let i = list.length - 1; i >= 0; i--) if (list[i].t > 1.4) list.splice(i, 1);
+}
+const myLook = (cls = 3) => ({ ...KID_STYLE[cls], ...KIDS[prefs.kid], faceLook: prefs.face });
+function drawCase(x, y, w, h, c, rot = 0) { // a suitcase; (x, y) is the top centre
+  cx.save(); cx.translate(x, y + h / 2); cx.rotate(rot); cx.translate(-x, -(y + h / 2));
+  brick(x - w / 2, y, w, h, c, true);
+  cx.fillStyle = 'rgba(0,0,0,0.25)'; cx.fillRect(x - w * 0.32, y, 6, h); cx.fillRect(x + w * 0.32 - 6, y, 6, h);
+  cx.fillStyle = '#d9b45a'; cx.fillRect(x - 4, y + 6, 8, 6);
+  cx.restore();
+}
+function waterStuds(x0, x1, y, t, color = '#5b9be0') { for (let x = Math.floor(x0 / PITCH) * PITCH; x < x1; x += PITCH) stud(x + 8, y + Math.sin(t * 1.5 + x * 0.02) * 1.5, color); }
+
+const MINIS = {
+  // ---------------------------------------------------------------
+  // 1. Boarding day: stack suitcases with the crane
+  boarding() {
+    const DECK = 470, PL = 340, PR = 620, GOAL = 8;
+    const COLORS = ['#8b5a2b', '#c91a09', '#1e5aa8', '#2f5a44', '#d9a52b', '#7a3b6e'];
+    const S = { stack: [], hookX: 480, dir: 1, carry: null, drop: null, next: 0.4, misses: 0, done: false, endT: 0, pops: [] };
+    const newCase = () => ({ w: rand(96, 140), h: 32, c: pick(COLORS) });
+    const top = () => S.stack.length ? S.stack[S.stack.length - 1] : { x: (PL + PR) / 2, w: PR - PL, y: DECK };
+    const end = () => {
+      if (S.won && S.misses === 0) award('packer');
+      miniResult('boarding', S.won, { coins: S.stack.length, title: S.won ? 'All aboard!' : 'Splash!',
+        text: S.won ? (S.misses ? `You loaded all ${GOAL} suitcases. ${S.misses} fell in the sea, but that's OK!` : 'You loaded every suitcase and not one fell in the sea!')
+          : 'Three suitcases fell in the sea. Drop each one when it is right over the pile.' });
+    };
+    return {
+      S, icon: 'suitcase', intro: `Press Space (or tap) to drop each suitcase onto the ship. Stack ${GOAL}!`,
+      action() { if (S.drop || S.done || !S.carry) return; S.drop = { ...S.carry, x: S.hookX, y: 132, vy: 0 }; S.carry = null; sfx.search(); },
+      tap() { this.action(); },
+      update(dt) {
+        if (S.done) { S.endT += dt; if (S.endT > 1.8 && !this.finished) end(); return; }
+        const sp = 190 + S.stack.length * 26;
+        S.hookX += S.dir * sp * dt; if (S.hookX > 820) S.dir = -1; if (S.hookX < 160) S.dir = 1;
+        if (!S.carry && !S.drop) { S.next -= dt; if (S.next <= 0) S.carry = newCase(); }
+        const d = S.drop;
+        if (d) {
+          d.vy += 1600 * dt; d.y += d.vy * dt;
+          const tp = top();
+          if (!d.miss && d.y + d.h >= tp.y) {
+            if (Math.abs(d.x - tp.x) <= tp.w / 2 - 4) {
+              const off = Math.abs(d.x - tp.x);
+              S.stack.push({ x: d.x, w: d.w, h: d.h, c: d.c, y: tp.y - d.h, squash: 1 }); S.drop = null; S.next = 0.35; sfx.coin();
+              popText(S.pops, off < 12 ? 'Perfect!' : 'Good!', d.x, tp.y - 50);
+              if (S.stack.length >= GOAL) { S.done = true; S.won = true; sfx.win(); msg('All the suitcases are on board!', 3, 'suitcase'); }
+            } else {
+              d.miss = true; d.vx = Math.sign(d.x - tp.x) * 180; S.misses++; sfx.nope();
+              popText(S.pops, 'Oops!', d.x, tp.y - 40, '#ff8a8a');
+              if (S.misses >= 3) { S.done = true; S.won = false; }
+            }
+          }
+          if (d.miss) { d.x += d.vx * dt; d.rot = (d.rot || 0) + dt * 5 * Math.sign(d.vx); if (d.y > 600) { S.drop = null; S.next = 0.35; sfx.splash(); } }
+        }
+        for (const s of S.stack) s.squash = Math.max(0, s.squash - dt * 5);
+      },
+      draw(t, W, H) {
+        screenFill(W, H, '#7cc4ea', '#d8f0ff');
+        const v = mview(W, H); VIEW = null;
+        cx.fillStyle = '#fff6c2'; circle(820, 110, 40); cx.fill();
+        for (const [x, y, s] of [[160, 120, 1], [420, 70, 0.8], [700, 150, 1.1]]) { cx.fillStyle = 'rgba(255,255,255,0.9)'; for (const [dx, dy, r] of [[0, 0, 22], [24, -8, 26], [50, 0, 20]]) { circle(x + dx * s + Math.sin(t * 0.2) * 10, y + dy * s, r * s); cx.fill(); } }
+        // sea and the dock
+        cx.fillStyle = '#2a78c8'; cx.fillRect(v.x0, 500, v.x1 - v.x0, v.y1 - 500); waterStuds(v.x0, v.x1, 500, t, '#4f97de');
+        brickWall(v.x0, 430, 200 - v.x0, 110, '#8d99a6'); studRow(v.x0, 430, 200 - v.x0, '#8d99a6');
+        for (const [x, c, h] of [[40, '#c91a09', 'cap'], [95, '#1e5aa8', 'bonnet'], [150, '#2f5a44', 'bowler']]) drawPerson(x, 430, { skin: SKIN, hair: '#5a3a22', style: 'short', coat: c, pants: '#23262d', trim: '#ddd', collar: 'buttons', hat: h, hatColor: '#f2cd37', face: 1, walkT: t, moving: false });
+        // the ship
+        brickWall(250, DECK + 10, v.x1 - 250, 80, '#25282e'); brick(250, DECK + 60, v.x1 - 250, 12, '#d0302a', false);
+        brick(250, DECK, v.x1 - 250, 12, '#e2c693', true);
+        brick(PL, DECK - 6, PR - PL, 8, '#8a5a30', true);
+        cx.fillStyle = '#f5a623'; cx.fillRect(760, 260, 70, DECK - 260); cx.fillStyle = '#1c1c1c'; cx.fillRect(760, 260, 70, 26);
+        for (let x = 260; x < v.x1; x += 40) { cx.fillStyle = 'rgba(255,225,150,0.9)'; cx.fillRect(x, DECK + 30, 10, 10); }
+        // crane
+        brick(70, 40, 24, 400, '#f2cd37', false); brick(40, 40, 860, 22, '#f2cd37', true);
+        for (let x = 60; x < 880; x += 40) { cx.strokeStyle = 'rgba(0,0,0,0.25)'; cx.lineWidth = 2; line(x, 40, x + 20, 62); }
+        cx.fillStyle = '#4a4f57'; rr(S.hookX - 22, 62, 44, 16, 4); cx.fill();
+        cx.strokeStyle = '#333'; cx.lineWidth = 3; line(S.hookX, 78, S.hookX, 122);
+        cx.strokeStyle = '#555'; cx.lineWidth = 4; cx.beginPath(); cx.arc(S.hookX, 126, 6, 0, Math.PI); cx.stroke();
+        if (S.carry) drawCase(S.hookX, 132, S.carry.w, S.carry.h, S.carry.c, Math.sin(t * 3) * 0.04);
+        if (!S.carry && !S.drop && !S.done) { cx.globalAlpha = 0.4; drawCase(S.hookX, 132, 110, 32, '#888'); cx.globalAlpha = 1; }
+        // the pile
+        for (const s of S.stack) drawCase(s.x, s.y + s.squash * 3, s.w, s.h - s.squash * 3, s.c);
+        if (S.drop) drawCase(S.drop.x, S.drop.y, S.drop.w, S.drop.h, S.drop.c, S.drop.rot || 0);
+        // aim guide
+        if (S.carry && !S.done) { const tp = top(); const okAim = Math.abs(S.hookX - tp.x) <= tp.w / 2 - 4; cx.strokeStyle = okAim ? 'rgba(91,209,139,0.8)' : 'rgba(255,255,255,0.35)'; cx.setLineDash([6, 8]); cx.lineWidth = 2; line(S.hookX, 170, S.hookX, tp.y); cx.setLineDash([]); }
+        drawPops(S.pops, 1 / 60);
+        miniHud(`Suitcases ${S.stack.length}/${GOAL}   Splashes ${'●'.repeat(S.misses)}${'○'.repeat(3 - S.misses)}`, W);
+      },
+    };
+  },
+
+  // ---------------------------------------------------------------
+  // 2. Shovel the coal: a rhythm game
+  coal() {
+    const TX = 720, BELT = 410, S = { lumps: [], spawn: 0.8, steam: 0, time: 45, swing: 0, flyers: [], done: false, endT: 0, pops: [], streak: 0 };
+    const end = () => {
+      if (S.won) award('steam');
+      miniResult('coal', S.won, { coins: S.won ? 6 : Math.round(S.steam / 20), title: S.won ? 'Full steam ahead!' : 'Out of time!',
+        text: S.won ? 'The Titanic is going full speed across the ocean!' : `You got the ship to ${Math.round(S.steam * 0.23)} knots. Press Space when a lump of coal is inside the gold ring.` });
+    };
+    return {
+      S, icon: 'flame', intro: 'Press Space (or tap) when the coal is in the gold ring to shovel it in!',
+      action() {
+        if (S.done) return;
+        S.swing = 1;
+        let best = null;
+        for (const l of S.lumps) if (!l.hit && !l.fall && (!best || Math.abs(l.x - TX) < Math.abs(best.x - TX))) best = l;
+        if (best && Math.abs(best.x - TX) < 46) {
+          const perfect = Math.abs(best.x - TX) < 20;
+          best.hit = true; S.steam = Math.min(100, S.steam + (perfect ? 8 : 5)); S.streak++;
+          S.flyers.push({ x: best.x, y: BELT - 14, t: 0, s: best.s });
+          popText(S.pops, perfect ? 'Perfect!' : 'Good!', TX, BELT - 90);
+          tone(perfect ? 784 : 659, 0.12, 'sine', 0.07);
+          if (S.steam >= 100) { S.done = true; S.won = true; sfx.win(); msg('Full speed!', 2.5, 'flame'); }
+        } else { S.steam = Math.max(0, S.steam - 2); S.streak = 0; popText(S.pops, 'Whoosh!', TX, BELT - 80, '#c8d4e8'); }
+      },
+      tap() { this.action(); },
+      update(dt) {
+        S.swing = Math.max(0, S.swing - dt * 4);
+        if (S.done) { S.endT += dt; if (S.endT > 1.8 && !this.finished) end(); return; }
+        S.time -= dt;
+        if (S.time <= 0) { S.time = 0; S.done = true; S.won = false; return; }
+        S.spawn -= dt;
+        if (S.spawn <= 0) { S.lumps.push({ x: 40, s: rand(22, 28), rot: rand(0, 6) }); S.spawn = rand(0.6, 1.05) - S.steam * 0.002; }
+        const sp = 230 + S.steam * 1.3;
+        for (const l of S.lumps) {
+          if (l.hit) continue;
+          if (l.fall) { l.vy += 900 * dt; l.y += l.vy * dt; l.x += 60 * dt; continue; }
+          l.x += sp * dt; l.rot += dt * 3;
+          if (l.x > TX + 50) { l.fall = true; l.y = BELT - 12; l.vy = 0; S.steam = Math.max(0, S.steam - 3); S.streak = 0; popText(S.pops, 'Missed!', TX + 40, BELT - 70, '#ff8a8a'); }
+        }
+        S.lumps = S.lumps.filter(l => !l.hit && !(l.fall && l.y > 600));
+        for (const f of S.flyers) f.t += dt * 2.2;
+        S.flyers = S.flyers.filter(f => f.t < 1);
+      },
+      draw(t, W, H) {
+        screenFill(W, H, '#5f6670', '#3b3f45');
+        const v = mview(W, H); VIEW = null;
+        brickWall(v.x0, 0, v.x1 - v.x0, 470, '#7a828d');
+        for (const [y, c] of [[40, '#d0302a'], [64, '#f2cd37']]) { cx.fillStyle = c; cx.fillRect(v.x0, y, v.x1 - v.x0, 14); cx.fillStyle = 'rgba(255,255,255,0.3)'; cx.fillRect(v.x0, y + 2, v.x1 - v.x0, 3); }
+        brick(v.x0, 470, v.x1 - v.x0, 80, '#505760', true);
+        // furnace
+        const heat = S.steam / 100;
+        brick(780, 170, 190, 300, '#3a3d42', true);
+        glow(860, 330, 160 + heat * 120, 'rgba(255,140,40,A)', 0.25 + heat * 0.5);
+        const fg = cx.createLinearGradient(0, 280, 0, 390); fg.addColorStop(0, `rgba(255,${200 + heat * 40},80,1)`); fg.addColorStop(1, '#d9480f');
+        cx.fillStyle = '#1b1b1b'; rr(800, 270, 120, 130, 14); cx.fill();
+        cx.fillStyle = fg; rr(812, 380 - (40 + heat * 70), 96, 40 + heat * 70, 12); cx.fill();
+        for (let i = 0; i < 5; i++) { const fx = 820 + i * 20, h = 20 + heat * 50 + Math.sin(t * 9 + i * 2) * 10; cx.fillStyle = 'rgba(255,220,120,0.8)'; cx.beginPath(); cx.moveTo(fx - 8, 380); cx.quadraticCurveTo(fx, 380 - h * 1.4, fx + 8, 380); cx.fill(); }
+        // conveyor
+        brick(20, BELT, 740, 18, '#2b2f36', false);
+        for (let x = 30; x < 760; x += 40) { cx.fillStyle = '#6b7178'; circle(x + ((t * (230 + S.steam * 1.3)) % 40), BELT + 9, 6); cx.fill(); }
+        cx.strokeStyle = '#8d99a6'; cx.lineWidth = 3; line(20, BELT + 18, 760, BELT + 18);
+        // target ring
+        cx.strokeStyle = `rgba(255,224,102,${0.7 + 0.3 * Math.sin(t * 6)})`; cx.lineWidth = 5; circle(TX, BELT - 14, 26); cx.stroke();
+        // coal
+        const lump = (x, y, s, r) => { cx.save(); cx.translate(x, y); cx.rotate(r); cx.fillStyle = '#1e1e22'; cx.fillRect(-s / 2, -s / 2, s, s); cx.fillStyle = '#3a3a42'; cx.fillRect(-s / 2, -s / 2, s, 3); stud(0, -s / 2, '#2a2a30'); cx.restore(); };
+        for (const l of S.lumps) lump(l.x, l.fall ? l.y : BELT - l.s / 2, l.s, l.rot);
+        for (const f of S.flyers) { const k = f.t; lump(f.x + (860 - f.x) * k, BELT - 14 + (330 - BELT) * k - Math.sin(Math.PI * k) * 120, f.s, k * 8); }
+        // the stoker
+        drawPerson(560, 470, { skin: SKIN, hair: '#1c1410', style: 'short', coat: '#4a4f57', pants: '#23262d', trim: '#f2cd37', collar: 'suspenders', hat: 'cap', faceLook: { ...FACE_DEFAULT, mouth: S.streak > 3 ? 'laugh' : 'grin' }, face: 1, walkT: 0, moving: false, scale: 1.6 });
+        cx.save(); cx.translate(590, 420); cx.rotate(-0.9 + S.swing * 1.6);
+        cx.fillStyle = '#8a5a30'; cx.fillRect(-3, -70, 6, 70); cx.fillStyle = '#8d99a6'; cx.beginPath(); cx.moveTo(-14, -70); cx.lineTo(14, -70); cx.lineTo(10, -96); cx.lineTo(-10, -96); cx.fill();
+        cx.restore();
+        // speed dial
+        const dx = 860, dy = 110;
+        cx.fillStyle = '#f4f1e8'; circle(dx, dy, 62); cx.fill(); cx.strokeStyle = '#d4af37'; cx.lineWidth = 6; cx.stroke();
+        for (let i = 0; i <= 23; i += 1) { const a = Math.PI * (0.8 + 1.4 * i / 23); cx.strokeStyle = i % 5 === 0 ? '#1d2340' : '#9aa3ad'; cx.lineWidth = i % 5 === 0 ? 3 : 1.5; line(dx + Math.cos(a) * 46, dy + Math.sin(a) * 46, dx + Math.cos(a) * 56, dy + Math.sin(a) * 56); }
+        const na = Math.PI * (0.8 + 1.4 * heat);
+        cx.strokeStyle = '#c91a09'; cx.lineWidth = 4; line(dx, dy, dx + Math.cos(na) * 44, dy + Math.sin(na) * 44);
+        cx.fillStyle = '#1d2340'; circle(dx, dy, 6); cx.fill();
+        cx.font = `600 13px ${FONT}`; cx.textAlign = 'center'; cx.fillText('KNOTS', dx, dy + 30); cx.font = `700 18px ${FONT}`; cx.fillText(String(Math.round(heat * 23)), dx, dy + 48);
+        drawPops(S.pops, 1 / 60);
+        miniHud(`Speed ${Math.round(S.steam)}%   Time ${Math.ceil(S.time)}`, W);
+      },
+    };
+  },
+
+  // ---------------------------------------------------------------
+  // 3. Lookout: find the iceberg through the binoculars
+  lookout() {
+    const WORLD = 2400, HZ = 300;
+    const S = { camX: 720, things: [], spawn: 1, berg: null, bergAt: rand(9, 16), done: false, endT: 0, pops: [], fog: Array.from({ length: 9 }, () => ({ x: rand(0, WORLD), y: rand(230, 320), r: rand(80, 160), v: rand(10, 30) })) };
+    const kinds = ['gull', 'whale', 'ship'];
+    const end = () => {
+      if (S.won) { save('titanic.lookoutBonus', true); if (S.fast) award('eagle'); }
+      miniResult('lookout', S.won, { coins: S.won ? 5 : 1, title: S.won ? 'Iceberg spotted!' : 'Too late!',
+        text: S.won ? `You rang the bell in ${S.found.toFixed(1)} seconds! Next time you escape the ship, the iceberg only scrapes it, so the water rises more slowly.`
+          : 'The iceberg got too close. Use the arrows to look left and right, and ring the bell as soon as you see it.' });
+    };
+    const center = () => S.camX + 480;
+    return {
+      S, icon: 'bell', intro: 'Use ← → to look around. When you see the iceberg, press Space to ring the bell!',
+      action() {
+        if (S.done) return;
+        sfx.bell();
+        if (S.berg && Math.abs(S.berg.x - center()) < 340) {
+          S.done = true; S.won = true; S.found = S.berg.t; S.fast = S.berg.t < 4; msg('Ding ding ding! Iceberg right ahead!', 3, 'bell'); return;
+        }
+        let near = null;
+        for (const th of S.things) if (Math.abs(th.x - center()) < 340 && (!near || Math.abs(th.x - center()) < Math.abs(near.x - center()))) near = th;
+        const names = { gull: "That's a seagull!", whale: "That's a whale!", ship: "That's another ship!" };
+        popText(S.pops, near ? names[near.k] : 'Nothing there!', 480, 220, '#c8e6ff');
+      },
+      tap(x) { if (x < 200) S.camX -= 160; else if (x > 760) S.camX += 160; else this.action(); S.camX = clamp(S.camX, 0, WORLD - 960); },
+      update(dt) {
+        const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+        S.camX = clamp(S.camX + dir * 520 * dt, 0, WORLD - 960);
+        for (const f of S.fog) { f.x += f.v * dt; if (f.x > WORLD + 200) f.x = -200; }
+        if (S.done) { S.endT += dt; if (S.berg) S.berg.t += dt * 0.2; if (S.endT > 2 && !this.finished) end(); return; }
+        S.spawn -= dt;
+        if (S.spawn <= 0) { S.things.push({ k: pick(kinds), x: rand(80, WORLD - 80), t: 0, life: rand(5, 8), dir: Math.random() < 0.5 ? -1 : 1 }); S.spawn = rand(1.5, 3); }
+        for (const th of S.things) { th.t += dt; if (th.k === 'gull') th.x += th.dir * 40 * dt; if (th.k === 'ship') th.x += th.dir * 8 * dt; }
+        S.things = S.things.filter(th => th.t < th.life);
+        if (!S.berg && this.t >= S.bergAt) {
+          let x; do { x = rand(150, WORLD - 150); } while (Math.abs(x - center()) < 600);
+          S.berg = { x, t: 0 };
+        }
+        if (S.berg) { S.berg.t += dt; if (S.berg.t > 16) { S.done = true; S.won = false; sfx.boom(); } }
+      },
+      draw(t, W, H) {
+        screenFill(W, H, '#0b1233', '#1c2654');
+        const v = mview(W, H); VIEW = null;
+        const X = x => x - S.camX;
+        // sky
+        const sg = cx.createLinearGradient(0, 0, 0, HZ); sg.addColorStop(0, '#0f1a44'); sg.addColorStop(1, '#4a3d78'); cx.fillStyle = sg; cx.fillRect(v.x0, v.y0, v.x1 - v.x0, HZ - v.y0);
+        for (let i = 0; i < 70; i++) { const sx = ((i * 137.5 - S.camX * 0.1) % 1200 + 1200) % 1200 - 120, sy = (i * 61) % 260; cx.fillStyle = `rgba(255,255,255,${0.4 + 0.4 * Math.sin(t * 2 + i)})`; cx.fillRect(sx, sy, 2, 2); }
+        // sea
+        cx.fillStyle = '#122a5c'; cx.fillRect(v.x0, HZ, v.x1 - v.x0, v.y1 - HZ);
+        for (let r = 0; r < 8; r++) { const y = HZ + 8 + r * r * 4.5; cx.fillStyle = `rgba(120,170,230,${0.12 + r * 0.02})`; for (let x = -((S.camX * (0.4 + r * 0.1)) % 48); x < 1000; x += 48) cx.fillRect(x + Math.sin(t + r + x) * 3, y, 12 + r * 2, 2 + r * 0.4); }
+        // things on the horizon
+        for (const th of S.things) {
+          const x = X(th.x), a = Math.min(1, th.t, th.life - th.t);
+          if (x < -100 || x > 1060) continue;
+          cx.globalAlpha = a;
+          if (th.k === 'gull') { cx.strokeStyle = '#e6ecf5'; cx.lineWidth = 3; const yy = 210 + Math.sin(th.t * 2) * 10, f = Math.sin(th.t * 10) * 5; cx.beginPath(); cx.moveTo(x - 14, yy - f); cx.quadraticCurveTo(x - 6, yy - 8, x, yy); cx.quadraticCurveTo(x + 6, yy - 8, x + 14, yy - f); cx.stroke(); }
+          else if (th.k === 'whale') { cx.fillStyle = '#2b3a5c'; cx.beginPath(); cx.ellipse(x, HZ + 4, 40, 12, 0, Math.PI, 0); cx.fill(); if ((th.t % 2.5) < 1.2) { cx.fillStyle = 'rgba(220,235,255,0.7)'; for (let i = 0; i < 6; i++) { circle(x - 10 + Math.sin(i) * 8, HZ - 16 - i * 7, 4); cx.fill(); } } }
+          else { cx.fillStyle = '#1a1a1a'; cx.fillRect(x - 40, HZ - 10, 80, 10); cx.fillRect(x - 10, HZ - 24, 12, 14); cx.fillStyle = '#ffd98a'; for (let i = 0; i < 6; i++) cx.fillRect(x - 34 + i * 12, HZ - 7, 4, 3); }
+          cx.globalAlpha = 1;
+        }
+        if (S.berg) {
+          const k = clamp(0.18 + S.berg.t / 16 * 0.82, 0, 1), x = X(S.berg.x);
+          cx.save(); cx.translate(x, HZ + 2); cx.scale(k, k);
+          const rows = [[-122, 244], [-104, 200], [-86, 164], [-60, 120], [-38, 80], [-18, 44]];
+          rows.forEach(([lx, w], i) => brick(lx, -(i + 1) * 24, w, 24, i % 2 ? '#cfe7f5' : '#f6fbff', true));
+          cx.restore();
+        }
+        for (const f of S.fog) { const x = X(f.x); cx.fillStyle = 'rgba(200,210,235,0.22)'; circle(x, f.y, f.r); cx.fill(); circle(x + f.r * 0.8, f.y + 10, f.r * 0.7); cx.fill(); }
+        // crow's nest rail
+        brick(v.x0, 470, v.x1 - v.x0, 18, '#8a5a30', true); for (let x = 0; x < 960; x += 64) brick(x, 488, 14, 60, '#8a5a30', false);
+        drawPops(S.pops, 1 / 60);
+        // binocular view
+        cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const sx = x => v.ox + x * v.s, sy = y => v.oy + y * v.s;
+        cx.fillStyle = 'rgba(0,0,0,0.9)'; cx.beginPath(); cx.rect(0, 0, W, H);
+        cx.moveTo(sx(330 + 250), sy(260)); cx.arc(sx(330), sy(260), 250 * v.s, 0, Math.PI * 2);
+        cx.moveTo(sx(630 + 250), sy(260)); cx.arc(sx(630), sy(260), 250 * v.s, 0, Math.PI * 2);
+        cx.fill('evenodd');
+        // where am I looking strip, and a hint arrow if the berg has been out a while
+        const bw = Math.min(360, W - 40), bx = W / 2 - bw / 2, by = H - 34;
+        cx.fillStyle = 'rgba(255,255,255,0.15)'; rr(bx, by, bw, 10, 5); cx.fill();
+        cx.fillStyle = '#ffe066'; rr(bx + bw * S.camX / WORLD, by - 3, bw * 960 / WORLD, 16, 6); cx.fill();
+        if (S.berg && !S.done && S.berg.t > 6) { const left = S.berg.x < center() - 340, right = S.berg.x > center() + 340; if (left || right) { cx.fillStyle = '#ffe066'; const ax = left ? 30 : W - 30, ay = H / 2; cx.beginPath(); cx.moveTo(ax + (left ? -14 : 14), ay); cx.lineTo(ax + (left ? 10 : -10), ay - 16); cx.lineTo(ax + (left ? 10 : -10), ay + 16); cx.fill(); } }
+        miniHud(isTouch ? 'Tap the edges to look around, tap the middle to ring' : '← → look around   Space rings the bell', W);
+      },
+    };
+  },
+
+  // ---------------------------------------------------------------
+  // 4. Radio for help: copy the light pattern
+  radio() {
+    const PADS = [{ x: 480, y: 170, c: '#e5484d', f: 523 }, { x: 600, y: 290, c: '#f2cd37', f: 659 }, { x: 480, y: 410, c: '#3bb273', f: 784 }, { x: 360, y: 290, c: '#3b82f6', f: 988 }];
+    const LENS = [3, 4, 5, 6];
+    const S = { round: 0, seq: [], phase: 'wait', timer: 1.4, showI: 0, lit: -1, litT: 0, got: 0, mistakes: 0, done: false, endT: 0, tape: '', pops: [] };
+    const grow = () => { while (S.seq.length < LENS[S.round]) S.seq.push(Math.floor(Math.random() * 4)); S.phase = 'show'; S.showI = 0; S.timer = 0.5; S.got = 0; };
+    const flash = i => { S.lit = i; S.litT = 0.38; tone(PADS[i].f, 0.3, 'sine', 0.09); };
+    const end = () => {
+      if (S.won) award('sparks');
+      miniResult('radio', S.won, { coins: S.won ? 6 : S.round, title: S.won ? 'Help is on the way!' : 'The signal got lost',
+        text: S.won ? 'The rescue ship Carpathia heard your call and is steaming toward you!' : 'Watch the lights, then press the same ones in the same order.' });
+    };
+    const press = i => {
+      if (S.phase !== 'input' || S.done) return;
+      flash(i);
+      S.tape += i % 2 ? '— ' : '· ';
+      if (S.seq[S.got] === i) {
+        S.got++;
+        if (S.got === S.seq.length) {
+          S.round++; popText(S.pops, 'Got it!', 480, 290);
+          if (S.round >= LENS.length) { S.done = true; S.won = true; S.phase = 'done'; setTimeout(() => sfx.win(), 300); }
+          else { S.phase = 'wait'; S.timer = 1.1; }
+        }
+      } else {
+        S.mistakes++; sfx.nope(); popText(S.pops, 'Oops! Watch again', 480, 290, '#ff8a8a');
+        if (S.mistakes >= 3) { S.done = true; S.won = false; S.phase = 'done'; }
+        else { S.phase = 'wait'; S.timer = 1.3; S.replay = true; }
+      }
+    };
+    return {
+      S, icon: 'radio', intro: 'Watch the lights, then copy them with the arrow keys (or tap the lights)!',
+      key(dir) { press({ up: 0, right: 1, down: 2, left: 3 }[dir]); },
+      tap(x, y) { PADS.forEach((p, i) => { if (Math.hypot(x - p.x, y - p.y) < 64) press(i); }); },
+      action() {},
+      update(dt) {
+        S.litT -= dt; if (S.litT <= 0) S.lit = -1;
+        if (S.done) { S.endT += dt; if (S.endT > 2 && !this.finished) end(); return; }
+        S.timer -= dt;
+        if (S.phase === 'wait' && S.timer <= 0) { if (S.replay) { S.replay = false; S.phase = 'show'; S.showI = 0; S.timer = 0.3; S.got = 0; } else grow(); }
+        else if (S.phase === 'show' && S.timer <= 0) {
+          if (S.showI < S.seq.length) { flash(S.seq[S.showI]); S.showI++; S.timer = 0.62; }
+          else { S.phase = 'input'; S.got = 0; }
+        }
+      },
+      draw(t, W, H) {
+        screenFill(W, H, '#9c7a52', '#7a5a3a');
+        const v = mview(W, H); VIEW = null;
+        brickWall(v.x0, v.y0, v.x1 - v.x0, 440 - v.y0, '#b8915f');
+        // porthole
+        cx.fillStyle = '#0f1a44'; circle(130, 140, 56); cx.fill(); cx.fillStyle = '#ffffff'; for (let i = 0; i < 8; i++) cx.fillRect(100 + i * 9, 110 + (i * 7) % 30, 2, 2);
+        cx.fillStyle = '#122a5c'; cx.fillRect(74, 150, 112, 46); cx.strokeStyle = '#d4af37'; cx.lineWidth = 10; circle(130, 140, 58); cx.stroke();
+        // desk
+        brick(v.x0, 440, v.x1 - v.x0, 110, '#6b4a2e', true);
+        // operator with headphones
+        drawPerson(150, 440, { skin: SKIN, hair: '#5a3a22', style: 'short', coat: '#f4f4f4', pants: '#23262d', trim: '#1d2a5c', collar: 'buttons', hat: 'none', faceLook: { ...FACE_DEFAULT, mouth: S.phase === 'input' ? 'oh' : 'smile' }, face: 1, walkT: 0, moving: false, scale: 1.9 });
+        cx.strokeStyle = '#222'; cx.lineWidth = 5; cx.beginPath(); cx.arc(150, 334, 22, Math.PI, 0); cx.stroke(); cx.fillStyle = '#222'; rr(122, 330, 10, 18, 3); cx.fill(); rr(168, 330, 10, 18, 3); cx.fill();
+        // the radio panel
+        cx.fillStyle = '#2b2f36'; rr(270, 90, 420, 400, 30); cx.fill(); cx.strokeStyle = '#8d99a6'; cx.lineWidth = 4; cx.stroke();
+        for (const [x, y] of [[300, 120], [660, 120], [300, 460], [660, 460]]) { cx.fillStyle = '#8d99a6'; circle(x, y, 6); cx.fill(); }
+        PADS.forEach((p, i) => {
+          const on = S.lit === i;
+          if (on) glow(p.x, p.y, 110, 'rgba(255,255,255,A)', 0.35);
+          cx.fillStyle = on ? p.c : shade(p.c, -90); circle(p.x, p.y, 56); cx.fill();
+          cx.fillStyle = 'rgba(255,255,255,0.25)'; circle(p.x - 16, p.y - 18, 14); cx.fill();
+          cx.strokeStyle = '#11141a'; cx.lineWidth = 5; circle(p.x, p.y, 56); cx.stroke();
+          if (!isTouch) { cx.fillStyle = on ? '#1b1b1b' : 'rgba(255,255,255,0.75)'; cx.font = `700 30px ${FONT}`; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(['↑', '→', '↓', '←'][i], p.x, p.y + 2); }
+        });
+        cx.fillStyle = '#e8c15a'; cx.font = `700 22px ${FONT}`; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+        cx.fillText(S.done ? (S.won ? 'Message sent!' : '') : S.phase === 'input' ? 'Your turn!' : 'Watch...', 480, 290);
+        // telegraph key and paper tape
+        brick(760, 400, 120, 24, '#4a4f57', true); cx.fillStyle = '#c91a09'; circle(840, 384 + (S.lit >= 0 ? 6 : 0), 14); cx.fill();
+        cx.fillStyle = '#f4f1e8'; rr(730, 120, 200, 240, 8); cx.fill();
+        cx.fillStyle = '#1d2340'; cx.font = `700 22px ${FONT}`; cx.textAlign = 'left';
+        const words = S.tape.trim().split(' ').slice(-48); for (let r = 0; r < 8; r++) cx.fillText(words.slice(r * 6, r * 6 + 6).join(' '), 744, 146 + r * 28);
+        drawPops(S.pops, 1 / 60);
+        miniHud(`Message ${Math.min(S.round + (S.done && S.won ? 0 : 1), LENS.length)}/${LENS.length}   Tries ${'●'.repeat(3 - S.mistakes)}${'○'.repeat(S.mistakes)}`, W);
+      },
+    };
+  },
+
+  // ---------------------------------------------------------------
+  // 7. Row to the rescue: steer through the ice, pick up swimmers
+  row() {
+    const GOAL = 3600, S = { x: 480, vx: 0, y: 0, time: 120, floes: [], swimmers: [], saved: 0, bump: 0, shake: 0, done: false, endT: 0, pops: [], riders: [] };
+    for (let y = 380; y < GOAL - 300; y += rand(220, 290)) {
+      const n = 1 + Math.floor(Math.random() * 2), gap = rand(140, 820);
+      for (let i = 0; i < n; i++) { let x; let tries = 0; do { x = rand(60, 900); } while (Math.abs(x - gap) < 130 && tries++ < 20); S.floes.push({ x, y: y + rand(-30, 30), r: rand(40, 70), a: rand(0, 1.5) }); }
+    }
+    for (let i = 0; i < 5; i++) {
+      const y = 500 + i * 620 + rand(-80, 80);
+      let x, tries = 0; do { x = rand(90, 870); } while (S.floes.some(f => Math.hypot(f.x - x, f.y - y) < f.r + 50) && tries++ < 40);
+      S.swimmers.push({ x, y, got: false, ph: rand(0, 6), look: adultLook() });
+    }
+    const end = () => {
+      if (S.won && S.saved === 5) award('rescuer');
+      miniResult('row', S.won, { coins: S.won ? 3 + S.saved * 2 : S.saved, title: S.won ? 'Rescued!' : 'The sun came up',
+        text: S.won ? `You rowed to the Carpathia and saved ${S.saved} of 5 swimmers!` : 'Row with ↑ to go faster, and steer around the ice so you don\'t get stuck.' });
+    };
+    return {
+      S, icon: 'boat', intro: 'Row to the rescue ship before sunrise! ← → steer, ↑ rows faster. Pick up swimmers on the way.',
+      tap(x) { S.vx += x < 480 ? -160 : 160; },
+      action() {},
+      update(dt) {
+        S.shake = Math.max(0, S.shake - dt);
+        if (S.done) { S.endT += dt; if (S.won) S.y += 40 * dt; if (S.endT > 2 && !this.finished) end(); return; }
+        S.time -= dt; if (S.time <= 0) { S.time = 0; S.done = true; S.won = false; return; }
+        const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
+        S.vx += (dir * 260 - S.vx) * Math.min(1, dt * 4);
+        S.x = clamp(S.x + S.vx * dt, 50, 910);
+        let sp = input.up ? 175 : input.down ? 50 : 105;
+        if (S.bump > 0) { S.bump -= dt; sp *= 0.15; }
+        S.y += sp * dt;
+        for (const f of S.floes) {
+          const d = Math.hypot(f.x - S.x, f.y - S.y);
+          if (d < f.r * 0.85 + 24) { S.y -= 12; S.x += Math.sign(S.x - f.x || 1) * 10; S.vx = Math.sign(S.x - f.x || 1) * 220; S.bump = 0.35; S.shake = 0.3; sfx.nope(); break; }
+        }
+        for (const s of S.swimmers) if (!s.got && Math.hypot(s.x - S.x, s.y - S.y) < 52) {
+          s.got = true; S.saved++; S.riders.push(s.look); sfx.pup(); popText(S.pops, 'Saved!', 480, 300);
+        }
+        if (S.y >= GOAL) { S.done = true; S.won = true; sfx.win(); msg('You made it to the rescue ship!', 3, 'boat'); }
+      },
+      draw(t, W, H) {
+        const dawn = 1 - S.time / 120;
+        screenFill(W, H, mixColor('#173f7a', '#3a80cc', dawn), mixColor('#0d2c5c', '#2a6cb5', dawn));
+        const v = mview(W, H); VIEW = null;
+        const sh = S.shake ? rand(-4, 4) : 0;
+        cx.translate(sh, 0);
+        const Y = y => 420 - (y - S.y);
+        // studded sea
+        for (let y = Math.floor((S.y - 200) / 32) * 32; y < S.y + 600; y += 32) for (let x = 16; x < 960; x += 32) { cx.fillStyle = 'rgba(255,255,255,0.08)'; circle(x, Y(y), 7); cx.fill(); }
+        // rescue ship at the top
+        const gy = Y(GOAL + 60);
+        if (gy > -300) {
+          brick(v.x0, gy - 120, v.x1 - v.x0, 120, '#1f2228', true); brick(v.x0, gy - 20, v.x1 - v.x0, 20, '#c91a09', false);
+          cx.fillStyle = '#c91a09'; cx.fillRect(560, gy - 230, 70, 110); cx.fillStyle = '#111'; cx.fillRect(560, gy - 230, 70, 22);
+          brick(300, gy - 160, 400, 40, '#f4f4f4', true);
+          for (let x = 40; x < 940; x += 40) { cx.fillStyle = '#ffe1a0'; circle(x, gy - 70, 6); cx.fill(); }
+          cx.fillStyle = '#f2cd37'; cx.font = `700 22px ${FONT}`; cx.textAlign = 'center'; try { cx.letterSpacing = '4px'; } catch (e) {} cx.fillText('CARPATHIA', 480, gy - 96); try { cx.letterSpacing = '0px'; } catch (e) {}
+          cx.strokeStyle = '#d9b77e'; cx.lineWidth = 3; for (let i = 0; i < 6; i++) line(470, gy - 10 + i * 12, 490, gy - 10 + i * 12);
+          line(470, gy - 10, 470, gy + 62); line(490, gy - 10, 490, gy + 62);
+        }
+        // ice
+        for (const f of S.floes) {
+          const y = Y(f.y); if (y < -120 || y > 680) continue;
+          cx.save(); cx.translate(f.x, y); cx.rotate(f.a);
+          const s = f.r * 1.5;
+          cx.fillStyle = 'rgba(0,0,0,0.18)'; cx.fillRect(-s / 2 + 4, -s / 2 + 5, s, s);
+          cx.fillStyle = '#cfe7f5'; cx.fillRect(-s / 2, -s / 2, s, s);
+          cx.fillStyle = '#f6fbff'; cx.fillRect(-s / 2 + 6, -s / 2 + 6, s - 18, s - 18);
+          for (let a = -s / 2 + 14; a < s / 2 - 10; a += 18) for (let b = -s / 2 + 14; b < s / 2 - 10; b += 18) topStud(a, b, 5, '#f6fbff');
+          cx.restore();
+        }
+        // swimmers
+        for (const s of S.swimmers) {
+          if (s.got) continue; const y = Y(s.y); if (y < -60 || y > 640) continue;
+          cx.strokeStyle = 'rgba(255,255,255,0.4)'; cx.lineWidth = 2; circle(s.x, y, 20 + Math.sin(t * 3 + s.ph) * 3); cx.stroke();
+          cx.fillStyle = '#f28c28'; circle(s.x, y + 4, 13); cx.fill(); cx.fillStyle = SKIN; circle(s.x, y - 4, 9); cx.fill();
+          cx.strokeStyle = SKIN; cx.lineWidth = 4; cx.lineCap = 'round'; line(s.x + 10, y, s.x + 18, y - 14 - Math.sin(t * 8 + s.ph) * 4);
+          if (Math.sin(t * 1.5 + s.ph) > 0.2) { cx.save(); cx.translate(s.x, y - 26); shout('Help!'); cx.restore(); }
+        }
+        // your lifeboat (from above)
+        const by = Y(S.y);
+        cx.save(); cx.translate(S.x, by); cx.rotate(S.vx * 0.0012);
+        cx.fillStyle = 'rgba(0,0,0,0.22)'; cx.beginPath(); cx.ellipse(4, 6, 30, 58, 0, 0, Math.PI * 2); cx.fill();
+        cx.fillStyle = shade(prefs.boat, -30); cx.beginPath(); cx.ellipse(0, 0, 30, 58, 0, 0, Math.PI * 2); cx.fill();
+        cx.fillStyle = prefs.boat; cx.beginPath(); cx.ellipse(0, 0, 24, 50, 0, 0, Math.PI * 2); cx.fill();
+        cx.fillStyle = '#8a5a30'; for (const yy of [-24, 0, 24]) cx.fillRect(-24, yy - 3, 48, 6);
+        const oar = Math.sin(t * (input.up ? 9 : 5)) * 0.5;
+        cx.strokeStyle = '#8a5a30'; cx.lineWidth = 4; cx.lineCap = 'round'; line(-20, 6, -52, 6 + oar * 30); line(20, 6, 52, 6 + oar * 30);
+        cx.fillStyle = '#f28c28'; circle(0, 10, 11); cx.fill(); cx.fillStyle = KIDS[prefs.kid].hair; circle(0, 10, 7.5); cx.fill();
+        S.riders.forEach((r, i) => { const yy = -34 + (i % 3) * 14, xx = i < 3 ? -10 : 10; cx.fillStyle = r.coat; circle(xx, yy, 7); cx.fill(); cx.fillStyle = SKIN; circle(xx, yy, 4.5); cx.fill(); });
+        if (souv.flag) { cx.fillStyle = '#c91a09'; cx.beginPath(); cx.moveTo(0, -54); cx.lineTo(18, -60); cx.lineTo(0, -66); cx.fill(); }
+        cx.restore();
+        drawPops(S.pops, 1 / 60);
+        cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        // sunrise bar
+        const bw = Math.min(300, W - 40), bx = W / 2 - bw / 2, bby = isTouch ? 124 : H - 40;
+        cx.fillStyle = 'rgba(9,18,40,0.82)'; rr(bx - 40, bby - 8, bw + 54, 32, 16); cx.fill();
+        cx.fillStyle = '#ffd166'; circle(bx - 22, bby + 8, 8); cx.fill();
+        cx.fillStyle = 'rgba(255,255,255,0.15)'; rr(bx, bby + 2, bw, 12, 6); cx.fill();
+        cx.fillStyle = '#ffd166'; rr(bx, bby + 2, Math.max(12, bw * dawn), 12, 6); cx.fill();
+        miniHud(`Swimmers saved ${S.saved}/5   Distance ${Math.round(Math.min(1, S.y / GOAL) * 100)}%`, W);
+      },
+    };
+  },
+
+  // ---------------------------------------------------------------
+  // 9. Find the treasure: explore the wreck in a submarine
+  treasure() {
+    const WW = 2700, WH = 820, FLOORY = 740;
+    const T = [
+      { id: 'bell', name: "the ship's bell", x: 640, y: 560 }, { id: 'key', name: 'the gold key', x: 1060, y: 690 },
+      { id: 'collar', name: `${dogName()}'s collar`, x: 1560, y: 600 }, { id: 'cup', name: 'a 1st Class teacup', x: 1980, y: 700 },
+      { id: 'watch', name: 'a pocket watch', x: 2420, y: 650 },
+    ].map(o => ({ ...o, got: false, ph: Math.random() * 6 }));
+    const S = { x: 220, y: 220, vx: 0, vy: 0, face: 1, claw: 0, camX: 0, camY: 0, done: false, endT: 0, pops: [],
+      fish: Array.from({ length: 14 }, () => ({ x: rand(0, WW), y: rand(150, 650), v: rand(30, 70) * (Math.random() < 0.5 ? -1 : 1), c: pick(['#f28c28', '#f2cd37', '#1e9bd7', '#ef7b8b', '#5bd18b']) })),
+      weeds: Array.from({ length: 30 }, () => ({ x: rand(0, WW), h: rand(3, 6), ph: rand(0, 6) })), rocks: Array.from({ length: 18 }, () => ({ x: rand(0, WW), w: rand(40, 110), h: rand(20, 50), c: pick(['#7a828d', '#5f6670', '#ef7b8b', '#f28c28']) })) };
+    const near = () => T.find(o => !o.got && Math.hypot(o.x - S.x, o.y - S.y) < 80);
+    const end = () => { award('treasure'); miniResult('treasure', true, { coins: 10, title: 'Treasure found!', text: 'You found all five treasures in the wreck of the Titanic. What a story!' }); };
+    const drawTreasure = (o, x, y, s = 1) => {
+      cx.save(); cx.translate(x, y); cx.scale(s, s);
+      if (o.id === 'bell') { cx.fillStyle = '#d4af37'; cx.beginPath(); cx.moveTo(-16, 10); cx.quadraticCurveTo(-14, -18, 0, -20); cx.quadraticCurveTo(14, -18, 16, 10); cx.closePath(); cx.fill(); cx.fillRect(-19, 8, 38, 5); cx.fillStyle = '#8a6d1c'; circle(0, 14, 4); cx.fill(); }
+      else if (o.id === 'key') drawKey(0, 0, 0.9, 0);
+      else if (o.id === 'collar') { cx.strokeStyle = '#e5484d'; cx.lineWidth = 6; circle(0, 0, 14); cx.stroke(); cx.fillStyle = '#d4af37'; circle(0, 18, 6); cx.fill(); }
+      else if (o.id === 'cup') { cx.fillStyle = '#ffffff'; cx.beginPath(); cx.moveTo(-14, -10); cx.lineTo(14, -10); cx.quadraticCurveTo(12, 12, 0, 12); cx.quadraticCurveTo(-12, 12, -14, -10); cx.fill(); cx.strokeStyle = '#ffffff'; cx.lineWidth = 3; cx.beginPath(); cx.arc(16, -2, 6, -1.2, 1.2); cx.stroke(); cx.fillStyle = '#1e5aa8'; cx.fillRect(-12, -6, 24, 3); }
+      else { cx.fillStyle = '#d4af37'; circle(0, 0, 15); cx.fill(); cx.fillStyle = '#fbf5e0'; circle(0, 0, 11); cx.fill(); cx.strokeStyle = '#333'; cx.lineWidth = 2; line(0, 0, 0, -8); line(0, 0, 6, 2); cx.fillStyle = '#d4af37'; cx.fillRect(-3, -19, 6, 5); }
+      cx.restore();
+    };
+    return {
+      S, T, icon: 'chest', intro: 'Steer the submarine with the arrows. Press Space near something shiny to grab it!',
+      action() {
+        const o = near(); if (!o || S.done) return;
+        o.got = true; S.claw = 1; sfx.key(); popText(S.pops, 'Found it!', o.x, o.y - 40); msg(`You found ${o.name}!`, 2.5, 'chest');
+        if (T.every(t2 => t2.got)) { S.done = true; setTimeout(() => sfx.win(), 400); }
+      },
+      tap() { this.action(); },
+      update(dt) {
+        S.claw = Math.max(0, S.claw - dt * 1.5);
+        const ax = (input.right ? 1 : 0) - (input.left ? 1 : 0), ay = (input.down ? 1 : 0) - (input.up ? 1 : 0);
+        S.vx += (ax * 230 - S.vx) * Math.min(1, dt * 2.5); S.vy += (ay * 170 - S.vy) * Math.min(1, dt * 2.5);
+        S.x = clamp(S.x + S.vx * dt, 60, WW - 60); S.y = clamp(S.y + S.vy * dt, 80, FLOORY - 40);
+        if (Math.abs(S.vx) > 20) S.face = Math.sign(S.vx);
+        for (const f of S.fish) { f.x += f.v * dt; if (f.x < -50) f.x = WW + 50; if (f.x > WW + 50) f.x = -50; }
+        if (S.done) { S.endT += dt; if (S.endT > 2.4 && !this.finished) end(); }
+      },
+      draw(t, W, H) {
+        screenFill(W, H, '#1d5f99', '#04142b');
+        const v = mview(W, H); VIEW = null;
+        S.camX = clamp(S.x - 480, 0, WW - 960); S.camY = clamp(S.y - 270, 0, WH - 540);
+        cx.save(); cx.translate(-S.camX, -S.camY);
+        // light rays
+        for (let i = 0; i < 8; i++) { const x = i * 360 + Math.sin(t * 0.3 + i) * 40; const r = cx.createLinearGradient(0, 0, 0, 700); r.addColorStop(0, 'rgba(200,235,255,0.12)'); r.addColorStop(1, 'rgba(200,235,255,0)'); cx.fillStyle = r; cx.beginPath(); cx.moveTo(x, 0); cx.lineTo(x + 50, 0); cx.lineTo(x + 200, 700); cx.lineTo(x + 100, 700); cx.fill(); }
+        // sea floor
+        brick(-100, FLOORY, WW + 200, 140, '#d9b77e', true);
+        for (const r of S.rocks) brick(r.x, FLOORY - r.h, r.w, r.h, r.c, true);
+        for (const w of S.weeds) { cx.strokeStyle = '#3b9a52'; cx.lineWidth = 6; cx.beginPath(); cx.moveTo(w.x, FLOORY); for (let k = 1; k <= w.h; k++) cx.lineTo(w.x + Math.sin(t * 1.4 + w.ph + k) * 6, FLOORY - k * 16); cx.stroke(); }
+        // the wreck: bow and stern lying on the bottom
+        const wreck = (x0, x1, tilt, bow) => {
+          cx.save(); cx.translate((x0 + x1) / 2, FLOORY - 6); cx.rotate(tilt); const w = x1 - x0;
+          brick(-w / 2, -150, w, 150, '#25282e', false); brick(-w / 2, -26, w, 26, '#d0302a', false); brick(-w / 2, -158, w, 10, '#e2c693', true);
+          for (let r = 0; r < 3; r++) for (let x = -w / 2 + 20; x < w / 2 - 10; x += 34) { cx.fillStyle = 'rgba(120,150,170,0.5)'; circle(x, -120 + r * 32, 6); cx.fill(); }
+          cx.fillStyle = '#c47a1e'; cx.fillRect(bow ? w * 0.1 : -w * 0.3, -230, 52, 72); cx.fillStyle = '#1c1c1c'; cx.fillRect(bow ? w * 0.1 : -w * 0.3, -230, 52, 16);
+          cx.fillStyle = '#3a3d42'; for (let y = -150; y < 0; y += 18) cx.fillRect(bow ? w / 2 - 6 : -w / 2 - 6, y, 12 + Math.sin(y) * 8, 14);
+          cx.restore();
+        };
+        wreck(380, 1260, -0.03, false); wreck(1420, 2260, 0.05, true);
+        // treasures
+        for (const o of T) if (!o.got) { const s = 1.1 + Math.sin(t * 3 + o.ph) * 0.1; glow(o.x, o.y, 60, 'rgba(255,230,120,A)', 0.35 + 0.2 * Math.sin(t * 4 + o.ph)); drawTreasure(o, o.x, o.y, s); cx.fillStyle = '#fff6c2'; drawSpark(o.x + 18, o.y - 20, 4 + 2 * Math.sin(t * 7 + o.ph)); }
+        // fish
+        for (const f of S.fish) { cx.save(); cx.translate(f.x, f.y + Math.sin(t * 2 + f.x) * 6); cx.scale(Math.sign(f.v), 1); cx.fillStyle = f.c; cx.fillRect(-14, -7, 28, 14); cx.beginPath(); cx.moveTo(-14, 0); cx.lineTo(-26, -9); cx.lineTo(-26, 9); cx.fill(); cx.fillStyle = '#fff'; circle(8, -2, 3); cx.fill(); cx.fillStyle = '#111'; circle(9, -2, 1.5); cx.fill(); cx.restore(); }
+        // the submarine
+        cx.save(); cx.translate(S.x, S.y); cx.scale(S.face, 1);
+        cx.fillStyle = 'rgba(255,240,180,0.18)'; cx.beginPath(); cx.moveTo(44, 0); cx.lineTo(260, -90); cx.lineTo(260, 90); cx.fill();
+        cx.fillStyle = '#f2cd37'; rr(-50, -28, 100, 56, 28); cx.fill(); cx.fillStyle = '#d9a52b'; rr(-50, 10, 100, 18, 9); cx.fill();
+        brick(-14, -44, 34, 18, '#f2cd37', true);
+        cx.fillStyle = '#9fd3f0'; circle(18, -4, 16); cx.fill(); cx.strokeStyle = '#8d99a6'; cx.lineWidth = 4; circle(18, -4, 16); cx.stroke();
+        cx.save(); cx.beginPath(); cx.arc(18, -4, 13, 0, Math.PI * 2); cx.clip(); cx.drawImage(faceCanvas(prefs.face), 6, -16, 24, 24); cx.restore();
+        cx.fillStyle = '#4a4f57'; cx.fillRect(-62, -6, 12, 12); const pr = Math.sin(t * 20) * 14; cx.fillRect(-68, -pr / 2, 5, Math.abs(pr) + 2);
+        const cl = 20 + S.claw * 30; cx.strokeStyle = '#8d99a6'; cx.lineWidth = 4; line(30, 22, 30 + cl * 0.6, 22 + cl); line(30 + cl * 0.6, 22 + cl, 22 + cl * 0.6, 32 + cl); line(30 + cl * 0.6, 22 + cl, 40 + cl * 0.6, 32 + cl);
+        cx.restore();
+        // bubbles
+        for (let i = 0; i < 10; i++) { const k = (t * 0.6 + i / 10) % 1; cx.fillStyle = `rgba(220,240,255,${0.5 * (1 - k)})`; circle(S.x - S.face * 50 + Math.sin(i * 3 + t) * 8, S.y - k * 120, 3 + (i % 3)); cx.fill(); }
+        const o = near(); if (o) { cx.save(); cx.translate(o.x, o.y - 44); prompt(0, 0, 'search'); cx.restore(); }
+        drawPops(S.pops, 1 / 60);
+        cx.restore();
+        // darkness around the submarine's light
+        cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        const px = v.ox + (S.x - S.camX) * v.s, py = v.oy + (S.y - S.camY) * v.s;
+        const dk = cx.createRadialGradient(px, py, 120 * v.s, px, py, 520 * v.s); dk.addColorStop(0, 'rgba(2,8,20,0)'); dk.addColorStop(1, 'rgba(2,8,20,0.72)');
+        cx.fillStyle = dk; cx.fillRect(0, 0, W, H);
+        // found list
+        const slotW = 54, sx0 = W - 20 - slotW * 5, sy0 = isTouch ? 124 : H - 74;
+        cx.fillStyle = 'rgba(9,18,40,0.82)'; rr(sx0 - 10, sy0 - 10, slotW * 5 + 20, 64, 16); cx.fill();
+        T.forEach((o2, i) => { const x = sx0 + i * slotW + slotW / 2, y = sy0 + 22; cx.fillStyle = 'rgba(255,255,255,0.08)'; circle(x, y, 22); cx.fill(); cx.globalAlpha = o2.got ? 1 : 0.25; drawTreasure(o2, x, y, 0.9); cx.globalAlpha = 1; });
+        miniHud(`Treasure ${T.filter(o2 => o2.got).length}/5`, W);
+      },
+    };
+  },
+};
+
+// ---------- Guide it down, drawn in 2D (when 3D isn't available) ----------
+function drawDive2D(now) {
+  const t = now / 1000, W = innerWidth, H = innerHeight, D = G.dive, k = Math.min(W / 140, H / 60);
+  screenFill(W, H, '#2f7fbf', '#06203f');
+  cx.setTransform(dpr, 0, 0, dpr, 0, 0); VIEW = null;
+  const sx = x => W / 2 + x * k, sy = y => H * 0.42 - (y - D.y) * k;
+  for (let i = 0; i < 6; i++) { const x = W * (0.1 + i * 0.17) + Math.sin(t * 0.3 + i) * 30; cx.fillStyle = 'rgba(200,235,255,0.08)'; cx.beginPath(); cx.moveTo(x - 30, 0); cx.lineTo(x + 30, 0); cx.lineTo(x + 140, H); cx.lineTo(x + 40, H); cx.fill(); }
+  const fy = sy(DIVE.floor);
+  if (fy < H) { cx.fillStyle = '#d9b77e'; cx.fillRect(0, fy, W, H - fy); cx.fillStyle = 'rgba(255,224,102,0.8)'; for (let i = 0; i < 10; i++) { const a = i / 10 * Math.PI * 2; circle(sx(D.landX) + Math.cos(a) * 9 * k, fy + 6 + Math.sin(a) * 2, 4); cx.fill(); } }
+  for (const r of D.rows) for (const f of r.fish) {
+    let x, y;
+    if (f.bumped) { const q = D.t - f.bt; if (q > 2) continue; x = f.bx + f.bvx * q; y = f.by + q * 9; } else { x = fishX(r, f, D.t); y = r.y; if (Math.abs(x) > DIVE.half + 6) continue; }
+    cx.save(); cx.translate(sx(x), sy(y)); cx.scale(r.dir * k / 3, k / 3);
+    cx.fillStyle = r.color; cx.fillRect(-3, -1.6, 6, 3.2); cx.beginPath(); cx.moveTo(-3, 0); cx.lineTo(-5.5, -2); cx.lineTo(-5.5, 2); cx.fill();
+    cx.fillStyle = '#fff'; circle(2, -0.5, 0.8); cx.fill(); cx.restore();
+  }
+  cx.save(); cx.translate(sx(D.x), sy(D.y)); cx.rotate(-(0.1 + Math.sin(t * 1.2) * 0.04)); cx.scale(k, k);
+  cx.fillStyle = '#25282e'; cx.fillRect(-13, -5, 26, 9); cx.fillStyle = '#d0302a'; cx.fillRect(-13, 2.5, 26, 2); cx.fillStyle = '#e2c693'; cx.fillRect(-13, -5.6, 26, 1);
+  cx.fillStyle = '#f5a623'; cx.fillRect(-6, -10, 2.6, 4.5); cx.fillRect(1, -10, 2.6, 4.5);
+  cx.fillStyle = '#ffe1a0'; for (let x = -11; x < 12; x += 2.2) cx.fillRect(x, -2.5, 0.8, 0.8);
+  cx.restore();
+  if (D.t < 6 && !D.landed) { cx.fillStyle = 'rgba(9,18,40,0.85)'; rr(W / 2 - 70, sy(D.y + 10) - 22, 140, 30, 15); cx.fill(); cx.fillStyle = '#fff'; cx.font = `600 14px ${FONT}`; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(isTouch ? '◀ ▶ to steer' : '← → to steer', W / 2, sy(D.y + 10) - 7); }
+  vignette(W, H);
+}
+
+// ---------- 3D: the puppy hat and lifeboat flag ----------
+function addDogHat3D(dog) {
+  if (!souv.dogHat) return;
+  const cone = new THREE.Mesh(new THREE.ConeGeometry(0.34, 0.85, 14), M('#ef7b8b')); cone.position.set(1.05, 2.4, 0); cone.castShadow = true; dog.body.add(cone);
+  const pom = mesh(R3.geo.ball, M('#f2cd37'), dog.body, 1.05, 2.86, 0); pom.scale.setScalar(0.13);
+}
+function addFlag3D(boat) {
+  if (!souv.flag) return;
+  box(0.14, 3.6, 0.14, '#8a5a30', -3.2, 3.9, 0, boat);
+  box(1.6, 1.0, 0.06, '#c91a09', -2.35, 5.15, 0, boat); box(1.6, 0.22, 0.07, '#ffffff', -2.35, 5.15, 0, boat);
+}
+
+function viewState() { return state === 'paused' && pausedFrom ? pausedFrom : state; } // what to show behind the pause screen
+function finishEscape() { if (G && G.mode) { showScreen('win'); return; } if (use3D && prefs.ending) startEnding(); else showScreen('win'); }
+function draw(now) {
+  if (MG) { cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, innerWidth, innerHeight); MG.draw(now / 1000, innerWidth, innerHeight); return; }
+  if (use3D) draw3D(now);
+  else if (G && G.dive && viewState() === 'dive') drawDive2D(now);
+  else drawClassic(now);
+}
 function start3D() {
   if (use3D) return;
   try { use3D = init3D(); } catch (e) { console.warn('3D unavailable, using 2D', e); use3D = false; }
@@ -3615,6 +4681,7 @@ function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   update(dt);
   draw(now);
+  if (photoPending) { photoPending = false; capturePhoto(); }
   requestAnimationFrame(frame);
 }
 showScreen('menu');

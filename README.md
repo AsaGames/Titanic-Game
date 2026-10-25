@@ -4,6 +4,28 @@ A browser game designed by Asa (age 6), drawn in a bright, brick-built toy-town 
 
 The Titanic is about to hit an iceberg. You start at the very bottom of the ship. Find the key, unlock the gate to the lifeboats, and get in a lifeboat before the water touches you. There are no points. You either survive or you don't.
 
+## The story map
+
+**Play** opens a map of the whole voyage: nine stops played in order. Finishing a stop opens the next one, and you can replay any stop you've reached.
+
+| Stop | Game | How it works |
+| --- | --- | --- |
+| 1 | Boarding day | Drop suitcases from the crane onto the ship. Stack 8 before 3 fall in the sea. |
+| 2 | Shovel the coal | Press Space when the coal is in the gold ring to get the ship to full speed before time runs out. |
+| 3 | Lookout | Look left and right through the binoculars and ring the bell when you spot the iceberg. Winning makes the next escape easier: the iceberg only scrapes the ship, so the water rises more slowly. |
+| 4 | Radio for help | Watch the lights, then copy them with the arrow keys to call the rescue ship. |
+| 5 | Escape the ship | The main game (see below). |
+| 6 | Swim to safety | The swim on its own: reach a lifeboat past sharks and icebergs. |
+| 7 | Row to the rescue | Row your lifeboat through the ice to the rescue ship before sunrise, picking up swimmers. |
+| 8 | Guide it down | Steer the wreck past the fish to the sea floor. |
+| 9 | Find the treasure | Explore the wreck in a submarine and find five treasures. No way to lose. |
+
+From the map you can also open:
+
+- **Sticker book:** 18 stickers to collect, like Puppy pal, Eagle eyes, Fish friend and Say cheese. A pop-up tells you when you earn one.
+- **Souvenir shop:** spend the coins you earn (on the ship and from finishing stops) on puppy colours, a party hat for the puppy and a flag for your lifeboat.
+- **1 player / 2 players:** on a computer, two people can play Escape the ship together on one keyboard.
+
 ## How to play
 
 Open `index.html` in any modern browser. There's nothing to install or build.
@@ -17,6 +39,8 @@ The game is drawn in 3D with [three.js](https://threejs.org/), loaded from a CDN
 | Search luggage, or open the shop | Space (or E / Enter) | 🔍 button |
 | Full screen | F, or the ⛶ button at the top right | ⛶ button (not on iPhone) |
 | Pause, restart or go to the menu | Esc, or the ⏸ button | ⏸ button |
+| Take a photo | P, or the 📷 button | 📷 button |
+| Player 2 (two-player mode) | W A S D to move, E to search | – |
 
 ## The rules
 
@@ -37,6 +61,8 @@ The game is drawn in 3D with [three.js](https://threejs.org/), loaded from a CDN
 - **The sinking ending (3D).** After you escape, watch the Titanic break in two and sink. Then guide the wreck down to the sea floor: steer left and right around the schools of fish, and try to land on the glowing spot. Press Space during the sinking scene to skip to the steering part. You can turn the ending off in Grown-ups.
 - **The lost puppy.** A puppy is hiding somewhere on the ship. Walk up to it and it follows you. Get it into the lifeboat with you to save it too.
 - **Picture hints.** Locked gates show what you still need, like a coin with "3/5". After the iceberg hits, a red arrow over your head reminds you to go up.
+- **Two players.** Player 1 uses the arrow keys and Space. Player 2 uses W A S D and E. Coins, class and keys are shared. You both need to get into a lifeboat. If one of you touches the water, the other can still save the team by reaching a lifeboat.
+- **Photo mode.** Press P or the camera button to take a picture of your game. It appears as an instant photo you can save.
 - **Guide arrow.** A gold arrow points to the next place to go: coins, then the key, then a lifeboat. It points at ladders when the next place is on another deck.
 
 ## The better you get, the harder it gets
@@ -74,7 +100,7 @@ The **Grown-ups** button on the title screen has:
 - **Guide arrow:** Auto (levels 1–2 only), Always, or Never.
 - **Level:** jump to any level from 1 to 10.
 - **Sinking ending:** turn the split-and-sink ending on or off.
-- **Reset everything:** goes back to level 1 and clears the face, names and settings (tap twice to confirm).
+- **Reset everything:** goes back to level 1 and clears the story map, stickers, coins, face, names and settings (tap twice to confirm).
 
 Other notes:
 
