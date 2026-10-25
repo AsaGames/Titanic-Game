@@ -24,7 +24,7 @@ The Titanic is about to hit an iceberg. You start at the very bottom of the ship
 
 From the map you can also open:
 
-- **Sticker book:** 20 stickers to collect, like Puppy pal, Eagle eyes, Fish friend and Say cheese. A pop-up tells you when you earn one.
+- **Sticker book:** 21 stickers to collect, like Puppy pal, Eagle eyes, Fish friend and Say cheese. A pop-up tells you when you earn one.
 - **Souvenir shop:** spend the coins you earn (on the ship and from finishing stops) on puppy colours, a party hat for the puppy and a flag for your lifeboat.
 - **1 player / 2 players:** on a computer, two people can play Escape the ship together on one keyboard.
 
@@ -66,6 +66,7 @@ The game is drawn in 3D with [three.js](https://threejs.org/), loaded from a CDN
 - **Picture hints.** Locked gates show what you still need, like a coin with "3/5". After the iceberg hits, a red arrow over your head reminds you to go up.
 - **Two players.** Player 1 uses the arrow keys and Space. Player 2 uses W A S D and E. Coins, class and keys are shared. You both need to get into a lifeboat. If one of you touches the water, the other can still save the team by reaching a lifeboat.
 - **Photo mode.** Press P or the camera button to take a picture of your game. It appears as an instant photo you can save.
+- **Six seven!** Whenever a number in the game lands on 67 (the fishing ticket counter, the coal speed, the rowing distance, your coins, even the seconds on the ship's clock), a giant bouncing 6 and 7 pop up, it goes boing-boing, and every character on screen does the six-seven hands. The first time earns a secret sticker.
 - **Guide arrow.** A gold arrow points to the next place to go: coins, then the key, then a lifeboat. It points at ladders when the next place is on another deck.
 
 ## The better you get, the harder it gets
