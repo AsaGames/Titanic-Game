@@ -6,7 +6,9 @@ The Titanic is about to hit an iceberg. You start at the very bottom of the ship
 
 ## The story map
 
-**Play** opens a map of the whole voyage: eleven stops played in order. Finishing a stop opens the next one, and you can replay any stop you've reached.
+**Play** opens a map of the whole voyage: eleven stops. Every stop is open from the start, so you can play the story in order or jump to any mini-game.
+
+**Escape the ship** plays straight through the rest of the story. Once you're in a lifeboat, you pick up people in the water, watch the Titanic split in two and sink (3D), row everyone to the Carpathia, guide the wreck down to the sea floor, and then dive for the treasure. The "You survived!" screen at the end sums it all up.
 
 | Stop | Game | How it works |
 | --- | --- | --- |
@@ -15,10 +17,10 @@ The Titanic is about to hit an iceberg. You start at the very bottom of the ship
 | 3 | Gone fishing | An arcade fishing game off the side of the ship. Move along the rail with ← →, press Space to drop your hook and again to reel it in. Deeper, bigger fish win more tickets (10, 25, 50, and 100 for the giant golden fish), there's a treasure chest on the bottom, boots are worth nothing, and the shark steals your catch if you reel it past him. Get 100 tickets in 60 seconds. Your best score is saved. |
 | 4 | Lookout | Look left and right through the binoculars and ring the bell when you spot the iceberg. Winning makes the next escape easier: the iceberg only scrapes the ship, so the water rises more slowly. |
 | 5 | Radio for help | Watch the lights, then copy them with the arrow keys to call the rescue ship. |
-| 6 | Escape the ship | The main game (see below). |
+| 6 | Escape the ship | The main game (see below). It carries on into stops 7, 9, 10 and 11. |
 | 7 | Lifeboat rescue | Row around the sinking Titanic and pull people out of the water before it goes under. Watch out for falling funnels. |
 | 8 | Swim to safety | The swim on its own: reach a lifeboat past sharks and icebergs. |
-| 9 | Row to the rescue | Row your lifeboat through the ice to the rescue ship before sunrise, picking up swimmers. |
+| 9 | Row to the rescue | Row your lifeboat through the ice to the Carpathia, the rescue ship, before sunrise, picking up swimmers. |
 | 10 | Guide it down | Steer the wreck past the fish to the sea floor. |
 | 11 | Find the treasure | Explore the wreck in a submarine and pick up five treasures: the ship's bell, the gold key, the puppy's collar, a teacup and a pocket watch. Steer next to something shiny and press Space (or tap): the claw reaches out, grabs it and lifts it into the submarine. Anglerfish, jellyfish and lanternfish drift around the wreck. Keep away from the sharks: they chase you when you get close, and three bumps ends the dive. |
 
@@ -64,7 +66,8 @@ The game is drawn in 3D with [three.js](https://threejs.org/), loaded from a CDN
 - **The shop.** The purser's desk in 3rd Class sells a **life jacket** (4 coins) and **fast shoes** (3 coins, run and climb faster). Spending coins doesn't lower your class, because class counts everything you've collected.
 - **Swimming to a lifeboat.** With a life jacket on, you can jump into the sea through the gangway doors on the two lower passenger decks once the iceberg has hit. A short scene shows you leaping out of the ship and splashing down (the puppy jumps after you). If the water reaches you, the jacket floats you out instead of you losing. Then the view switches to the open sea from above: swim to a lifeboat before your warmth bar runs out. Icebergs block the way and make you colder if you touch them. Sharks chase you if you swim close, but you can outswim them. More sharks appear at higher levels.
 - **Panic after the iceberg.** More passengers come running, wave their arms and shout for help, and they get in your way.
-- **The sinking ending (3D).** After you escape, watch the Titanic break in two and sink from your lifeboat, with everyone you rescued sitting beside you and waving. Then guide the wreck down to the sea floor: steer left and right around the schools of fish, and try to land on the glowing spot. Press Space during the sinking scene to skip to the steering part. You can turn the ending off in Grown-ups.
+- **The sinking scene (3D).** After the lifeboat rescue, watch the Titanic break in two and sink from your lifeboat, with everyone you rescued sitting beside you and waving. Press Space to skip it. You can turn it off in Grown-ups.
+- **Guide it down.** After you reach the Carpathia, steer the wreck left and right around the schools of fish on its way to the sea floor, and try to land on the glowing spot.
 - **The lost puppy.** A puppy is hiding somewhere on the ship. Walk up to it and it follows you. Get it into the lifeboat with you to save it too.
 - **Picture hints.** Locked gates show what you still need, like a coin with "3/5". After the iceberg hits, a red arrow over your head reminds you to go up.
 - **Two players.** Player 1 uses the arrow keys and Space. Player 2 uses W A S D and E. Coins, class and keys are shared. You both need to get into a lifeboat. If one of you touches the water, the other can still save the team by reaching a lifeboat.
@@ -74,7 +77,7 @@ The game is drawn in 3D with [three.js](https://threejs.org/), loaded from a CDN
 
 ## The better you get, the harder it gets
 
-Every win moves you up a level. Your level is saved in the browser.
+Every win moves you up a level, and you can also pick any level from 1 to 10 by tapping its number on the title screen. Your level is saved in the browser.
 
 | Level | What changes |
 | --- | --- |
@@ -106,9 +109,8 @@ The **Grown-ups** button on the title screen has:
 - **Slow mode:** the iceberg comes 10 seconds later, the water rises 40% slower, lifeboats wait longer, and sharks and cold are gentler when swimming.
 - **Guide arrow:** Auto (levels 1–2 only), Always, or Never.
 - **Level:** jump to any level from 1 to 10.
-- **Sinking ending:** turn the split-and-sink ending on or off.
-- **Open every stop:** unlocks the whole story map so you can jump straight to any mini-game.
-- **Reset everything:** goes back to level 1 and clears the story map, stickers, coins, face, names and settings (tap twice to confirm).
+- **Sinking ending:** turn the split-and-sink scene on or off.
+- **Reset everything:** goes back to level 1 and clears stickers, coins, face, names and settings (tap twice to confirm).
 
 Other notes:
 

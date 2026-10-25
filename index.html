@@ -205,6 +205,12 @@
   .pips { display: flex; gap: 5px; }
   .pip { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.15); }
   .pip.on { background: var(--gold); box-shadow: 0 0 8px rgba(232,193,90,0.6); }
+  .pips.pick { gap: 4px; }
+  .pips.pick button { width: 30px; height: 30px; padding: 0; border-radius: 9px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.08);
+    color: var(--muted); font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer; letter-spacing: 0; }
+  .pips.pick button.on { background: var(--gold); color: #2a1d00; border-color: transparent; box-shadow: 0 0 8px rgba(232,193,90,0.6); }
+  .pips.pick button:hover { border-color: var(--gold); }
+  .level-help { margin: -10px 0 16px; color: var(--muted); font-size: 14px; }
   .next { display: inline-flex; align-items: center; gap: 8px; margin: -4px auto 18px; padding: 8px 14px; border-radius: 12px;
     background: rgba(232,193,90,0.1); border: 1px solid rgba(232,193,90,0.35); font-size: 15px; color: var(--text); text-align: left; }
   .next svg { width: 24px; height: 24px; flex: none; }
@@ -751,7 +757,7 @@ addEventListener('keydown', e => {
   if (k2 && live) { input2[k2] = true; e.preventDefault(); }
   if (e.code === 'KeyP' && screenEl.classList.contains('hide')) { takePhoto(); return; }
   if (state === 'mini' && (e.code === 'Space' || e.code === 'Enter')) { e.preventDefault(); if (MG.action) MG.action(); return; }
-  if (state === 'ending' && (e.code === 'Space' || e.code === 'Enter')) { e.preventDefault(); startDive(); return; }
+  if (state === 'ending' && (e.code === 'Space' || e.code === 'Enter')) { e.preventDefault(); finishEscape(); return; }
   if (e.code === 'Escape' && live) { pauseGame(); return; }
   if (state === 'paused' && (e.code === 'Escape' || e.code === 'Space')) { e.preventDefault(); resumeGame(); return; }
   if (state === 'shop') {
@@ -906,10 +912,10 @@ const LEVEL_NOTES = {
   9: 'No more twinkling hints, bigger crowds, and lifeboats leave sooner.',
   10: 'The fastest water yet. Good luck!',
 };
-function pips() {
+function pips() { // every level is open: tap a number to play that level
   let html = '';
-  for (let i = 1; i <= 10; i++) html += `<span class="pip${i <= level ? ' on' : ''}"></span>`;
-  return `<div class="level-row">Level <b>${level}</b><span class="pips">${html}</span></div>`;
+  for (let i = 1; i <= 10; i++) html += `<button data-level="${i}" class="${i === level ? 'on' : ''}" aria-pressed="${i === level}" aria-label="Level ${i}">${i}</button>`;
+  return `<div class="level-row">Level<span class="pips pick">${html}</span></div><div class="level-help" id="levelHelp">${esc(levelSummary(level))}</div>`;
 }
 const AVATARS = [];
 function avatarURL(i) {
@@ -1004,10 +1010,8 @@ function showScreen(kind) {
         <div class="field"><label class="switch"><span><span class="lbl" style="margin:0">Sinking ending</span>
           <span class="help" style="display:block">After you escape, watch the ship split and sink, then guide it to the sea floor (3D only).</span></span>
           <input type="checkbox" id="endingOpt" ${prefs.ending ? 'checked' : ''}></label></div>
-        <div class="field"><span class="lbl">Story map</span><button class="secondary" id="unlockAll">Open every stop</button>
-          <div class="help">Lets you play any mini-game without finishing the ones before it.</div></div>
         <div class="field"><span class="lbl">Start over</span><button class="secondary" id="resetAll">Reset everything</button>
-          <div class="help">Goes back to level 1 and clears the story map, stickers, coins, face, names and settings.</div></div>
+          <div class="help">Goes back to level 1 and clears stickers, coins, face, names and settings.</div></div>
       </div>
       <div class="actions"><button class="primary" id="backBtn">Done</button></div>`;
   } else if (kind === 'face') {
@@ -1044,7 +1048,9 @@ function showScreen(kind) {
     html = shopHTML();
   } else if (kind === 'win') {
     const pup = (G && G.dog.following ? `<div class="saved">${ICONS.dog}<span>You saved ${esc(dogName())} too!</span></div>` : '')
-      + (G && G.dive && G.dive.landed ? `<div class="saved">${ICONS.wave}<span>${G.dive.bumped === 0 ? 'You guided the Titanic down and every fish stayed safe!' : `You guided the Titanic down and kept ${G.dive.total - G.dive.bumped} of ${G.dive.total} fish safe.`}</span></div>` : '');
+      + (G && G.rowed !== undefined ? `<div class="saved">${ICONS.boat}<span>${G.rowWon ? 'You rowed everyone to the Carpathia' : 'The Carpathia picked you up at sunrise'}${G.rowed ? ` and saved ${G.rowed} more ${G.rowed === 1 ? 'swimmer' : 'swimmers'}` : ''}!</span></div>` : '')
+      + (G && G.dive && G.dive.landed ? `<div class="saved">${ICONS.wave}<span>${G.dive.bumped === 0 ? 'You guided the Titanic down and every fish stayed safe!' : `You guided the Titanic down and kept ${G.dive.total - G.dive.bumped} of ${G.dive.total} fish safe.`}</span></div>` : '')
+      + (G && G.found !== undefined ? `<div class="saved">${ICONS.chest}<span>${G.found === 5 ? 'You found all 5 treasures in the wreck!' : `You found ${G.found} of 5 treasures in the wreck.`}</span></div>` : '');
     const note = LEVEL_NOTES[level] ? `<div class="next">${ICONS.keyGold}<span>Next: ${LEVEL_NOTES[level]}</span></div>` : `<div class="next">${ICONS.keyGold}<span>Next time, the key will be hidden even better.</span></div>`;
     html = `
       <div class="hero">${ICONS.boatHero}</div>
@@ -1091,13 +1097,12 @@ function wireScreen(kind) {
   on('makeBtn', () => showScreen('make'));
   on('faceBtn', () => showScreen('face'));
   on('resumeBtn', resumeGame);
-  on('unlockAll', e => { story = STOPS.length; save('titanic.story', story); e.currentTarget.textContent = 'Every stop is open!'; e.currentTarget.disabled = true; });
   on('restartBtn', () => startStop(curStop || 'escape'));
   on('resetAll', e => {
     const b = e.currentTarget;
     if (!b.dataset.sure) { b.dataset.sure = '1'; b.textContent = 'Tap again to reset everything'; return; }
     try { Object.keys(localStorage).filter(k => k.startsWith('titanic.')).forEach(k => localStorage.removeItem(k)); } catch (_) {}
-    level = 1; story = 1; stickers = []; doneStops = []; Object.assign(souv, { bank: 0, owned: [], dog: 'golden', cat: 'orange', pet: 'dog', fishOff: [], dogHat: false, flag: false });
+    level = 1; stickers = []; doneStops = []; Object.assign(souv, { bank: 0, owned: [], dog: 'golden', cat: 'orange', pet: 'dog', fishOff: [], dogHat: false, flag: false });
     Object.assign(prefs, { players: 1, kid: 0, dog: 'Pinkie', boat: '#ffffff', sign: '', slow: false, guide: 'auto', ending: true, face: { ...FACE_DEFAULT } });
     faceLayer.getContext('2d').clearRect(0, 0, 288, 288); hasDrawing = false; faceChanged(); if (use3D) refreshShipSign();
     showScreen('menu');
@@ -1125,6 +1130,12 @@ function wireScreen(kind) {
   const sm = $('slowMode'); if (sm) sm.addEventListener('change', () => setPref('slow', sm.checked));
   const mo = $('musicOpt'); if (mo) mo.addEventListener('change', () => { musicOn = mo.checked; save('titanic.music', musicOn); });
   const eo = $('endingOpt'); if (eo) eo.addEventListener('change', () => setPref('ending', eo.checked));
+  cardEl.querySelectorAll('[data-level]').forEach(b => b.addEventListener('click', () => {
+    level = clamp(Number(b.dataset.level), 1, 10); save('titanic.level', level);
+    cardEl.querySelectorAll('[data-level]').forEach(o => { const on = o === b; o.classList.toggle('on', on); o.setAttribute('aria-pressed', String(on)); });
+    const h = $('levelHelp'); if (h) h.textContent = levelSummary(level);
+    const pb = $('playBtn'); if (pb) pb.textContent = `Play level ${level}`;
+  }));
   const setLevel = l => { level = clamp(l, 1, 10); save('titanic.level', level); $('lvlOut').textContent = level; $('lvlNote').textContent = levelSummary(level); };
   on('lvlDown', () => setLevel(level - 1));
   on('lvlUp', () => setLevel(level + 1));
@@ -3761,7 +3772,7 @@ function updateEnding(dt) {
     E.cracked = true; G.shake = 1.2; sfx.boom();
     msg('CRACK! The Titanic broke in two!', 4, 'ice');
   }
-  if (E.t >= 13.5) startDive();
+  if (E.t >= 13.5) finishEscape();
 }
 function startDive() {
   state = 'dive';
@@ -3779,7 +3790,7 @@ function startDive() {
 function fishX(row, f, t) { return row.base + Math.sin(t * row.speed + row.ph) * 16 + f.off; }
 function updateDive(dt) {
   const D = G.dive; D.t += dt;
-  if (D.landed) { if (D.t - D.landT > 3.2) showScreen('win'); return; }
+  if (D.landed) { if (D.t - D.landT > 3.2) { if (!G.mode && !D.next) { D.next = true; finishStop('dive'); finishEscape(); } else if (G.mode) showScreen('win'); } return; }
   const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
   D.vx += (dir * 24 - D.vx) * Math.min(1, dt * 4);
   D.x = clamp(D.x + D.vx * dt, -DIVE.half + 12, DIVE.half - 12);
@@ -3939,14 +3950,12 @@ const STOPS = [
   { id: 'dive', name: 'Guide it down', icon: 'wave', desc: 'Steer the wreck past the fish to the sea floor.' },
   { id: 'treasure', name: 'Find the treasure', icon: 'chest', desc: 'Explore the wreck in a little submarine.' },
 ];
-let story = clamp(Number(load('titanic.story', 1)) || 1, 1, STOPS.length);
-if (doneStopsRaw().includes('coal') && story < 3) story = 3; // keep 'Gone fishing' open for players who were past it  // how many stops are open
+let story = STOPS.length; // every stop is open
 function doneStopsRaw() { const v = load('titanic.done', []); return Array.isArray(v) ? v : []; }
 let doneStops = (() => { const v = load('titanic.done', []); return Array.isArray(v) ? v.filter(id => STOPS.some(s => s.id === id)) : []; })();
 function finishStop(id) {
   const i = STOPS.findIndex(s => s.id === id);
   if (!doneStops.includes(id)) { doneStops.push(id); save('titanic.done', doneStops); }
-  if (i + 2 > story) { story = Math.min(STOPS.length, i + 2); save('titanic.story', story); }
 }
 
 // ---------- Stickers ----------
@@ -4253,7 +4262,7 @@ function extraScreen(kind) {
     return `
       <div class="eyebrow">The voyage</div>
       <h2>Story map</h2>
-      <p class="lede">Play the story in order. Finishing a stop opens the next one, and you can replay any stop you've reached.</p>
+      <p class="lede">Play the whole story from the start, or jump to any stop. Escape the ship plays straight through to the treasure hunt.</p>
       <ol class="route">${stops}</ol>
       <div class="row map-tools">${players}
         <button class="secondary" id="bookBtn">${ICONS.star}Sticker book <span class="count">${stickers.length}/${STICKERS.length}</span></button>
@@ -4947,7 +4956,7 @@ const MINIS = {
 
   // ---------------------------------------------------------------
   // 7. Row to the rescue: steer through the ice, pick up swimmers
-  row() {
+  row(fromEscape) {
     const GOAL = 3600, S = { x: 480, vx: 0, y: 0, time: 120, floes: [], swimmers: [], saved: 0, bump: 0, shake: 0, done: false, endT: 0, pops: [], riders: [] };
     for (let y = 380; y < GOAL - 300; y += rand(220, 290)) {
       const n = 1 + Math.floor(Math.random() * 2), gap = rand(140, 820);
@@ -4960,11 +4969,13 @@ const MINIS = {
     }
     const end = () => {
       if (S.won && S.saved === 5) award('rescuer');
+      if (fromEscape) { G.rowed = S.saved; G.rowWon = S.won; chainDone('row', S.won, S.won ? 3 + S.saved * 2 : S.saved); return; }
       miniResult('row', S.won, { coins: S.won ? 3 + S.saved * 2 : S.saved, title: S.won ? 'Rescued!' : 'The sun came up',
         text: S.won ? `You rowed to the Carpathia and saved ${S.saved} of 5 swimmers!` : 'Row with ↑ to go faster, and steer around the ice so you don\'t get stuck.' });
     };
     return {
-      S, icon: 'boat', intro: 'Row to the rescue ship before sunrise! ← → steer, ↑ rows faster. Pick up swimmers on the way.',
+      S, icon: 'boat', intro: fromEscape ? 'Now row everyone to the Carpathia, the rescue ship! ← → steer, ↑ rows faster. Pick up more swimmers on the way.'
+        : 'Row to the Carpathia, the rescue ship, before sunrise! ← → steer, ↑ rows faster. Pick up swimmers on the way.',
       tap(x) { S.vx += x < 480 ? -160 : 160; },
       action() {},
       update(dt) {
@@ -5036,7 +5047,7 @@ const MINIS = {
         const oar = Math.sin(t * (input.up ? 9 : 5)) * 0.5;
         cx.strokeStyle = '#8a5a30'; cx.lineWidth = 4; cx.lineCap = 'round'; line(-20, 6, -52, 6 + oar * 30); line(20, 6, 52, 6 + oar * 30);
         cx.fillStyle = '#f28c28'; circle(0, 10, 11); cx.fill(); cx.fillStyle = KIDS[prefs.kid].hair; circle(0, 10, 7.5); cx.fill();
-        S.riders.forEach((r, i) => { const yy = -34 + (i % 3) * 14, xx = i < 3 ? -10 : 10; cx.fillStyle = r.coat; circle(xx, yy, 7); cx.fill(); cx.fillStyle = SKIN; circle(xx, yy, 4.5); cx.fill(); });
+        [...(fromEscape && G.rescuedLooks ? G.rescuedLooks : []), ...S.riders].slice(0, 6).forEach((r, i) => { const yy = -34 + (i % 3) * 14, xx = i < 3 ? -10 : 10; cx.fillStyle = r.coat; circle(xx, yy, 7); cx.fill(); cx.fillStyle = SKIN; circle(xx, yy, 4.5); cx.fill(); });
         if (souv.flag) { cx.fillStyle = '#c91a09'; cx.beginPath(); cx.moveTo(0, -54); cx.lineTo(18, -60); cx.lineTo(0, -66); cx.fill(); }
         cx.restore();
         drawPops(S.pops, 1 / 60);
@@ -5071,7 +5082,7 @@ const MINIS = {
     for (let i = 0; i < 5; i++) spawnPerson();
     const end = () => {
       if (S.saved >= SEATS) award('lifesaver');
-      if (fromEscape) { G.rescued = S.saved; G.rescuedLooks = S.riders.slice(); MG = null; document.body.classList.remove('mini'); bankCoins(S.saved); G.bankedRescue = S.saved; finishEscape(); return; }
+      if (fromEscape) { G.rescued = S.saved; G.rescuedLooks = S.riders.slice(); chainDone('rescue', S.saved >= 4, S.saved); return; }
       miniResult('rescue', S.saved >= 4, { coins: S.saved, title: S.saved >= 4 ? 'What a rescue!' : 'Keep trying!',
         text: S.saved >= 4 ? `You pulled ${S.saved} people out of the water before the Titanic went under.` : `You rescued ${S.saved}. Row up close to the people waving in the water. Try to rescue at least 4.` });
     };
@@ -5203,7 +5214,7 @@ const MINIS = {
 
   // ---------------------------------------------------------------
   // 9. Find the treasure: explore the wreck in a submarine
-  treasure() {
+  treasure(fromEscape) {
     const WW = 2700, WH = 820, FLOORY = 740;
     const T = [
       { id: 'bell', name: "the ship's bell", x: 640, y: 560 }, { id: 'key', name: 'the gold key', x: 1060, y: 690 },
@@ -5218,7 +5229,9 @@ const MINIS = {
     S.hp = 3; S.hurt = 0; S.arm = null;
     const near = () => T.find(o => !o.got && Math.hypot(o.x - S.x, o.y - (S.y + 40)) < 120);
     const end = () => {
-      if (S.won) { award('treasure'); miniResult('treasure', true, { coins: 10, title: 'Treasure found!', text: 'You found all five treasures in the wreck of the Titanic and got away from the sharks!' }); }
+      if (S.won) award('treasure');
+      if (fromEscape) { G.found = T.filter(o => o.got).length; chainDone('treasure', S.won, S.won ? 10 : G.found); return; }
+      if (S.won) { miniResult('treasure', true, { coins: 10, title: 'Treasure found!', text: 'You found all five treasures in the wreck of the Titanic and got away from the sharks!' }); }
       else miniResult('treasure', false, { coins: T.filter(o => o.got).length, title: 'The sharks got too close!', text: 'Sharks chase you when you come near. Swim away from them, and grab the treasure when they are far off.' });
     };
     const clawTip = () => { const A = S.arm; if (!A) return { x: S.x + S.face * 30, y: S.y + 34 }; const k = A.phase === 'out' ? A.k : 1 - A.k; return { x: S.x + S.face * 30 + (A.tx - (S.x + S.face * 30)) * k, y: S.y + 34 + (A.ty - (S.y + 34)) * k }; };
@@ -5466,16 +5479,28 @@ function addFlag3D(boat) {
 }
 
 function viewState() { return state === 'paused' && pausedFrom ? pausedFrom : state; } // what to show behind the pause screen
+// After you escape, the story keeps going: pick people up, watch the ship split (3D),
+// row everyone to the Carpathia, guide the wreck down, then dive for the treasure.
 function finishEscape() {
   if (G && G.mode) { showScreen('win'); return; }
-  if (G && G.rescued === undefined && !G.swim) { startRescue(); return; } // row around and pick people up first
-  if (use3D && prefs.ending) startEnding(); else showScreen('win');
+  if (G.rescued === undefined && !G.swim) { startChainMini('rescue'); return; }
+  if (!G.split && use3D && prefs.ending) { G.split = true; startEnding(); return; }
+  if (G.rowed === undefined) { startChainMini('row'); return; }
+  if (!G.dive) { startDive(); return; }
+  if (G.found === undefined) { startChainMini('treasure'); return; }
+  showScreen('win');
 }
-function startRescue() {
-  MG = MINIS.rescue(true); MG.id = 'rescue'; MG.t = 0;
+function startChainMini(id) {
+  MG = MINIS[id](true); MG.id = id; MG.t = 0;
   state = 'mini'; document.body.classList.add('mini'); warnEl.style.display = 'none';
   for (const k in input) input[k] = false;
   msg(MG.intro, 5, MG.icon);
+}
+function chainDone(id, won, coins) { // a mini-game inside the escape finished: bank it and move on
+  MG = null; document.body.classList.remove('mini');
+  if (won) finishStop(id);
+  G.bankedRescue = (G.bankedRescue || 0) + bankCoins(coins);
+  finishEscape();
 }
 function draw(now) {
   if (MG) { cx.setTransform(dpr, 0, 0, dpr, 0, 0); cx.clearRect(0, 0, innerWidth, innerHeight); MG.draw(now / 1000, innerWidth, innerHeight); return; }
