@@ -3834,14 +3834,19 @@ function updateEnding3D(t) {
   // lifeboats rowing away in front
   const by = base - 0.9 + Math.sin(t * 1.2) * 0.1;
   R3.endBoat.position.set(sx - 8 - k * 0.8, by, 26); R3.endBoat.userData.hull.material.color.copy(col(prefs.boat));
-  if (!R3.endFig || R3.endFigRev !== faceRev + ':' + prefs.kid + ':' + G.cls) {
+  const rev = faceRev + ':' + prefs.kid + ':' + G.cls + ':' + (G.rescued || 0);
+  if (!R3.endFig || R3.endFigRev !== rev) {
     if (R3.endFig) R3.endBoat.remove(R3.endFig.root);
+    for (const f of R3.endRiders || []) R3.endBoat.remove(f.root);
+    R3.endRiders = (G.rescuedLooks || []).map((l, i) => { const f = makeMinifig(l); R3.endBoat.add(f.root);
+      poseFig(f, { x: -3.2 + (i % 4) * 1.6 + (i >= 4 ? 0.8 : 0), y: 1.2, z: i >= 4 ? 1.0 : -0.9, face: 1, facing: Math.PI * 0.9 + (i % 2 ? 0.25 : -0.25), scale: 0.95 }); return f; });
     R3.endFig = makeMinifig({ ...KID_STYLE[G.cls], ...KIDS[prefs.kid], faceLook: prefs.face, jacket: G.jacket }); R3.endBoat.add(R3.endFig.root);
-    R3.endFigRev = faceRev + ':' + prefs.kid + ':' + G.cls;
+    R3.endFigRev = rev;
     if (!R3.endDog) { R3.endDog = makeDog3D(); R3.endBoat.add(R3.endDog.root); }
   }
-  poseFig(R3.endFig, { x: -1, y: 0.6, z: 0, face: 1, facing: Math.PI * 0.9, t, pose: 'wave', scale: 1.05 });
-  R3.endDog.root.visible = !!G.dog.following; if (G.dog.following) poseDog(R3.endDog, 1.6, 2.2, 0, 1, false, 0, t);
+  poseFig(R3.endFig, { x: 2.6, y: 0.6, z: 0, face: 1, facing: Math.PI * 0.9, t, pose: 'wave', scale: 1.05 });
+  (R3.endRiders || []).forEach((f, i) => { if (Math.sin(t * 2 + i * 1.7) > 0.4) f.arms[1].rotation.set(-2.8, 0, Math.sin(t * 9 + i) * 0.4); else f.arms[1].rotation.set(0, 0, 0); });
+  R3.endDog.root.visible = !!G.dog.following; if (G.dog.following) poseDog(R3.endDog, 3.6, 2.2, 1.0, 1, false, 0, t);
   R3.endOthers.forEach((b, i) => b.position.set(sx + 22 + i * 14 - k * 0.5, by, 12 - i * 6));
   lerpTo(R3.camPos, sx - 6, base + 10, 96, R3.ease * 0.5); lerpTo(R3.camLook, sx - 2, base + 8, -20, R3.ease * 0.5);
   if (G.shake > 0) { R3.camPos.x += rand(-0.6, 0.6) * G.shake; R3.camPos.y += rand(-0.6, 0.6) * G.shake; }
@@ -4882,7 +4887,7 @@ const MINIS = {
     for (let i = 0; i < 5; i++) spawnPerson();
     const end = () => {
       if (S.saved >= SEATS) award('lifesaver');
-      if (fromEscape) { G.rescued = S.saved; MG = null; document.body.classList.remove('mini'); bankCoins(S.saved); G.bankedRescue = S.saved; finishEscape(); return; }
+      if (fromEscape) { G.rescued = S.saved; G.rescuedLooks = S.riders.slice(); MG = null; document.body.classList.remove('mini'); bankCoins(S.saved); G.bankedRescue = S.saved; finishEscape(); return; }
       miniResult('rescue', S.saved >= 4, { coins: S.saved, title: S.saved >= 4 ? 'What a rescue!' : 'Keep trying!',
         text: S.saved >= 4 ? `You pulled ${S.saved} people out of the water before the Titanic went under.` : `You rescued ${S.saved}. Row up close to the people waving in the water. Try to rescue at least 4.` });
     };
@@ -5022,7 +5027,8 @@ const MINIS = {
       { id: 'watch', name: 'a pocket watch', x: 2420, y: 650 },
     ].map(o => ({ ...o, got: false, ph: Math.random() * 6 }));
     const S = { x: 220, y: 220, vx: 0, vy: 0, face: 1, claw: 0, camX: 0, camY: 0, done: false, endT: 0, pops: [],
-      fish: Array.from({ length: 14 }, () => ({ x: rand(0, WW), y: rand(150, 650), v: rand(30, 70) * (Math.random() < 0.5 ? -1 : 1), k: Math.floor(Math.random() * FISH_KINDS.length) })),
+      fish: Array.from({ length: 14 }, (_, i) => { const k = ['angler', 'angler', 'angler', 'jelly', 'jelly', 'jelly', 'jelly', 'lantern'][i % 8];
+        return { x: rand(0, WW), y: rand(150, 650), v: (k === 'jelly' ? rand(8, 16) : rand(25, 55)) * (Math.random() < 0.5 ? -1 : 1), k, ph: rand(0, 6), c: pick(['rgba(255,140,210,0.75)', 'rgba(170,150,255,0.75)', 'rgba(120,220,255,0.75)']) }; }),
       weeds: Array.from({ length: 30 }, () => ({ x: rand(0, WW), h: rand(3, 6), ph: rand(0, 6) })), rocks: Array.from({ length: 18 }, () => ({ x: rand(0, WW), w: rand(40, 110), h: rand(20, 50), c: pick(['#7a828d', '#5f6670', '#ef7b8b', '#f28c28']) })) };
     S.sharks = [[900, 300], [1700, 420], [2300, 260]].map(([x, y]) => ({ x, y, hx: x, hy: y, vx: 0, vy: 0, face: 1, chase: false, cool: 0 }));
     S.hp = 3; S.hurt = 0; S.arm = null;
@@ -5115,7 +5121,7 @@ const MINIS = {
         // treasures
         for (const o of T) if (!o.got && !(S.arm && S.arm.o === o && S.arm.phase !== 'out')) { const s = 1.1 + Math.sin(t * 3 + o.ph) * 0.1; glow(o.x, o.y, 60, 'rgba(255,230,120,A)', 0.35 + 0.2 * Math.sin(t * 4 + o.ph)); drawTreasure(o, o.x, o.y, s); cx.fillStyle = '#fff6c2'; drawSpark(o.x + 18, o.y - 20, 4 + 2 * Math.sin(t * 7 + o.ph)); }
         // fish
-        for (const f of S.fish) drawFish2D(f.x, f.y + Math.sin(t * 2 + f.x) * 6, 38, f.k, Math.sign(f.v), t, f.x);
+        for (const f of S.fish) drawDeepCreature({ ...f, y: f.y + Math.sin(t * (f.k === 'jelly' ? 0.8 : 1.4) + f.ph) * (f.k === 'jelly' ? 20 : 6) }, t);
         for (const k of S.sharks) drawShark2D(k.x, k.y, k.face, t, k.chase);
         // the submarine
         if (S.hurt > 0 && Math.sin(t * 30) > 0) cx.globalAlpha = 0.4;
@@ -5187,6 +5193,57 @@ function drawClaw(S, tip, t) { // a two-joint arm with gripping pincers
   }
   cx.fillStyle = '#f2cd37'; circle(0, 0, 6); cx.fill();
   cx.restore();
+}
+
+// ---------- Deep-sea creatures for the treasure hunt ----------
+function drawAngler(x, y, dir, t, ph) {
+  cx.save(); cx.translate(x, y); cx.scale(dir, 1);
+  const bob = Math.sin(t * 1.5 + ph) * 3;
+  // lure on a stalk
+  const lx = 46, ly = -44 + bob;
+  cx.strokeStyle = '#3a3f52'; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(8, -24); cx.quadraticCurveTo(30, -56, lx, ly); cx.stroke();
+  glow(lx, ly, 34, 'rgba(180,255,220,A)', 0.55 + 0.25 * Math.sin(t * 4 + ph));
+  cx.fillStyle = '#e8fff6'; circle(lx, ly, 5); cx.fill();
+  // tail and fins
+  cx.fillStyle = '#2c3044'; cx.beginPath(); cx.moveTo(-30, 0); cx.lineTo(-52, -16 + Math.sin(t * 4 + ph) * 4); cx.lineTo(-48, 0); cx.lineTo(-52, 16 + Math.sin(t * 4 + ph) * 4); cx.closePath(); cx.fill();
+  cx.beginPath(); cx.moveTo(-14, -22); cx.lineTo(-4, -36); cx.lineTo(4, -24); cx.fill();
+  // round body
+  const g = cx.createRadialGradient(-6, -10, 4, 0, 0, 36); g.addColorStop(0, '#5b6178'); g.addColorStop(1, '#22263a');
+  cx.fillStyle = g; cx.beginPath(); cx.ellipse(0, 0, 36, 28, 0, 0, Math.PI * 2); cx.fill();
+  // big mouth with teeth
+  cx.fillStyle = '#12131c'; cx.beginPath(); cx.moveTo(34, -6); cx.quadraticCurveTo(14, 4, 34, 20); cx.closePath(); cx.fill();
+  cx.fillStyle = '#f4f1e8';
+  for (let i = 0; i < 4; i++) { cx.beginPath(); cx.moveTo(32 - i * 4, -4 + i * 2); cx.lineTo(28 - i * 4, 2 + i * 2); cx.lineTo(25 - i * 4, -2 + i * 2); cx.fill(); }
+  for (let i = 0; i < 3; i++) { cx.beginPath(); cx.moveTo(30 - i * 4, 18 - i * 2); cx.lineTo(27 - i * 4, 11 - i * 2); cx.lineTo(24 - i * 4, 16 - i * 2); cx.fill(); }
+  // eye
+  cx.fillStyle = '#d7f7ff'; circle(14, -12, 6); cx.fill(); cx.fillStyle = '#111'; circle(15, -12, 3); cx.fill();
+  cx.restore();
+}
+function drawJelly(x, y, t, ph, c) {
+  const pulse = 1 + Math.sin(t * 2.4 + ph) * 0.12;
+  cx.save(); cx.translate(x, y);
+  glow(0, 0, 50, c.replace('#', 'rgba(').length ? 'rgba(255,170,230,A)' : 'rgba(255,170,230,A)', 0.25);
+  cx.strokeStyle = 'rgba(255,200,235,0.6)'; cx.lineWidth = 2;
+  for (let i = -2; i <= 2; i++) { cx.beginPath(); cx.moveTo(i * 7, 4); for (let k = 1; k <= 5; k++) cx.lineTo(i * 7 + Math.sin(t * 2 + ph + k + i) * 4, 4 + k * 9); cx.stroke(); }
+  cx.scale(pulse, 2 - pulse);
+  const g = cx.createLinearGradient(0, -24, 0, 6); g.addColorStop(0, 'rgba(255,220,245,0.9)'); g.addColorStop(1, c);
+  cx.fillStyle = g; cx.beginPath(); cx.arc(0, 4, 22, Math.PI, 0); cx.quadraticCurveTo(0, 12, -22, 4); cx.fill();
+  cx.fillStyle = 'rgba(255,255,255,0.5)'; cx.beginPath(); cx.ellipse(-8, -8, 6, 3, -0.4, 0, Math.PI * 2); cx.fill();
+  cx.restore();
+}
+function drawLantern(x, y, dir, t, ph) {
+  cx.save(); cx.translate(x, y); cx.scale(dir, 1);
+  const wag = Math.sin(t * 8 + ph) * 0.3;
+  cx.save(); cx.translate(-11, 0); cx.rotate(wag); cx.fillStyle = '#3a4a6b'; cx.beginPath(); cx.moveTo(0, 0); cx.lineTo(-9, -6); cx.lineTo(-9, 6); cx.fill(); cx.restore();
+  cx.fillStyle = '#4b5d85'; cx.beginPath(); cx.ellipse(0, 0, 13, 6, 0, 0, Math.PI * 2); cx.fill();
+  for (let i = 0; i < 4; i++) { cx.fillStyle = `rgba(140,240,255,${0.6 + 0.4 * Math.sin(t * 5 + ph + i)})`; circle(-6 + i * 4, 4, 1.4); cx.fill(); }
+  cx.fillStyle = '#cfefff'; circle(8, -1, 2.6); cx.fill(); cx.fillStyle = '#111'; circle(8.6, -1, 1.3); cx.fill();
+  cx.restore();
+}
+function drawDeepCreature(f, t) {
+  if (f.k === 'angler') drawAngler(f.x, f.y, Math.sign(f.v), t, f.ph);
+  else if (f.k === 'jelly') drawJelly(f.x, f.y, t, f.ph, f.c);
+  else for (let i = 0; i < 5; i++) drawLantern(f.x + (i % 3) * 22 - i * 4, f.y + (i - 2) * 12 + Math.sin(t * 2 + f.ph + i) * 3, Math.sign(f.v), t, f.ph + i);
 }
 
 // ---------- Guide it down, drawn in 2D (when 3D isn't available) ----------

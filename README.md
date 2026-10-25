@@ -20,7 +20,7 @@ The Titanic is about to hit an iceberg. You start at the very bottom of the ship
 | 8 | Swim to safety | The swim on its own: reach a lifeboat past sharks and icebergs. |
 | 9 | Row to the rescue | Row your lifeboat through the ice to the rescue ship before sunrise, picking up swimmers. |
 | 10 | Guide it down | Steer the wreck past the fish to the sea floor. |
-| 11 | Find the treasure | Explore the wreck in a submarine and pick up five treasures: the ship's bell, the gold key, the puppy's collar, a teacup and a pocket watch. Steer next to something shiny and press Space (or tap): the claw reaches out, grabs it and lifts it into the submarine. Keep away from the sharks: they chase you when you get close, and three bumps ends the dive. |
+| 11 | Find the treasure | Explore the wreck in a submarine and pick up five treasures: the ship's bell, the gold key, the puppy's collar, a teacup and a pocket watch. Steer next to something shiny and press Space (or tap): the claw reaches out, grabs it and lifts it into the submarine. Anglerfish, jellyfish and lanternfish drift around the wreck. Keep away from the sharks: they chase you when you get close, and three bumps ends the dive. |
 
 From the map you can also open:
 
@@ -61,7 +61,7 @@ The game is drawn in 3D with [three.js](https://threejs.org/), loaded from a CDN
 - **The shop.** The purser's desk in 3rd Class sells a **life jacket** (4 coins) and **fast shoes** (3 coins, run and climb faster). Spending coins doesn't lower your class, because class counts everything you've collected.
 - **Swimming to a lifeboat.** With a life jacket on, you can jump into the sea through the gangway doors on the two lower passenger decks once the iceberg has hit. A short scene shows you leaping out of the ship and splashing down (the puppy jumps after you). If the water reaches you, the jacket floats you out instead of you losing. Then the view switches to the open sea from above: swim to a lifeboat before your warmth bar runs out. Icebergs block the way and make you colder if you touch them. Sharks chase you if you swim close, but you can outswim them. More sharks appear at higher levels.
 - **Panic after the iceberg.** More passengers come running, wave their arms and shout for help, and they get in your way.
-- **The sinking ending (3D).** After you escape, watch the Titanic break in two and sink. Then guide the wreck down to the sea floor: steer left and right around the schools of fish, and try to land on the glowing spot. Press Space during the sinking scene to skip to the steering part. You can turn the ending off in Grown-ups.
+- **The sinking ending (3D).** After you escape, watch the Titanic break in two and sink from your lifeboat, with everyone you rescued sitting beside you and waving. Then guide the wreck down to the sea floor: steer left and right around the schools of fish, and try to land on the glowing spot. Press Space during the sinking scene to skip to the steering part. You can turn the ending off in Grown-ups.
 - **The lost puppy.** A puppy is hiding somewhere on the ship. Walk up to it and it follows you. Get it into the lifeboat with you to save it too.
 - **Picture hints.** Locked gates show what you still need, like a coin with "3/5". After the iceberg hits, a red arrow over your head reminds you to go up.
 - **Two players.** Player 1 uses the arrow keys and Space. Player 2 uses W A S D and E. Coins, class and keys are shared. You both need to get into a lifeboat. If one of you touches the water, the other can still save the team by reaching a lifeboat.
